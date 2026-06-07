@@ -26,4 +26,11 @@ data class Question(
     val rating: Int,
     val explanation: String,
     val category: Category
-)
+) {
+    /**
+     * Identifiant stable d'une question, utilisé comme clé pour l'historique anti-grind.
+     * Basé sur l'énoncé : robuste au réordonnancement des questions (corriger un énoncé
+     * réinitialise en revanche son historique, ce qui est acceptable).
+     */
+    val id: String get() = text
+}

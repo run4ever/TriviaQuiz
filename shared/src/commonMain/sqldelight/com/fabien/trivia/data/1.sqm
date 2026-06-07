@@ -1,0 +1,7 @@
+-- Migration v1 -> v2 : ajoute la table d'historique des questions (anti-grind).
+-- Nécessaire pour les installations existantes qui possèdent déjà trivia.db en version 1.
+CREATE TABLE question_stats (
+    question_id TEXT NOT NULL PRIMARY KEY,
+    times_seen INTEGER NOT NULL DEFAULT 0,
+    times_correct INTEGER NOT NULL DEFAULT 0
+);

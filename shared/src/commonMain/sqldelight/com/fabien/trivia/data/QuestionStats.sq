@@ -1,0 +1,14 @@
+CREATE TABLE question_stats (
+    question_id TEXT NOT NULL PRIMARY KEY,
+    times_seen INTEGER NOT NULL DEFAULT 0,
+    times_correct INTEGER NOT NULL DEFAULT 0
+);
+
+selectStats:
+SELECT times_seen, times_correct FROM question_stats WHERE question_id = ?;
+
+-- INSERT OR REPLACE plutôt qu'un UPSERT (ON CONFLICT DO UPDATE) car ce dernier
+-- n'est pas supporté par le SQLite embarqué des anciens Android (API 24).
+upsertStats:
+INSERT OR REPLACE INTO question_stats(question_id, times_seen, times_correct)
+VALUES (?, ?, ?);

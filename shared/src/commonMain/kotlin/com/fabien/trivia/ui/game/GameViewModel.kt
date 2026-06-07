@@ -5,7 +5,9 @@ import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
+import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
+import com.fabien.trivia.data.TriviaDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +32,9 @@ data class GameState(
 }
 
 class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
-    private val ratingsRepository = RatingsRepository(driverFactory)
+    private val database = TriviaDatabase(driverFactory.createDriver())
+    private val ratingsRepository = RatingsRepository(database)
+    private val questionStatsRepository = QuestionStatsRepository(database)
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings()
@@ -62,8 +66,16 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val question = current.questions[current.currentIndex]
         val isCorrect = question.correctIndex == index
 
+        // Anti-grind : le gain est réduit si la question a déjà été réussie auparavant.
+        // La pénalité (mauvaise réponse) reste pleine à chaque fois.
+        val gainFactor = if (isCorrect) {
+            repeatedCorrectFactor(questionStatsRepository.getTimesCorrect(question.id))
+        } else {
+            1.0
+        }
+
         val categoryRating = current.categoryRatings[question.category] ?: 750
-        val categoryDelta = eloRatingDelta(categoryRating, question.rating, isCorrect)
+        val categoryDelta = scaleGain(eloRatingDelta(categoryRating, question.rating, isCorrect), gainFactor)
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
@@ -76,7 +88,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             )
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
-            val globalDelta = eloRatingDelta(current.playerRating, question.rating, isCorrect)
+            val globalDelta = scaleGain(eloRatingDelta(current.playerRating, question.rating, isCorrect), gainFactor)
             val newPlayerRating = (current.playerRating + globalDelta).coerceAtLeast(100)
             _state.value = current.copy(
                 selectedAnswerIndex = index,
@@ -88,6 +100,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             ratingsRepository.savePlayerRating(newPlayerRating)
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         }
+
+        questionStatsRepository.recordAnswer(question.id, isCorrect)
     }
 
     fun nextQuestion() {
@@ -124,4 +138,18 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val result = if (correct) 1.0 else 0.0
         return (32.0 * (result - expected)).roundToInt()
     }
+
+    /**
+     * Facteur appliqué au gain selon le nombre de bonnes réponses déjà données à la question :
+     * ×1 la 1re fois, ×0.5 la 2e, ×0 ensuite. Empêche de regagner indéfiniment du rating
+     * sur des questions déjà maîtrisées.
+     */
+    private fun repeatedCorrectFactor(priorCorrect: Int): Double = when (priorCorrect) {
+        0 -> 1.0
+        1 -> 0.5
+        else -> 0.0
+    }
+
+    private fun scaleGain(delta: Int, factor: Double): Int =
+        if (factor >= 1.0) delta else (delta * factor).roundToInt()
 }

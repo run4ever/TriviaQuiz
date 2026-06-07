@@ -1,12 +1,7 @@
 package com.fabien.trivia.data
 
-class RatingsRepository(driverFactory: DatabaseDriverFactory) {
-    private val queries: RatingsQueries
-
-    init {
-        val driver = driverFactory.createDriver()
-        queries = TriviaDatabase(driver).ratingsQueries
-    }
+class RatingsRepository(database: TriviaDatabase) {
+    private val queries: RatingsQueries = database.ratingsQueries
 
     fun getPlayerRating(): Int =
         queries.getRating("global").executeAsOneOrNull()?.toInt() ?: 750
