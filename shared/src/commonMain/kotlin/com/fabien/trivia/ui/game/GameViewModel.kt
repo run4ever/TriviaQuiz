@@ -2,8 +2,10 @@ package com.fabien.trivia.ui.game
 
 import androidx.lifecycle.ViewModel
 import com.fabien.trivia.data.Category
+import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
+import com.fabien.trivia.data.RatingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,8 +29,12 @@ data class GameState(
         get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 1000 else playerRating
 }
 
-class GameViewModel : ViewModel() {
-    private val _state = MutableStateFlow(GameState())
+class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
+    private val ratingsRepository = RatingsRepository(driverFactory)
+    private val _state = MutableStateFlow(GameState(
+        playerRating = ratingsRepository.getPlayerRating(),
+        categoryRatings = ratingsRepository.getAllCategoryRatings()
+    ))
     val state: StateFlow<GameState> = _state.asStateFlow()
 
     fun goToCategorySelect() {
@@ -58,8 +64,8 @@ class GameViewModel : ViewModel() {
 
         val categoryRating = current.categoryRatings[question.category] ?: 1000
         val categoryDelta = eloRatingDelta(categoryRating, question.rating, isCorrect)
-        val newCategoryRatings = current.categoryRatings +
-            (question.category to (categoryRating + categoryDelta).coerceAtLeast(100))
+        val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
+        val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
         if (current.selectedCategory != null) {
             _state.value = current.copy(
@@ -68,15 +74,19 @@ class GameViewModel : ViewModel() {
                 categoryRatings = newCategoryRatings,
                 lastRatingDelta = categoryDelta
             )
+            ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
             val globalDelta = eloRatingDelta(current.playerRating, question.rating, isCorrect)
+            val newPlayerRating = (current.playerRating + globalDelta).coerceAtLeast(100)
             _state.value = current.copy(
                 selectedAnswerIndex = index,
                 answerConfirmed = true,
-                playerRating = (current.playerRating + globalDelta).coerceAtLeast(100),
+                playerRating = newPlayerRating,
                 categoryRatings = newCategoryRatings,
                 lastRatingDelta = globalDelta
             )
+            ratingsRepository.savePlayerRating(newPlayerRating)
+            ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         }
     }
 

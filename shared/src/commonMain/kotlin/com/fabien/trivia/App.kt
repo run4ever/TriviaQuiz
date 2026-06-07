@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.ui.category.CategoryScreen
 import com.fabien.trivia.ui.game.GamePhase
 import com.fabien.trivia.ui.game.GameScreen
@@ -16,8 +17,8 @@ import com.fabien.trivia.ui.home.HomeScreen
 import com.fabien.trivia.ui.theme.CultureGeneraleTheme
 
 @Composable
-fun App() {
-    val viewModel = viewModel { GameViewModel() }
+fun App(driverFactory: DatabaseDriverFactory) {
+    val viewModel = viewModel { GameViewModel(driverFactory) }
     CultureGeneraleTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             val state by viewModel.state.collectAsState()

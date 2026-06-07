@@ -1,0 +1,13 @@
+CREATE TABLE player_ratings (
+    id TEXT NOT NULL PRIMARY KEY,
+    rating INTEGER NOT NULL
+);
+
+getRating:
+SELECT rating FROM player_ratings WHERE id = ?;
+
+getAllRatings:
+SELECT id, rating FROM player_ratings;
+
+upsertRating:
+INSERT OR REPLACE INTO player_ratings(id, rating) VALUES (?, ?);
