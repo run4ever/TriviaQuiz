@@ -66,16 +66,17 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val question = current.questions[current.currentIndex]
         val isCorrect = question.correctIndex == index
 
+        // État persisté de la question : rating dynamique (graine du code si jamais jouée) + historique anti-grind.
+        val stats = questionStatsRepository.getStats(question.id)
+        val questionRating = stats?.rating?.toInt() ?: question.rating
+        val priorCorrect = stats?.timesCorrect?.toInt() ?: 0
+
         // Anti-grind : le gain est réduit si la question a déjà été réussie auparavant.
         // La pénalité (mauvaise réponse) reste pleine à chaque fois.
-        val gainFactor = if (isCorrect) {
-            repeatedCorrectFactor(questionStatsRepository.getTimesCorrect(question.id))
-        } else {
-            1.0
-        }
+        val gainFactor = if (isCorrect) repeatedCorrectFactor(priorCorrect) else 1.0
 
         val categoryRating = current.categoryRatings[question.category] ?: 750
-        val categoryDelta = scaleGain(eloRatingDelta(categoryRating, question.rating, isCorrect), gainFactor)
+        val categoryDelta = scaleGain(eloRatingDelta(categoryRating, questionRating, isCorrect), gainFactor)
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
@@ -88,7 +89,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             )
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
-            val globalDelta = scaleGain(eloRatingDelta(current.playerRating, question.rating, isCorrect), gainFactor)
+            val globalDelta = scaleGain(eloRatingDelta(current.playerRating, questionRating, isCorrect), gainFactor)
             val newPlayerRating = (current.playerRating + globalDelta).coerceAtLeast(100)
             _state.value = current.copy(
                 selectedAnswerIndex = index,
@@ -101,7 +102,12 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         }
 
-        questionStatsRepository.recordAnswer(question.id, isCorrect)
+        // Rating dynamique : la question évolue à l'inverse de l'échange ELO avec le rating de catégorie
+        // du joueur (le joueur gagne X → la question perd X). On enregistre aussi la réponse (anti-grind).
+        val newQuestionRating = (questionRating - categoryDelta).coerceAtLeast(100)
+        val newTimesSeen = (stats?.timesSeen ?: 0L) + 1L
+        val newTimesCorrect = (stats?.timesCorrect ?: 0L) + if (isCorrect) 1L else 0L
+        questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating)
     }
 
     fun nextQuestion() {

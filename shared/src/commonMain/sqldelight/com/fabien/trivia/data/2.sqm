@@ -1,0 +1,3 @@
+-- Migration v2 -> v3 : ajoute le rating dynamique par question (évolue selon les résultats du joueur, en local).
+-- Colonne nullable : les questions déjà en base (jouées avant cette migration) repartent de leur rating "graine".
+ALTER TABLE question_stats ADD COLUMN rating INTEGER;

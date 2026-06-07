@@ -1,21 +1,22 @@
 package com.fabien.trivia.data
 
 /**
- * Historique par question (anti-grind) : combien de fois chaque question a été vue
- * et réussie, pour faire décroître le gain ELO d'une question déjà maîtrisée.
+ * État persisté par question :
+ * - `timesSeen` / `timesCorrect` : historique anti-grind (fait décroître le gain ELO d'une question déjà maîtrisée)
+ * - `rating` : rating dynamique local de la question (évolue selon les résultats du joueur), NULL tant
+ *   que la question n'a jamais été jouée (on utilise alors le rating "graine" défini dans le code).
  */
 class QuestionStatsRepository(database: TriviaDatabase) {
     private val queries = database.questionStatsQueries
 
-    /** Nombre de fois où la question a déjà été répondue correctement par le joueur. */
-    fun getTimesCorrect(questionId: String): Int =
-        queries.selectStats(questionId).executeAsOneOrNull()?.times_correct?.toInt() ?: 0
+    data class Stats(val timesSeen: Long, val timesCorrect: Long, val rating: Long?)
 
-    /** Enregistre une nouvelle réponse (vue +1, et réussie +1 si correcte). */
-    fun recordAnswer(questionId: String, correct: Boolean) {
-        val current = queries.selectStats(questionId).executeAsOneOrNull()
-        val timesSeen = (current?.times_seen ?: 0L) + 1L
-        val timesCorrect = (current?.times_correct ?: 0L) + if (correct) 1L else 0L
-        queries.upsertStats(questionId, timesSeen, timesCorrect)
+    fun getStats(questionId: String): Stats? =
+        queries.selectStats(questionId).executeAsOneOrNull()?.let {
+            Stats(it.times_seen, it.times_correct, it.rating)
+        }
+
+    fun save(questionId: String, timesSeen: Long, timesCorrect: Long, rating: Int) {
+        queries.upsertStats(questionId, timesSeen, timesCorrect, rating.toLong())
     }
 }
