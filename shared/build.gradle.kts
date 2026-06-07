@@ -19,7 +19,7 @@ kotlin {
         }
     }
     
-    androidLibrary {
+    android {
        namespace = "com.fabien.trivia.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.sqldelight.runtime)
+            implementation(libs.compose.material.icons.core)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
