@@ -23,11 +23,11 @@ import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
 
 private fun Int.levelName(): String = when {
-    this < 600 -> "Débutant"
+    this < 500 -> "Débutant"
     this < 800 -> "Amateur"
-    this < 1000 -> "Intermédiaire"
-    this < 1200 -> "Confirmé"
-    this < 1400 -> "Expert"
+    this < 1100 -> "Intermédiaire"
+    this < 1400 -> "Confirmé"
+    this < 1700 -> "Expert"
     else -> "Maître"
 }
 

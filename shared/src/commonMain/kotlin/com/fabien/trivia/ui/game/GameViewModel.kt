@@ -20,13 +20,13 @@ data class GameState(
     val currentIndex: Int = 0,
     val selectedAnswerIndex: Int? = null,
     val answerConfirmed: Boolean = false,
-    val playerRating: Int = 1000,
-    val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 1000 },
+    val playerRating: Int = 750,
+    val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 750 },
     val lastRatingDelta: Int = 0,
     val selectedCategory: Category? = null
 ) {
     val displayedRating: Int
-        get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 1000 else playerRating
+        get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 750 else playerRating
 }
 
 class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
@@ -62,7 +62,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val question = current.questions[current.currentIndex]
         val isCorrect = question.correctIndex == index
 
-        val categoryRating = current.categoryRatings[question.category] ?: 1000
+        val categoryRating = current.categoryRatings[question.category] ?: 750
         val categoryDelta = eloRatingDelta(categoryRating, question.rating, isCorrect)
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)

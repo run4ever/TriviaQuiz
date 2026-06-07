@@ -9,10 +9,10 @@ class RatingsRepository(driverFactory: DatabaseDriverFactory) {
     }
 
     fun getPlayerRating(): Int =
-        queries.getRating("global").executeAsOneOrNull()?.toInt() ?: 1000
+        queries.getRating("global").executeAsOneOrNull()?.toInt() ?: 750
 
     fun getCategoryRating(category: Category): Int =
-        queries.getRating(category.name).executeAsOneOrNull()?.toInt() ?: 1000
+        queries.getRating(category.name).executeAsOneOrNull()?.toInt() ?: 750
 
     fun getAllCategoryRatings(): Map<Category, Int> =
         Category.entries.associateWith { getCategoryRating(it) }
