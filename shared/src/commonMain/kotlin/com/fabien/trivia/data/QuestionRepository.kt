@@ -5,6 +5,7 @@ object QuestionRepository {
 
         // ===================== GÉOGRAPHIE =====================
         Question(
+            id = "geo_australie_capitale",
             text = "Quelle est la capitale de l'Australie ?",
             options = listOf("Canberra", "Sydney", "Melbourne", "Brisbane"),
             correctIndex = 0,
@@ -13,6 +14,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_plus_grand_ocean",
             text = "Quel est le plus grand océan du monde ?",
             options = listOf("Atlantique", "Indien", "Arctique", "Pacifique"),
             correctIndex = 3,
@@ -21,6 +23,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_sahara_continent",
             text = "Sur quel continent se trouve le désert du Sahara ?",
             options = listOf("Asie", "Australie", "Amérique du Sud", "Afrique"),
             correctIndex = 3,
@@ -29,6 +32,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_plus_long_fleuve",
             text = "Quel est le fleuve le plus long du monde ?",
             options = listOf("Amazone", "Mississippi", "Yangtsé", "Nil"),
             correctIndex = 3,
@@ -37,6 +41,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_japon_monnaie",
             text = "Quelle est la monnaie officielle du Japon ?",
             options = listOf("Yuan", "Won", "Yen", "Ringgit"),
             correctIndex = 2,
@@ -45,6 +50,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_canada_capitale",
             text = "Quelle est la capitale du Canada ?",
             options = listOf("Toronto", "Ottawa", "Vancouver", "Montréal"),
             correctIndex = 1,
@@ -53,6 +59,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_plus_haut_sommet",
             text = "Quel est le plus haut sommet du monde ?",
             options = listOf("K2", "Mont Blanc", "Everest", "Kilimandjaro"),
             correctIndex = 2,
@@ -61,6 +68,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_marrakech_pays",
             text = "Dans quel pays se trouve la ville de Marrakech ?",
             options = listOf("Tunisie", "Algérie", "Maroc", "Égypte"),
             correctIndex = 2,
@@ -69,6 +77,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_plus_grand_pays",
             text = "Quel pays a la plus grande superficie du monde ?",
             options = listOf("Canada", "Chine", "États-Unis", "Russie"),
             correctIndex = 3,
@@ -77,6 +86,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_egypte_capitale",
             text = "Quelle est la capitale de l'Égypte ?",
             options = listOf("Alexandrie", "Le Caire", "Louxor", "Gizeh"),
             correctIndex = 1,
@@ -85,6 +95,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_detroit_gibraltar",
             text = "Quel détroit sépare l'Europe de l'Afrique ?",
             options = listOf("Le Bosphore", "Gibraltar", "La Manche", "Le détroit de Béring"),
             correctIndex = 1,
@@ -93,6 +104,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_plus_petit_etat",
             text = "Quel est le plus petit État du monde ?",
             options = listOf("Monaco", "Nauru", "Le Vatican", "Saint-Marin"),
             correctIndex = 2,
@@ -101,6 +113,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_galapagos_pays",
             text = "À quel pays appartiennent les îles Galápagos ?",
             options = listOf("Pérou", "Chili", "Équateur", "Colombie"),
             correctIndex = 2,
@@ -109,6 +122,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_espagne_capitale",
             text = "Quelle est la capitale de l'Espagne ?",
             options = listOf("Barcelone", "Madrid", "Séville", "Valence"),
             correctIndex = 1,
@@ -117,6 +131,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_paris_fleuve",
             text = "Quel fleuve traverse Paris ?",
             options = listOf("La Loire", "Le Rhône", "La Seine", "La Garonne"),
             correctIndex = 2,
@@ -125,6 +140,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_pays_plus_peuple",
             text = "Quel pays est le plus peuplé du monde en 2023 ?",
             options = listOf("Chine", "Inde", "États-Unis", "Indonésie"),
             correctIndex = 1,
@@ -133,6 +149,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_oural_europe_asie",
             text = "Quelle chaîne de montagnes sépare l'Europe de l'Asie ?",
             options = listOf("Les Alpes", "Le Caucase", "L'Oural", "Les Carpates"),
             correctIndex = 2,
@@ -141,6 +158,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_mer_morte",
             text = "Quelle est l'étendue d'eau la plus salée parmi les suivantes ?",
             options = listOf("La mer Rouge", "La mer Morte", "La mer Caspienne", "La mer Noire"),
             correctIndex = 1,
@@ -149,6 +167,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_norvege_capitale",
             text = "Quelle est la capitale de la Norvège ?",
             options = listOf("Stockholm", "Helsinki", "Oslo", "Copenhague"),
             correctIndex = 2,
@@ -157,6 +176,7 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
+            id = "geo_kilimandjaro_continent",
             text = "Sur quel continent se trouve le mont Kilimandjaro ?",
             options = listOf("Asie", "Afrique", "Amérique du Sud", "Océanie"),
             correctIndex = 1,
@@ -167,6 +187,7 @@ object QuestionRepository {
 
         // ===================== HISTOIRE =====================
         Question(
+            id = "hist_revolution_francaise",
             text = "En quelle année a eu lieu la Révolution française ?",
             options = listOf("1776", "1804", "1789", "1815"),
             correctIndex = 2,
@@ -175,6 +196,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_premier_president_us",
             text = "Qui était le premier président des États-Unis ?",
             options = listOf("Benjamin Franklin", "Thomas Jefferson", "Abraham Lincoln", "George Washington"),
             correctIndex = 3,
@@ -183,6 +205,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_debarquement_normandie",
             text = "En quelle année a eu lieu le débarquement en Normandie ?",
             options = listOf("1942", "1943", "1944", "1945"),
             correctIndex = 2,
@@ -191,6 +214,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_colisee_empire",
             text = "Quel empire a construit le Colisée de Rome ?",
             options = listOf("L'Empire grec", "L'Empire romain", "L'Empire ottoman", "L'Empire byzantin"),
             correctIndex = 1,
@@ -199,6 +223,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_napoleon_naissance",
             text = "Dans quelle île est né Napoléon Bonaparte ?",
             options = listOf("Sardaigne", "Malte", "Corse", "Sicile"),
             correctIndex = 2,
@@ -207,6 +232,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_premiere_guerre_mondiale",
             text = "En quelle année a commencé la Première Guerre mondiale ?",
             options = listOf("1914", "1916", "1918", "1912"),
             correctIndex = 0,
@@ -215,6 +241,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_mur_berlin",
             text = "Quel mur est tombé en 1989 ?",
             options = listOf("Le mur d'Hadrien", "Le mur de Berlin", "La Grande Muraille", "Le mur des Lamentations"),
             correctIndex = 1,
@@ -223,6 +250,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_pyramides_gizeh",
             text = "Quelle civilisation a construit les pyramides de Gizeh ?",
             options = listOf("Les Romains", "Les Grecs", "Les Égyptiens", "Les Mayas"),
             correctIndex = 2,
@@ -231,6 +259,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_premier_homme_lune",
             text = "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?",
             options = listOf("1965", "1969", "1972", "1959"),
             correctIndex = 1,
@@ -239,6 +268,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_colomb_amerique",
             text = "Quel navigateur a atteint l'Amérique en 1492 ?",
             options = listOf("Vasco de Gama", "Christophe Colomb", "Magellan", "Amerigo Vespucci"),
             correctIndex = 1,
@@ -247,6 +277,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_cleopatre",
             text = "Quelle reine d'Égypte s'est alliée à Jules César et Marc Antoine ?",
             options = listOf("Néfertiti", "Cléopâtre", "Hatchepsout", "Néfertari"),
             correctIndex = 1,
@@ -255,6 +286,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_roi_soleil",
             text = "Quel roi de France était surnommé le \"Roi-Soleil\" ?",
             options = listOf("Louis XIV", "Louis XVI", "François Ier", "Henri IV"),
             correctIndex = 0,
@@ -263,6 +295,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_guerre_cent_ans",
             text = "La guerre de Cent Ans a opposé la France à quel pays ?",
             options = listOf("L'Espagne", "L'Angleterre", "L'Allemagne", "L'Italie"),
             correctIndex = 1,
@@ -271,6 +304,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_fin_seconde_guerre",
             text = "En quelle année s'est terminée la Seconde Guerre mondiale ?",
             options = listOf("1944", "1945", "1946", "1943"),
             correctIndex = 1,
@@ -279,6 +313,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_waterloo",
             text = "Quel empereur français a été défait à Waterloo en 1815 ?",
             options = listOf("Louis XVIII", "Napoléon Ier", "Charles X", "Napoléon III"),
             correctIndex = 1,
@@ -287,6 +322,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_sparte_athenes",
             text = "Quelle cité grecque antique était la grande rivale militaire d'Athènes ?",
             options = listOf("Thèbes", "Corinthe", "Sparte", "Olympie"),
             correctIndex = 2,
@@ -295,6 +331,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_lincoln_esclavage",
             text = "Quel président américain a aboli l'esclavage ?",
             options = listOf("George Washington", "Thomas Jefferson", "Abraham Lincoln", "Franklin Roosevelt"),
             correctIndex = 2,
@@ -303,6 +340,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_magellan_tour_monde",
             text = "Quel explorateur est associé à la première circumnavigation du globe ?",
             options = listOf("Christophe Colomb", "Vasco de Gama", "Fernand de Magellan", "Marco Polo"),
             correctIndex = 2,
@@ -311,6 +349,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_pompei_vesuve",
             text = "Quelle catastrophe a détruit la cité de Pompéi en 79 apr. J.-C. ?",
             options = listOf("Un tremblement de terre", "L'éruption du Vésuve", "Une inondation", "Un grand incendie"),
             correctIndex = 1,
@@ -319,6 +358,7 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
+            id = "hist_hitler_allemagne",
             text = "Qui était le chef de l'Allemagne durant la Seconde Guerre mondiale ?",
             options = listOf("Benito Mussolini", "Joseph Staline", "Adolf Hitler", "Francisco Franco"),
             correctIndex = 2,
@@ -329,6 +369,7 @@ object QuestionRepository {
 
         // ===================== SCIENCES & NATURE =====================
         Question(
+            id = "sci_hexagone_cotes",
             text = "Combien de côtés a un hexagone ?",
             options = listOf("6", "5", "7", "8"),
             correctIndex = 0,
@@ -337,6 +378,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_symbole_or",
             text = "Quel est l'élément chimique dont le symbole est \"Au\" ?",
             options = listOf("Argent", "Aluminium", "Or", "Azote"),
             correctIndex = 2,
@@ -345,6 +387,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_planete_proche_soleil",
             text = "Quelle planète est la plus proche du Soleil ?",
             options = listOf("Mercure", "Vénus", "Mars", "Terre"),
             correctIndex = 0,
@@ -353,6 +396,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_inventeur_telephone",
             text = "Qui a inventé le téléphone ?",
             options = listOf("Thomas Edison", "Nikola Tesla", "Alexander Graham Bell", "Guglielmo Marconi"),
             correctIndex = 2,
@@ -361,6 +405,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_formule_eau",
             text = "Quelle est la formule chimique de l'eau ?",
             options = listOf("H₂O", "CO₂", "NaCl", "O₂"),
             correctIndex = 0,
@@ -369,6 +414,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_penicilline_fleming",
             text = "Qui a découvert la pénicilline ?",
             options = listOf("Louis Pasteur", "Alexander Fleming", "Marie Curie", "Albert Einstein"),
             correctIndex = 1,
@@ -377,6 +423,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_coeur_sang",
             text = "Quel organe pompe le sang dans le corps humain ?",
             options = listOf("Le foie", "Le cœur", "Les poumons", "Les reins"),
             correctIndex = 1,
@@ -385,6 +432,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_nombre_planetes",
             text = "Combien de planètes compte le système solaire ?",
             options = listOf("7", "8", "9", "10"),
             correctIndex = 1,
@@ -393,6 +441,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_photosynthese_co2",
             text = "Quel gaz les plantes absorbent-elles pour réaliser la photosynthèse ?",
             options = listOf("L'oxygène", "L'azote", "Le dioxyde de carbone", "L'hydrogène"),
             correctIndex = 2,
@@ -401,6 +450,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_animal_plus_rapide",
             text = "Quel est l'animal terrestre le plus rapide ?",
             options = listOf("Le lion", "Le guépard", "L'antilope", "Le lévrier"),
             correctIndex = 1,
@@ -409,6 +459,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_vitesse_lumiere",
             text = "Quelle est approximativement la vitesse de la lumière dans le vide ?",
             options = listOf("300 000 km/s", "150 000 km/s", "1 000 km/s", "30 000 km/s"),
             correctIndex = 0,
@@ -417,6 +468,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_nombre_os",
             text = "Combien d'os compte le corps humain adulte ?",
             options = listOf("186", "206", "226", "250"),
             correctIndex = 1,
@@ -425,6 +477,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_metal_liquide_mercure",
             text = "Quel métal est liquide à température ambiante ?",
             options = listOf("Le plomb", "Le mercure", "Le fer", "L'étain"),
             correctIndex = 1,
@@ -433,6 +486,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_planete_rouge",
             text = "Quelle planète est surnommée la \"planète rouge\" ?",
             options = listOf("Vénus", "Jupiter", "Mars", "Saturne"),
             correctIndex = 2,
@@ -441,6 +495,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_darwin_evolution",
             text = "Quel scientifique a formulé la théorie de l'évolution par sélection naturelle ?",
             options = listOf("Isaac Newton", "Charles Darwin", "Gregor Mendel", "Galilée"),
             correctIndex = 1,
@@ -449,6 +504,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_plus_grand_organe_peau",
             text = "Quel est le plus grand organe du corps humain ?",
             options = listOf("Le foie", "Les intestins", "La peau", "Les poumons"),
             correctIndex = 2,
@@ -457,6 +513,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_gravite",
             text = "Quelle force nous maintient au sol ?",
             options = listOf("Le magnétisme", "La gravité", "L'électricité", "La pression"),
             correctIndex = 1,
@@ -465,6 +522,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_atmosphere_azote",
             text = "Quel gaz compose majoritairement l'atmosphère terrestre ?",
             options = listOf("L'oxygène", "L'azote", "Le dioxyde de carbone", "L'hydrogène"),
             correctIndex = 1,
@@ -473,6 +531,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_nombre_chromosomes",
             text = "Combien de chromosomes possède un être humain ?",
             options = listOf("23", "44", "46", "48"),
             correctIndex = 2,
@@ -481,6 +540,7 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
+            id = "sci_element_abondant_hydrogene",
             text = "Quel est l'élément chimique le plus abondant dans l'univers ?",
             options = listOf("L'oxygène", "L'hélium", "L'hydrogène", "Le carbone"),
             correctIndex = 2,
@@ -491,6 +551,7 @@ object QuestionRepository {
 
         // ===================== ART & CULTURE =====================
         Question(
+            id = "art_joconde_peintre",
             text = "Qui a peint la Joconde ?",
             options = listOf("Michel-Ange", "Léonard de Vinci", "Raphaël", "Botticelli"),
             correctIndex = 1,
@@ -499,6 +560,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_miserables_auteur",
             text = "Qui a écrit \"Les Misérables\" ?",
             options = listOf("Émile Zola", "Victor Hugo", "Honoré de Balzac", "Gustave Flaubert"),
             correctIndex = 1,
@@ -507,6 +569,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_penseur_sculpteur",
             text = "Qui a sculpté \"Le Penseur\" ?",
             options = listOf("Auguste Rodin", "Michel-Ange", "Donatello", "Lorenzo Bernini"),
             correctIndex = 0,
@@ -515,6 +578,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_moliere_vrai_nom",
             text = "Quel est le vrai nom de Molière ?",
             options = listOf("Pierre Corneille", "Jean-Baptiste Poquelin", "François-Marie Arouet", "Jean Racine"),
             correctIndex = 1,
@@ -523,6 +587,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_picasso_pays",
             text = "Dans quel pays est né Pablo Picasso ?",
             options = listOf("France", "Italie", "Espagne", "Portugal"),
             correctIndex = 2,
@@ -531,6 +596,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_symphonie_9_beethoven",
             text = "Quel compositeur a écrit la \"Symphonie n°9\" et son \"Ode à la joie\" ?",
             options = listOf("Mozart", "Beethoven", "Bach", "Chopin"),
             correctIndex = 1,
@@ -539,6 +605,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_louvre_ville",
             text = "Dans quelle ville se trouve le musée du Louvre ?",
             options = listOf("Londres", "Rome", "Paris", "Madrid"),
             correctIndex = 2,
@@ -547,6 +614,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_nuit_etoilee_vangogh",
             text = "Qui a peint \"La Nuit étoilée\" ?",
             options = listOf("Claude Monet", "Vincent van Gogh", "Paul Cézanne", "Paul Gauguin"),
             correctIndex = 1,
@@ -555,6 +623,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_sherlock_holmes_auteur",
             text = "Quel écrivain a créé le personnage de Sherlock Holmes ?",
             options = listOf("Agatha Christie", "Arthur Conan Doyle", "Edgar Allan Poe", "Jules Verne"),
             correctIndex = 1,
@@ -563,6 +632,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_monet_impressionnisme",
             text = "Quel mouvement artistique Claude Monet a-t-il contribué à fonder ?",
             options = listOf("Le cubisme", "Le surréalisme", "L'impressionnisme", "Le fauvisme"),
             correctIndex = 2,
@@ -571,6 +641,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_romeo_juliette_auteur",
             text = "Qui a écrit la pièce \"Roméo et Juliette\" ?",
             options = listOf("William Shakespeare", "Molière", "Dante Alighieri", "Goethe"),
             correctIndex = 0,
@@ -579,6 +650,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_piano_88_touches",
             text = "Quel instrument de musique possède 88 touches ?",
             options = listOf("L'orgue", "Le piano", "L'accordéon", "Le clavecin"),
             correctIndex = 1,
@@ -587,6 +659,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_david_michelange",
             text = "Qui a sculpté le \"David\", chef-d'œuvre de la Renaissance ?",
             options = listOf("Donatello", "Léonard de Vinci", "Michel-Ange", "Raphaël"),
             correctIndex = 2,
@@ -595,6 +668,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_shakespeare_pays",
             text = "De quel pays l'écrivain William Shakespeare est-il originaire ?",
             options = listOf("L'Angleterre", "L'Irlande", "L'Écosse", "Les États-Unis"),
             correctIndex = 0,
@@ -603,6 +677,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_dali_montres_molles",
             text = "Quel peintre espagnol est célèbre pour ses montres molles dans \"La Persistance de la mémoire\" ?",
             options = listOf("Joan Miró", "Salvador Dalí", "Pablo Picasso", "Francisco Goya"),
             correctIndex = 1,
@@ -611,6 +686,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_flute_enchantee_mozart",
             text = "Quel compositeur autrichien, enfant prodige, a écrit \"La Flûte enchantée\" ?",
             options = listOf("Joseph Haydn", "Wolfgang Amadeus Mozart", "Franz Schubert", "Johann Strauss"),
             correctIndex = 1,
@@ -619,6 +695,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_tour_eiffel_1889",
             text = "Quel monument parisien a été construit pour l'Exposition universelle de 1889 ?",
             options = listOf("La tour Montparnasse", "La tour Eiffel", "L'Arc de Triomphe", "La Sainte-Chapelle"),
             correctIndex = 1,
@@ -627,6 +704,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_le_cid_corneille",
             text = "Qui a écrit la tragédie \"Le Cid\" ?",
             options = listOf("Jean Racine", "Pierre Corneille", "Molière", "Voltaire"),
             correctIndex = 1,
@@ -635,6 +713,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_lac_des_cygnes",
             text = "Quel ballet de Tchaïkovski met en scène un lac et un cygne ?",
             options = listOf("Casse-Noisette", "Le Lac des cygnes", "La Belle au bois dormant", "Giselle"),
             correctIndex = 1,
@@ -643,6 +722,7 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
+            id = "art_chapelle_sixtine",
             text = "Quel artiste a peint le plafond de la chapelle Sixtine ?",
             options = listOf("Raphaël", "Michel-Ange", "Botticelli", "Le Caravage"),
             correctIndex = 1,
@@ -653,6 +733,7 @@ object QuestionRepository {
 
         // ===================== SPORTS =====================
         Question(
+            id = "spo_foot_nb_joueurs",
             text = "Combien de joueurs composent une équipe de football ?",
             options = listOf("9", "11", "13", "10"),
             correctIndex = 1,
@@ -661,6 +742,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_volant_badminton",
             text = "Dans quel sport utilise-t-on un volant ?",
             options = listOf("Tennis de table", "Squash", "Badminton", "Padel"),
             correctIndex = 2,
@@ -669,6 +751,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_cdm_2018",
             text = "Quel pays a remporté la Coupe du Monde de football 2018 ?",
             options = listOf("Croatie", "Brésil", "Argentine", "France"),
             correctIndex = 3,
@@ -677,6 +760,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_basket_nb_joueurs",
             text = "Combien de joueurs composent une équipe de basketball sur le terrain ?",
             options = listOf("4", "5", "6", "7"),
             correctIndex = 1,
@@ -685,6 +769,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_roland_garros_surface",
             text = "Sur quelle surface se joue le tournoi de Roland-Garros ?",
             options = listOf("Gazon", "Dur", "Terre battue", "Moquette"),
             correctIndex = 2,
@@ -693,6 +778,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_hand_nb_joueurs",
             text = "Combien de joueurs composent une équipe de handball sur le terrain ?",
             options = listOf("5", "6", "7", "8"),
             correctIndex = 2,
@@ -701,6 +787,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_jo_frequence",
             text = "Tous les combien d'années ont lieu les Jeux Olympiques d'été ?",
             options = listOf("2 ans", "3 ans", "4 ans", "5 ans"),
             correctIndex = 2,
@@ -709,6 +796,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_strike_bowling",
             text = "Dans quel sport peut-on réaliser un \"strike\" ?",
             options = listOf("Le golf", "Le bowling", "Le curling", "Le billard"),
             correctIndex = 1,
@@ -717,6 +805,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_tour_de_france",
             text = "Quelle est la plus grande course cycliste française ?",
             options = listOf("Paris-Roubaix", "Le Tour de France", "La Vuelta", "Le Giro"),
             correctIndex = 1,
@@ -725,6 +814,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_golf_nb_trous",
             text = "Combien de trous compte un parcours de golf standard ?",
             options = listOf("9", "12", "18", "21"),
             correctIndex = 2,
@@ -733,6 +823,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_phelps_medailles",
             text = "Quel nageur a remporté 23 médailles d'or olympiques ?",
             options = listOf("Mark Spitz", "Michael Phelps", "Ian Thorpe", "Caeleb Dressel"),
             correctIndex = 1,
@@ -741,6 +832,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_jo_antiques_grece",
             text = "Dans quel pays sont nés les Jeux Olympiques antiques ?",
             options = listOf("L'Italie", "La Grèce", "L'Égypte", "La Turquie"),
             correctIndex = 1,
@@ -749,6 +841,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_cdm_2022_messi",
             text = "Quel joueur argentin a soulevé la Coupe du Monde de football 2022 ?",
             options = listOf("Diego Maradona", "Lionel Messi", "Sergio Agüero", "Ángel Di María"),
             correctIndex = 1,
@@ -757,6 +850,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_f1_nb_pilotes",
             text = "Combien de pilotes composent une écurie de Formule 1 en course ?",
             options = listOf("1", "2", "3", "4"),
             correctIndex = 1,
@@ -765,6 +859,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_marathon_distance",
             text = "Quelle distance parcourt-on lors d'un marathon ?",
             options = listOf("21 km", "42,195 km", "50 km", "100 km"),
             correctIndex = 1,
@@ -773,6 +868,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_hockey_glace",
             text = "Dans quel sport utilise-t-on une crosse sur la glace ?",
             options = listOf("Le curling", "Le hockey sur glace", "Le patinage", "Le bobsleigh"),
             correctIndex = 1,
@@ -781,6 +877,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_judo_japon",
             text = "Quel pays est à l'origine du judo ?",
             options = listOf("La Chine", "La Corée", "Le Japon", "La Thaïlande"),
             correctIndex = 2,
@@ -789,6 +886,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_rugby_essai_points",
             text = "Combien de points vaut un essai au rugby à XV ?",
             options = listOf("3", "4", "5", "7"),
             correctIndex = 2,
@@ -797,6 +895,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_wimbledon",
             text = "Quel tournoi de tennis du Grand Chelem se joue sur gazon à Londres ?",
             options = listOf("L'US Open", "Wimbledon", "L'Open d'Australie", "Roland-Garros"),
             correctIndex = 1,
@@ -805,6 +904,7 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
+            id = "spo_tiger_woods_golf",
             text = "Dans quel sport Tiger Woods s'est-il illustré ?",
             options = listOf("Le tennis", "Le golf", "Le baseball", "Le basketball"),
             correctIndex = 1,
@@ -815,6 +915,7 @@ object QuestionRepository {
 
         // ===================== DIVERTISSEMENT =====================
         Question(
+            id = "div_ironman_acteur",
             text = "Quel acteur incarne Iron Man dans les films Marvel ?",
             options = listOf("Chris Evans", "Chris Hemsworth", "Robert Downey Jr.", "Mark Ruffalo"),
             correctIndex = 2,
@@ -823,6 +924,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_ross_rachel_friends",
             text = "Dans quelle série retrouve-t-on les personnages de Ross et Rachel ?",
             options = listOf("Seinfeld", "How I Met Your Mother", "Friends", "The Big Bang Theory"),
             correctIndex = 2,
@@ -831,6 +933,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_los_santos_gta",
             text = "Quel jeu vidéo se déroule dans la ville fictive de \"Los Santos\" ?",
             options = listOf("Red Dead Redemption", "Cyberpunk 2077", "Grand Theft Auto V", "Watch Dogs"),
             correctIndex = 2,
@@ -839,6 +942,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_inception_nolan",
             text = "Qui a réalisé le film \"Inception\" (2010) ?",
             options = listOf("Steven Spielberg", "James Cameron", "Ridley Scott", "Christopher Nolan"),
             correctIndex = 3,
@@ -847,6 +951,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_thriller_jackson",
             text = "Quel artiste a sorti l'album \"Thriller\" en 1982 ?",
             options = listOf("Prince", "Madonna", "Michael Jackson", "Whitney Houston"),
             correctIndex = 2,
@@ -855,6 +960,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_yoda_starwars",
             text = "Quel petit personnage vert enseigne la Force dans Star Wars ?",
             options = listOf("Chewbacca", "Yoda", "R2-D2", "Jabba"),
             correctIndex = 1,
@@ -863,6 +969,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_harry_potter",
             text = "Comment s'appelle le jeune sorcier à lunettes créé par J.K. Rowling ?",
             options = listOf("Harry Potter", "Frodon", "Percy Jackson", "Gandalf"),
             correctIndex = 0,
@@ -871,6 +978,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_roi_lion_disney",
             text = "Quel studio a produit le film d'animation \"Le Roi Lion\" ?",
             options = listOf("Pixar", "DreamWorks", "Disney", "Studio Ghibli"),
             correctIndex = 2,
@@ -879,6 +987,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_creepers_minecraft",
             text = "Dans quel jeu vidéo affronte-t-on des créatures appelées \"Creepers\" ?",
             options = listOf("Fortnite", "Minecraft", "Roblox", "Terraria"),
             correctIndex = 1,
@@ -887,6 +996,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_reine_pop_madonna",
             text = "Quelle chanteuse est surnommée la \"Reine de la pop\" ?",
             options = listOf("Beyoncé", "Madonna", "Lady Gaga", "Britney Spears"),
             correctIndex = 1,
@@ -895,6 +1005,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_avatar_pandora",
             text = "Quel film de James Cameron, sorti en 2009, se déroule sur la planète Pandora ?",
             options = listOf("Avatar", "Interstellar", "Star Trek", "Gravity"),
             correctIndex = 0,
@@ -903,6 +1014,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_dark_vador_pere",
             text = "Dans la saga Star Wars, qui est le père de Luke Skywalker ?",
             options = listOf("Obi-Wan Kenobi", "Dark Vador", "L'Empereur Palpatine", "Han Solo"),
             correctIndex = 1,
@@ -911,6 +1023,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_walter_white_breakingbad",
             text = "Quelle série met en scène le professeur de chimie devenu trafiquant Walter White ?",
             options = listOf("The Wire", "Breaking Bad", "Dexter", "Better Call Saul"),
             correctIndex = 1,
@@ -919,6 +1032,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_shape_of_you_sheeran",
             text = "Quel chanteur britannique est l'auteur de la chanson \"Shape of You\" ?",
             options = listOf("Sam Smith", "Ed Sheeran", "Harry Styles", "Robbie Williams"),
             correctIndex = 1,
@@ -927,6 +1041,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_bohemian_rhapsody_queen",
             text = "Quel groupe britannique a chanté \"Bohemian Rhapsody\" ?",
             options = listOf("The Beatles", "The Rolling Stones", "Queen", "Led Zeppelin"),
             correctIndex = 2,
@@ -935,6 +1050,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_fast_furious_toretto",
             text = "Quelle franchise de films met en scène Dominic Toretto et des courses de voitures ?",
             options = listOf("Need for Speed", "Fast and Furious", "Rush", "Le Transporteur"),
             correctIndex = 1,
@@ -943,6 +1059,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_schtroumpfs_couleur",
             text = "De quelle couleur sont les Schtroumpfs ?",
             options = listOf("Verts", "Bleus", "Jaunes", "Rouges"),
             correctIndex = 1,
@@ -951,6 +1068,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_pulp_fiction_tarantino",
             text = "Quel réalisateur est célèbre pour \"Pulp Fiction\" et \"Kill Bill\" ?",
             options = listOf("Martin Scorsese", "Quentin Tarantino", "Steven Spielberg", "Les frères Coen"),
             correctIndex = 1,
@@ -959,6 +1077,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_seigneur_anneaux",
             text = "Quelle saga se déroule dans un univers appelé la \"Terre du Milieu\" ?",
             options = listOf("Game of Thrones", "Le Seigneur des Anneaux", "Le Monde de Narnia", "Harry Potter"),
             correctIndex = 1,
@@ -967,6 +1086,7 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
+            id = "div_batman",
             text = "Quel super-héros est surnommé \"l'homme chauve-souris\" ?",
             options = listOf("Superman", "Batman", "Spider-Man", "Hulk"),
             correctIndex = 1,

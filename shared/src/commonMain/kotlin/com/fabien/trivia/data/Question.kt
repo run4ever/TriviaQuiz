@@ -20,17 +20,16 @@ val Category.displayName: String
     }
 
 data class Question(
+    /**
+     * Identifiant stable et permanent (slug), clé de l'historique anti-grind, du rating dynamique
+     * et — à terme — du backend (document Firestore). Une fois posé, ne jamais le modifier, même
+     * si l'énoncé ou l'image changent. Convention : `<prefixe_categorie>_<descripteur>`.
+     */
+    val id: String,
     val text: String,
     val options: List<String>,
     val correctIndex: Int,
     val rating: Int,
     val explanation: String,
     val category: Category
-) {
-    /**
-     * Identifiant stable d'une question, utilisé comme clé pour l'historique anti-grind.
-     * Basé sur l'énoncé : robuste au réordonnancement des questions (corriger un énoncé
-     * réinitialise en revanche son historique, ce qui est acceptable).
-     */
-    val id: String get() = text
-}
+)
