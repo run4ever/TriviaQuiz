@@ -8,6 +8,30 @@ plugins {
     alias(libs.plugins.sqldelight)
 }
 
+// Génère un fichier AppVersion.kt à partir du numéro de version défini dans libs.versions.toml,
+// pour que le code commun (Android + iOS) puisse afficher la version sans la dupliquer.
+val generateAppVersion by tasks.registering {
+    val outputDir = layout.buildDirectory.dir("generated/appversion")
+    outputs.dir(outputDir)
+    val versionName = libs.versions.appVersionName.get()
+    val versionCode = libs.versions.appVersionCode.get()
+    doLast {
+        val file = outputDir.get().asFile.resolve("com/fabien/trivia/AppVersion.kt")
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            |package com.fabien.trivia
+            |
+            |object AppVersion {
+            |    const val NAME: String = "$versionName"
+            |    const val CODE: Int = $versionCode
+            |}
+            |
+            """.trimMargin()
+        )
+    }
+}
+
 kotlin {
     listOf(
         iosArm64(),
@@ -36,6 +60,9 @@ kotlin {
     }
     
     sourceSets {
+        commonMain {
+            kotlin.srcDir(generateAppVersion)
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.sqldelight.android.driver)
