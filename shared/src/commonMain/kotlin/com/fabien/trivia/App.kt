@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,11 @@ fun App(driverFactory: DatabaseDriverFactory) {
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
         val authState by authViewModel.state.collectAsState()
+
+        // À chaque changement d'utilisateur connecté, on (re)synchronise le rating avec Firestore.
+        LaunchedEffect(authState.user?.uid) {
+            viewModel.onUserChanged(authState.user?.uid)
+        }
 
         val accountStatus = when {
             authState.user == null -> "Non connecté — appuyez pour vous connecter"

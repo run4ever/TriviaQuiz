@@ -1,8 +1,11 @@
 package com.fabien.trivia.ui.game
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DatabaseDriverFactory
+import com.fabien.trivia.data.PlayerRatingSync
+import com.fabien.trivia.data.PlayerRatings
 import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
@@ -11,6 +14,7 @@ import com.fabien.trivia.data.TriviaDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -35,11 +39,65 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val database = TriviaDatabase(driverFactory.createDriver())
     private val ratingsRepository = RatingsRepository(database)
     private val questionStatsRepository = QuestionStatsRepository(database)
+    private val ratingSync = PlayerRatingSync()
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings()
     ))
     val state: StateFlow<GameState> = _state.asStateFlow()
+
+    /** UID du compte connecté, null si déconnecté. Détermine si on pousse vers Firestore. */
+    private var currentUid: String? = null
+
+    /**
+     * Appelé quand l'utilisateur connecté change (connexion / déconnexion / changement de compte).
+     * - connexion avec un doc cloud existant → le cloud fait foi : on écrase le rating local.
+     * - connexion sans doc cloud → on sème le cloud depuis le local.
+     * - déconnexion (uid null) → on garde le local tel quel, plus de push.
+     * Toute erreur réseau est ignorée : le local reste autoritaire et Firestore resynchronisera.
+     */
+    fun onUserChanged(uid: String?) {
+        currentUid = uid
+        if (uid == null) return
+        viewModelScope.launch {
+            try {
+                val cloud = ratingSync.fetch(uid)
+                if (cloud != null) {
+                    applyCloudRatings(cloud)
+                } else {
+                    ratingSync.push(uid, currentLocalRatings())
+                }
+            } catch (_: Exception) {
+                // Hors-ligne / erreur : le local reste source de vérité ; la synchro reprendra plus tard.
+            }
+        }
+    }
+
+    private fun currentLocalRatings() = PlayerRatings(
+        global = _state.value.playerRating,
+        categories = _state.value.categoryRatings
+    )
+
+    private fun applyCloudRatings(cloud: PlayerRatings) {
+        ratingsRepository.savePlayerRating(cloud.global)
+        cloud.categories.forEach { (category, rating) -> ratingsRepository.saveCategoryRating(category, rating) }
+        _state.value = _state.value.copy(
+            playerRating = cloud.global,
+            categoryRatings = cloud.categories
+        )
+    }
+
+    /** Pousse l'état local courant vers Firestore (fire-and-forget) si connecté. */
+    private fun pushRatings() {
+        val uid = currentUid ?: return
+        viewModelScope.launch {
+            try {
+                ratingSync.push(uid, currentLocalRatings())
+            } catch (_: Exception) {
+                // Firestore rejoue l'écriture à la reconnexion.
+            }
+        }
+    }
 
     fun goToCategorySelect() {
         _state.value = _state.value.copy(phase = GamePhase.CATEGORY_SELECT)
@@ -108,6 +166,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newTimesSeen = (stats?.timesSeen ?: 0L) + 1L
         val newTimesCorrect = (stats?.timesCorrect ?: 0L) + if (isCorrect) 1L else 0L
         questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating)
+
+        // Le rating joueur vient d'évoluer → on le pousse vers Firestore (si connecté).
+        pushRatings()
     }
 
     fun nextQuestion() {
