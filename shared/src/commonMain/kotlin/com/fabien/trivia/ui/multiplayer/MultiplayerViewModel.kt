@@ -4,20 +4,37 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fabien.trivia.data.AuthRepository
 import com.fabien.trivia.data.Category
+import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
 import com.fabien.trivia.data.UserProfileRepository
 import com.fabien.trivia.data.multiplayer.GamePlayer
 import com.fabien.trivia.data.multiplayer.GameRoom
 import com.fabien.trivia.data.multiplayer.GameRoomRepository
+import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.data.multiplayer.ScoringMode
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlin.math.roundToInt
 
 enum class MpPhase { ENTRY, CREATE, JOIN, LOBBY }
+
+enum class RoundPhase { ANSWERING, REVEAL }
+
+/** Vue dérivée de la question en cours, recalculée au fil du minuteur. */
+data class RoundInfo(
+    val question: Question,
+    val index: Int,
+    val total: Int,
+    val phase: RoundPhase,
+    val remainingMs: Long,
+    val myChoice: Int?
+)
 
 data class MultiplayerUiState(
     val phase: MpPhase = MpPhase.ENTRY,
@@ -25,9 +42,13 @@ data class MultiplayerUiState(
     val isHost: Boolean = false,
     val room: GameRoom? = null,
     val players: List<GamePlayer> = emptyList(),
+    val round: RoundInfo? = null,
     val isBusy: Boolean = false,
     val error: String? = null
 )
+
+private const val QUESTION_DURATION_MS = 20_000L
+private const val REVEAL_DURATION_MS = 5_000L
 
 /**
  * Pilote le flux du salon multijoueur : accueil (créer/rejoindre), config hôte, salon temps réel.
@@ -48,12 +69,30 @@ class MultiplayerViewModel(
     private var roomCode: String? = null
     private var roomJob: Job? = null
     private var playersJob: Job? = null
+    private var hostJob: Job? = null
+    private var tickerJob: Job? = null
+
+    /** Map id → Question pour résoudre les questionIds de la partie (mêmes questions pour tous). */
+    private var questionById: Map<String, Question> = QuestionRepository.questions.associateBy { it.id }
+    private var lastSeenIndex: Int = -1
+    private var myChoice: Int? = null
 
     init {
         viewModelScope.launch {
             _state.value = _state.value.copy(pseudo = loadDefaultPseudo())
         }
+        loadQuestions()
     }
+
+    private fun loadQuestions() {
+        viewModelScope.launch {
+            val pool = runCatching { remoteQuestions.fetchAll() }.getOrNull()?.takeIf { it.isNotEmpty() }
+                ?: QuestionRepository.questions
+            questionById = pool.associateBy { it.id }
+        }
+    }
+
+    private fun nowMs(): Long = Clock.System.now().toEpochMilliseconds()
 
     private suspend fun loadDefaultPseudo(): String {
         val user = auth.currentUser
@@ -138,35 +177,131 @@ class MultiplayerViewModel(
                 _state.value = _state.value.copy(players = players)
             }
         }
+        startTicker()
     }
 
+    /** Recalcule l'état de la question courante toutes les 250 ms (minuteur + phase). */
+    private fun startTicker() {
+        tickerJob?.cancel()
+        tickerJob = viewModelScope.launch {
+            while (true) {
+                recomputeRound()
+                delay(250)
+            }
+        }
+    }
+
+    private fun recomputeRound() {
+        val room = _state.value.room
+        if (room == null || room.status != GameStatus.PLAYING) {
+            if (_state.value.round != null) _state.value = _state.value.copy(round = null)
+            return
+        }
+        val total = room.questionIds.size
+        val question = room.questionIds.getOrNull(room.currentIndex)?.let { questionById[it] }
+        if (question == null) {
+            if (_state.value.round != null) _state.value = _state.value.copy(round = null)
+            return
+        }
+        // Changement de question → on réinitialise mon choix.
+        if (room.currentIndex != lastSeenIndex) {
+            lastSeenIndex = room.currentIndex
+            myChoice = null
+        }
+        val elapsed = nowMs() - room.currentStartedAt
+        val phase = if (elapsed < QUESTION_DURATION_MS) RoundPhase.ANSWERING else RoundPhase.REVEAL
+        val remainingMs = (QUESTION_DURATION_MS - elapsed).coerceAtLeast(0)
+        _state.value = _state.value.copy(
+            round = RoundInfo(question, room.currentIndex, total, phase, remainingMs, myChoice)
+        )
+    }
+
+    /** L'hôte démarre la partie et pilote l'avancement (une question toutes les durée+révélation). */
     fun startGame() {
         val code = roomCode ?: return
-        launchBusy { rooms.startGame(code) }
+        val room = _state.value.room ?: return
+        if (!_state.value.isHost) return
+        val total = room.questionIds.size
+        if (total == 0) { setError("Aucune question disponible"); return }
+        hostJob?.cancel()
+        hostJob = viewModelScope.launch {
+            runCatching { rooms.startGame(code, nowMs()) }
+            var index = 0
+            while (index < total) {
+                delay(QUESTION_DURATION_MS + REVEAL_DURATION_MS)
+                index++
+                if (index >= total) {
+                    runCatching { rooms.finishGame(code) }
+                } else {
+                    runCatching { rooms.advance(code, index, nowMs()) }
+                }
+            }
+        }
+    }
+
+    /** L'hôte termine la partie avant la fin (mode partie ouverte ou arrêt anticipé). */
+    fun endGame() {
+        val code = roomCode ?: return
+        hostJob?.cancel()
+        viewModelScope.launch { runCatching { rooms.finishGame(code) } }
+    }
+
+    /** Le joueur courant répond à la question en cours (une seule fois, pendant la phase ANSWERING). */
+    fun submitAnswer(choice: Int) {
+        val round = _state.value.round ?: return
+        if (round.phase != RoundPhase.ANSWERING || round.myChoice != null) return
+        val code = roomCode ?: return
+        val uid = myId ?: return
+        val mode = _state.value.room?.scoringMode ?: return
+        val correct = round.question.correctIndex == choice
+        val points = computePoints(correct, round.remainingMs, mode)
+        myChoice = choice
+        recomputeRound() // reflète le choix immédiatement
+        val myScore = _state.value.players.find { it.id == uid }?.score ?: 0
+        viewModelScope.launch {
+            runCatching { rooms.submitAnswer(code, uid, myScore + points, round.index, choice) }
+        }
+    }
+
+    private fun computePoints(correct: Boolean, remainingMs: Long, mode: ScoringMode): Int {
+        if (!correct) return 0
+        return when (mode) {
+            ScoringMode.SIMPLE -> 1
+            // Bonne réponse : 500 pts garantis + jusqu'à 500 selon la rapidité (max 1000).
+            ScoringMode.RAPIDITE -> (500 + 500 * (remainingMs.toDouble() / QUESTION_DURATION_MS)).roundToInt()
+        }
     }
 
     fun leaveGame() {
         val code = roomCode
         val uid = myId
         val isHost = _state.value.isHost
-        roomJob?.cancel()
-        playersJob?.cancel()
+        cancelRoomJobs()
         viewModelScope.launch {
             if (code != null && uid != null) runCatching { rooms.leaveRoom(code, uid, isHost) }
             resetToEntry()
         }
     }
 
-    private fun resetToEntry() {
+    private fun cancelRoomJobs() {
         roomJob?.cancel()
         playersJob?.cancel()
+        hostJob?.cancel()
+        tickerJob?.cancel()
+    }
+
+    private fun resetToEntry() {
+        cancelRoomJobs()
         roomCode = null
         myId = null
+        lastSeenIndex = -1
+        myChoice = null
         _state.value = _state.value.copy(
             phase = MpPhase.ENTRY,
             isHost = false,
             room = null,
-            players = emptyList()
+            players = emptyList(),
+            round = null
         )
     }
 
@@ -188,7 +323,6 @@ class MultiplayerViewModel(
     }
 
     override fun onCleared() {
-        roomJob?.cancel()
-        playersJob?.cancel()
+        cancelRoomJobs()
     }
 }

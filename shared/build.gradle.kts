@@ -85,6 +85,7 @@ kotlin {
             implementation(libs.compose.material.icons.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.datetime)
             // GitLive Firebase Kotlin SDK (auth + firestore). iOS : nécessite de linker les pods
             // Firebase côté iosApp (voir Podfile) ; Android : auto-init via google-services.json.
             implementation(libs.firebase.auth)

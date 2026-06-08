@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,10 @@ import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.data.multiplayer.ScoringMode
+import kotlin.math.ceil
+
+private val ColorCorrect = Color(0xFF4CAF50)
+private val ColorWrong = Color(0xFFF44336)
 
 /** Point d'entrée du multijoueur. Rend l'écran selon la phase du [MultiplayerViewModel]. */
 @Composable
@@ -45,7 +50,29 @@ fun MultiplayerScreen(viewModel: MultiplayerViewModel, onExit: () -> Unit) {
         MpPhase.ENTRY -> EntryContent(state, viewModel::setPseudo, viewModel::goToCreate, viewModel::goToJoin, onExit)
         MpPhase.CREATE -> CreateContent(state, viewModel::setPseudo, viewModel::createGame, viewModel::backToEntry)
         MpPhase.JOIN -> JoinContent(state, viewModel::setPseudo, viewModel::joinGame, viewModel::backToEntry)
-        MpPhase.LOBBY -> LobbyContent(state, viewModel::startGame, viewModel::leaveGame)
+        MpPhase.LOBBY -> RoomContent(
+            state = state,
+            onStart = viewModel::startGame,
+            onEndGame = viewModel::endGame,
+            onAnswer = viewModel::submitAnswer,
+            onLeave = viewModel::leaveGame
+        )
+    }
+}
+
+/** Dans une partie : aiguille selon le statut (salon / en jeu / résultats). */
+@Composable
+private fun RoomContent(
+    state: MultiplayerUiState,
+    onStart: () -> Unit,
+    onEndGame: () -> Unit,
+    onAnswer: (Int) -> Unit,
+    onLeave: () -> Unit
+) {
+    when (state.room?.status) {
+        null, GameStatus.LOBBY -> LobbyContent(state, onStart, onLeave)
+        GameStatus.PLAYING -> GameContent(state, onAnswer, onEndGame, onLeave)
+        GameStatus.FINISHED -> ResultsContent(state, onLeave)
     }
 }
 
@@ -156,16 +183,8 @@ private fun LobbyContent(
     onStart: () -> Unit,
     onLeave: () -> Unit
 ) {
-    val room = state.room
-    // Avant le démarrage : simple « Retour ». Une fois la partie lancée : « Quitter ».
-    val started = room?.status == GameStatus.PLAYING
-    val backLabel = if (started) "Quitter" else "< Retour"
-    ScreenScaffold(title = "Salon", onBack = onLeave, backLabel = backLabel) {
-        if (room == null) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            return@ScreenScaffold
-        }
-
+    val room = state.room ?: return
+    ScreenScaffold(title = "Salon", onBack = onLeave, backLabel = "< Retour") {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -208,21 +227,16 @@ private fun LobbyContent(
         }
 
         Spacer(Modifier.height(24.dp))
-        when {
-            room.status == GameStatus.PLAYING -> Text(
-                text = "La partie démarre… (déroulé à venir — étape 2)",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            state.isHost -> Button(
+        if (state.isHost) {
+            Button(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isBusy && state.players.size >= 1
+                enabled = !state.isBusy && state.players.isNotEmpty()
             ) {
                 Text("Démarrer la partie")
             }
-            else -> Text(
+        } else {
+            Text(
                 text = "En attente que l'hôte démarre…",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
@@ -230,6 +244,151 @@ private fun LobbyContent(
             )
         }
         ErrorAndBusy(state)
+    }
+}
+
+@Composable
+private fun GameContent(
+    state: MultiplayerUiState,
+    onAnswer: (Int) -> Unit,
+    onEndGame: () -> Unit,
+    onLeave: () -> Unit
+) {
+    ScreenScaffold(title = "Partie", onBack = onLeave, backLabel = "Quitter") {
+        val round = state.round
+        if (round == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            return@ScreenScaffold
+        }
+
+        val reveal = round.phase == RoundPhase.REVEAL
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Question ${round.index + 1} / ${round.total}",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+            if (!reveal) {
+                val seconds = ceil(round.remainingMs / 1000.0).toInt()
+                Text("⏱ $seconds s", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            Text(
+                text = round.question.text,
+                modifier = Modifier.padding(20.dp),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+        round.question.options.forEachIndexed { index, option ->
+            val isCorrect = index == round.question.correctIndex
+            val isMine = round.myChoice == index
+            val container = when {
+                reveal && isCorrect -> ColorCorrect
+                reveal && isMine -> ColorWrong
+                isMine -> MaterialTheme.colorScheme.tertiary
+                else -> MaterialTheme.colorScheme.primary
+            }
+            val content = when {
+                reveal && (isCorrect || isMine) -> Color.White
+                isMine -> MaterialTheme.colorScheme.onTertiary
+                else -> MaterialTheme.colorScheme.onPrimary
+            }
+            Button(
+                onClick = { onAnswer(index) },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                enabled = round.phase == RoundPhase.ANSWERING && round.myChoice == null,
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = container,
+                    contentColor = content,
+                    disabledContainerColor = container,
+                    disabledContentColor = content
+                )
+            ) {
+                Text(option, style = MaterialTheme.typography.bodyLarge)
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+
+        if (!reveal && round.myChoice != null) {
+            Text(
+                text = "Réponse enregistrée — en attente des autres…",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        if (reveal) {
+            Scoreboard(state, round.index, round.question.correctIndex)
+        }
+
+        if (state.isHost) {
+            Spacer(Modifier.height(16.dp))
+            OutlinedButton(onClick = onEndGame, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
+                Text("Terminer la partie")
+            }
+        }
+        ErrorAndBusy(state)
+    }
+}
+
+@Composable
+private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctIndex: Int) {
+    SectionLabel("Scores")
+    state.players.sortedByDescending { it.score }.forEach { player ->
+        val answeredThis = player.answeredIndex == currentIndex
+        val gotItRight = answeredThis && player.lastChoice == correctIndex
+        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = if (answeredThis) (if (gotItRight) "✓ " else "✗ ") + player.pseudo else player.pseudo,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (answeredThis && gotItRight) ColorCorrect else MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            Text("${player.score}", style = MaterialTheme.typography.titleMedium)
+        }
+    }
+}
+
+@Composable
+private fun ResultsContent(state: MultiplayerUiState, onLeave: () -> Unit) {
+    ScreenScaffold(title = "Résultats", onBack = onLeave, backLabel = "< Quitter") {
+        val ranked = state.players.sortedByDescending { it.score }
+        ranked.forEachIndexed { position, player ->
+            val isWinner = position == 0
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isWinner) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${position + 1}. ${player.pseudo}",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text("${player.score} pts", style = MaterialTheme.typography.titleMedium)
+                }
+            }
+        }
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
+            Text("Revenir à l'accueil")
+        }
     }
 }
 

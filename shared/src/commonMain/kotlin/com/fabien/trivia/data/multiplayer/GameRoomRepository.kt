@@ -64,9 +64,36 @@ class GameRoomRepository(private val firestore: FirebaseFirestore = Firebase.fir
         )
     }
 
-    /** L'hôte lance la partie (passe le statut à PLAYING). Le déroulé est géré à l'étape 2. */
-    suspend fun startGame(code: String) {
-        roomDoc(code).set(RoomStatusDto.serializer(), RoomStatusDto(GameStatus.PLAYING.name), merge = true)
+    /** L'hôte lance la partie : statut PLAYING, première question (index 0) démarrée à [startedAt]. */
+    suspend fun startGame(code: String, startedAt: Long) {
+        roomDoc(code).set(
+            RoomProgressDto.serializer(),
+            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = 0, currentStartedAt = startedAt),
+            merge = true
+        )
+    }
+
+    /** L'hôte avance à la question [index], démarrée à [startedAt]. */
+    suspend fun advance(code: String, index: Int, startedAt: Long) {
+        roomDoc(code).set(
+            RoomProgressDto.serializer(),
+            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = index, currentStartedAt = startedAt),
+            merge = true
+        )
+    }
+
+    /** L'hôte termine la partie. */
+    suspend fun finishGame(code: String) {
+        roomDoc(code).set(RoomStatusDto.serializer(), RoomStatusDto(GameStatus.FINISHED.name), merge = true)
+    }
+
+    /** Un joueur enregistre sa réponse : score cumulé + option choisie pour la question [answeredIndex]. */
+    suspend fun submitAnswer(code: String, playerId: String, score: Int, answeredIndex: Int, choice: Int) {
+        playersCol(code).document(playerId).set(
+            PlayerAnswerDto.serializer(),
+            PlayerAnswerDto(score = score, answeredIndex = answeredIndex, lastChoice = choice),
+            merge = true
+        )
     }
 
     /**
