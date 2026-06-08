@@ -17,3 +17,8 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Signature release (NE JAMAIS committer la clé ni les mots de passe)
+keystore.properties
+*.jks
+*.keystore
