@@ -68,18 +68,23 @@ class GameRoomRepository(private val firestore: FirebaseFirestore = Firebase.fir
     suspend fun startGame(code: String, startedAt: Long) {
         roomDoc(code).set(
             RoomProgressDto.serializer(),
-            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = 0, currentStartedAt = startedAt),
+            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = 0, currentStartedAt = startedAt, revealStartedAt = 0),
             merge = true
         )
     }
 
-    /** L'hôte avance à la question [index], démarrée à [startedAt]. */
+    /** L'hôte avance à la question [index], démarrée à [startedAt] (révélation remise à zéro). */
     suspend fun advance(code: String, index: Int, startedAt: Long) {
         roomDoc(code).set(
             RoomProgressDto.serializer(),
-            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = index, currentStartedAt = startedAt),
+            RoomProgressDto(status = GameStatus.PLAYING.name, currentIndex = index, currentStartedAt = startedAt, revealStartedAt = 0),
             merge = true
         )
+    }
+
+    /** L'hôte déclenche la révélation (tous ont répondu, ou temps écoulé) à [revealStartedAt]. */
+    suspend fun setReveal(code: String, revealStartedAt: Long) {
+        roomDoc(code).set(RoomRevealDto.serializer(), RoomRevealDto(revealStartedAt), merge = true)
     }
 
     /** L'hôte termine la partie. */
@@ -87,11 +92,11 @@ class GameRoomRepository(private val firestore: FirebaseFirestore = Firebase.fir
         roomDoc(code).set(RoomStatusDto.serializer(), RoomStatusDto(GameStatus.FINISHED.name), merge = true)
     }
 
-    /** Un joueur enregistre sa réponse : score cumulé + option choisie pour la question [answeredIndex]. */
-    suspend fun submitAnswer(code: String, playerId: String, score: Int, answeredIndex: Int, choice: Int) {
+    /** Un joueur enregistre sa réponse : score cumulé, option choisie et points gagnés pour [answeredIndex]. */
+    suspend fun submitAnswer(code: String, playerId: String, score: Int, answeredIndex: Int, choice: Int, points: Int) {
         playersCol(code).document(playerId).set(
             PlayerAnswerDto.serializer(),
-            PlayerAnswerDto(score = score, answeredIndex = answeredIndex, lastChoice = choice),
+            PlayerAnswerDto(score = score, answeredIndex = answeredIndex, lastChoice = choice, lastPoints = points),
             merge = true
         )
     }
@@ -104,13 +109,19 @@ class GameRoomRepository(private val firestore: FirebaseFirestore = Firebase.fir
         playersCol(code).get().documents.forEach { player ->
             playersCol(code).document(player.id).set(
                 PlayerAnswerDto.serializer(),
-                PlayerAnswerDto(score = 0, answeredIndex = -1, lastChoice = -1),
+                PlayerAnswerDto(score = 0, answeredIndex = -1, lastChoice = -1, lastPoints = 0),
                 merge = true
             )
         }
         roomDoc(code).set(
             RoomReplayDto.serializer(),
-            RoomReplayDto(status = GameStatus.LOBBY.name, currentIndex = 0, currentStartedAt = 0, questionIds = questionIds),
+            RoomReplayDto(
+                status = GameStatus.LOBBY.name,
+                currentIndex = 0,
+                currentStartedAt = 0,
+                revealStartedAt = 0,
+                questionIds = questionIds
+            ),
             merge = true
         )
     }

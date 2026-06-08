@@ -212,7 +212,9 @@ class MultiplayerViewModel(
             myChoice = null
         }
         val elapsed = nowMs() - room.currentStartedAt
-        val phase = if (elapsed < QUESTION_DURATION_MS) RoundPhase.ANSWERING else RoundPhase.REVEAL
+        // Révélation si l'hôte l'a déclenchée (tous ont répondu) OU si le temps est écoulé.
+        val reveal = room.revealStartedAt != 0L || elapsed >= QUESTION_DURATION_MS
+        val phase = if (reveal) RoundPhase.REVEAL else RoundPhase.ANSWERING
         val remainingMs = (QUESTION_DURATION_MS - elapsed).coerceAtLeast(0)
         _state.value = _state.value.copy(
             round = RoundInfo(question, room.currentIndex, total, phase, remainingMs, myChoice)
@@ -231,7 +233,14 @@ class MultiplayerViewModel(
             runCatching { rooms.startGame(code, nowMs()) }
             var index = 0
             while (index < total) {
-                delay(QUESTION_DURATION_MS + REVEAL_DURATION_MS)
+                // Phase réponse : on attend que TOUS aient répondu, ou la fin du minuteur.
+                val deadline = nowMs() + QUESTION_DURATION_MS
+                while (nowMs() < deadline && !allAnsweredFor(index)) {
+                    delay(200)
+                }
+                runCatching { rooms.setReveal(code, nowMs()) }
+                // Phase révélation.
+                delay(REVEAL_DURATION_MS)
                 index++
                 if (index >= total) {
                     runCatching { rooms.finishGame(code) }
@@ -240,6 +249,11 @@ class MultiplayerViewModel(
                 }
             }
         }
+    }
+
+    private fun allAnsweredFor(index: Int): Boolean {
+        val players = _state.value.players
+        return players.isNotEmpty() && players.all { it.answeredIndex == index }
     }
 
     /** L'hôte termine la partie avant la fin (mode partie ouverte ou arrêt anticipé). */
@@ -274,7 +288,7 @@ class MultiplayerViewModel(
         recomputeRound() // reflète le choix immédiatement
         val myScore = _state.value.players.find { it.id == uid }?.score ?: 0
         viewModelScope.launch {
-            runCatching { rooms.submitAnswer(code, uid, myScore + points, round.index, choice) }
+            runCatching { rooms.submitAnswer(code, uid, myScore + points, round.index, choice, points) }
         }
     }
 

@@ -33,8 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.key
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
+import com.fabien.trivia.data.multiplayer.GamePlayer
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.data.multiplayer.ScoringMode
 import kotlin.math.ceil
@@ -346,18 +354,46 @@ private fun GameContent(
 @Composable
 private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctIndex: Int) {
     SectionLabel("Scores")
-    state.players.sortedByDescending { it.score }.forEach { player ->
-        val answeredThis = player.answeredIndex == currentIndex
-        val gotItRight = answeredThis && player.lastChoice == correctIndex
-        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = if (answeredThis) (if (gotItRight) "✓ " else "✗ ") + player.pseudo else player.pseudo,
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (answeredThis && gotItRight) ColorCorrect else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            Text("${player.score}", style = MaterialTheme.typography.titleMedium)
+    val ranked = state.players.sortedByDescending { it.score }
+    val rowHeight = 44.dp
+    Box(modifier = Modifier.fillMaxWidth().height(rowHeight * ranked.size.coerceAtLeast(1))) {
+        // Ordre d'itération STABLE (par id) + key() : chaque ligne garde son identité et
+        // glisse vers sa nouvelle position quand son rang change (remontée visible).
+        state.players.sortedBy { it.id }.forEach { player ->
+            key(player.id) {
+                val rank = ranked.indexOfFirst { it.id == player.id }.coerceAtLeast(0)
+                val offsetY by animateDpAsState(targetValue = rowHeight * rank, label = "rank")
+                ScoreRow(
+                    player = player,
+                    currentIndex = currentIndex,
+                    correctIndex = correctIndex,
+                    modifier = Modifier.fillMaxWidth().height(rowHeight).offset(y = offsetY)
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun ScoreRow(player: GamePlayer, currentIndex: Int, correctIndex: Int, modifier: Modifier) {
+    val answeredThis = player.answeredIndex == currentIndex
+    val gotItRight = answeredThis && player.lastChoice == correctIndex
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = (if (answeredThis) (if (gotItRight) "✓ " else "✗ ") else "") + player.pseudo,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (gotItRight) ColorCorrect else MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f)
+        )
+        if (answeredThis && player.lastPoints > 0) {
+            Text(
+                text = "+${player.lastPoints}",
+                style = MaterialTheme.typography.labelLarge,
+                color = ColorCorrect,
+                modifier = Modifier.padding(end = 10.dp)
+            )
+        }
+        Text("${player.score}", style = MaterialTheme.typography.titleMedium)
     }
 }
 
@@ -365,28 +401,24 @@ private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctInde
 private fun ResultsContent(state: MultiplayerUiState, onReplay: () -> Unit, onLeave: () -> Unit) {
     ScreenScaffold(title = "Résultats", onBack = onLeave, backLabel = "< Quitter") {
         val ranked = state.players.sortedByDescending { it.score }
-        ranked.forEachIndexed { position, player ->
-            val isWinner = position == 0
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isWinner) MaterialTheme.colorScheme.primaryContainer
-                    else MaterialTheme.colorScheme.surfaceVariant
-                )
+
+        if (ranked.isNotEmpty()) Podium(ranked)
+
+        // Les joueurs au-delà du podium, en liste.
+        ranked.drop(3).forEachIndexed { i, player ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "${position + 1}. ${player.pseudo}",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text("${player.score} pts", style = MaterialTheme.typography.titleMedium)
-                }
+                Text(
+                    text = "${i + 4}. ${player.pseudo}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Text("${player.score} pts", style = MaterialTheme.typography.titleMedium)
             }
         }
+
         Spacer(Modifier.height(24.dp))
         if (state.isHost) {
             Button(onClick = onReplay, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
@@ -409,6 +441,56 @@ private fun ResultsContent(state: MultiplayerUiState, onReplay: () -> Unit, onLe
             }
         }
         ErrorAndBusy(state)
+    }
+}
+
+@Composable
+private fun Podium(ranked: List<GamePlayer>) {
+    val first = ranked.getOrNull(0)
+    val second = ranked.getOrNull(1)
+    val third = ranked.getOrNull(2)
+    Spacer(Modifier.height(8.dp))
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        // Disposition classique : 2e à gauche, 1er au centre (plus haut), 3e à droite.
+        if (second != null) PodiumColumn(second, 2, 96.dp, Modifier.weight(1f))
+        if (first != null) PodiumColumn(first, 1, 128.dp, Modifier.weight(1f))
+        if (third != null) PodiumColumn(third, 3, 72.dp, Modifier.weight(1f))
+    }
+    Spacer(Modifier.height(16.dp))
+}
+
+@Composable
+private fun PodiumColumn(player: GamePlayer, rank: Int, barHeight: Dp, modifier: Modifier) {
+    val barColor = when (rank) {
+        1 -> Color(0xFFFFD54F) // or
+        2 -> Color(0xFFB0BEC5) // argent
+        else -> Color(0xFFBCAAA4) // bronze
+    }
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = player.pseudo,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1
+        )
+        Text(
+            text = "${player.score} pts",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(barHeight)
+                .background(barColor, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("$rank", style = MaterialTheme.typography.headlineMedium, color = Color(0xFF333333))
+        }
     }
 }
 

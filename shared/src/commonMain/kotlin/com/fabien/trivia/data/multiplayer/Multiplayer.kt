@@ -16,7 +16,8 @@ data class GameRoom(
     val category: Category?,     // null = toutes catégories
     val questionIds: List<String>,
     val currentIndex: Int,
-    val currentStartedAt: Long   // epoch millis (horloge de l'hôte) du début de la question courante
+    val currentStartedAt: Long,  // epoch millis (horloge de l'hôte) du début de la question courante
+    val revealStartedAt: Long    // epoch millis du début de la révélation (0 = phase réponse en cours)
 )
 
 /** Joueur d'une partie — doc `games/{code}/players/{uid}`. */
@@ -26,7 +27,8 @@ data class GamePlayer(
     val score: Int,
     val isHost: Boolean,
     val answeredIndex: Int,      // index de la dernière question répondue (-1 = aucune)
-    val lastChoice: Int          // option choisie à cette question (-1 = aucune)
+    val lastChoice: Int,         // option choisie à cette question (-1 = aucune)
+    val lastPoints: Int          // points gagnés à cette dernière réponse
 )
 
 @Serializable
@@ -38,7 +40,8 @@ internal data class GameRoomDto(
     val category: String? = null,
     val questionIds: List<String> = emptyList(),
     val currentIndex: Int = 0,
-    val currentStartedAt: Long = 0
+    val currentStartedAt: Long = 0,
+    val revealStartedAt: Long = 0
 )
 
 @Serializable
@@ -47,7 +50,8 @@ internal data class GamePlayerDto(
     val score: Int = 0,
     val isHost: Boolean = false,
     val answeredIndex: Int = -1,
-    val lastChoice: Int = -1
+    val lastChoice: Int = -1,
+    val lastPoints: Int = 0
 )
 
 /** Mise à jour partielle du statut (écrite en merge pour ne pas toucher aux autres champs). */
@@ -61,15 +65,23 @@ internal data class RoomStatusDto(
 internal data class RoomProgressDto(
     val status: String = "",
     val currentIndex: Int = 0,
-    val currentStartedAt: Long = 0
+    val currentStartedAt: Long = 0,
+    val revealStartedAt: Long = 0
 )
 
-/** Réponse d'un joueur (score cumulé + choix), écrite en merge dans son propre doc. */
+/** Top de révélation (tous ont répondu ou temps écoulé), écrit en merge par l'hôte. */
+@Serializable
+internal data class RoomRevealDto(
+    val revealStartedAt: Long = 0
+)
+
+/** Réponse d'un joueur (score cumulé + choix + points gagnés), écrite en merge dans son propre doc. */
 @Serializable
 internal data class PlayerAnswerDto(
     val score: Int = 0,
     val answeredIndex: Int = -1,
-    val lastChoice: Int = -1
+    val lastChoice: Int = -1,
+    val lastPoints: Int = 0
 )
 
 /** Remise en salon pour rejouer : retour LOBBY + nouvelles questions, écrit en merge. */
@@ -78,6 +90,7 @@ internal data class RoomReplayDto(
     val status: String = "LOBBY",
     val currentIndex: Int = 0,
     val currentStartedAt: Long = 0,
+    val revealStartedAt: Long = 0,
     val questionIds: List<String> = emptyList()
 )
 
@@ -90,7 +103,8 @@ internal fun GameRoomDto.toDomain(code: String) = GameRoom(
     category = category?.let { name -> runCatching { Category.valueOf(name) }.getOrNull() },
     questionIds = questionIds,
     currentIndex = currentIndex,
-    currentStartedAt = currentStartedAt
+    currentStartedAt = currentStartedAt,
+    revealStartedAt = revealStartedAt
 )
 
 internal fun GamePlayerDto.toDomain(id: String) = GamePlayer(
@@ -99,5 +113,6 @@ internal fun GamePlayerDto.toDomain(id: String) = GamePlayer(
     score = score,
     isHost = isHost,
     answeredIndex = answeredIndex,
-    lastChoice = lastChoice
+    lastChoice = lastChoice,
+    lastPoints = lastPoints
 )
