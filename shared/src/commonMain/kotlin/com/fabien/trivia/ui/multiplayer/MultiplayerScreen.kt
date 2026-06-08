@@ -55,6 +55,7 @@ fun MultiplayerScreen(viewModel: MultiplayerViewModel, onExit: () -> Unit) {
             onStart = viewModel::startGame,
             onEndGame = viewModel::endGame,
             onAnswer = viewModel::submitAnswer,
+            onReplay = viewModel::replay,
             onLeave = viewModel::leaveGame
         )
     }
@@ -67,12 +68,13 @@ private fun RoomContent(
     onStart: () -> Unit,
     onEndGame: () -> Unit,
     onAnswer: (Int) -> Unit,
+    onReplay: () -> Unit,
     onLeave: () -> Unit
 ) {
     when (state.room?.status) {
         null, GameStatus.LOBBY -> LobbyContent(state, onStart, onLeave)
         GameStatus.PLAYING -> GameContent(state, onAnswer, onEndGame, onLeave)
-        GameStatus.FINISHED -> ResultsContent(state, onLeave)
+        GameStatus.FINISHED -> ResultsContent(state, onReplay, onLeave)
     }
 }
 
@@ -360,7 +362,7 @@ private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctInde
 }
 
 @Composable
-private fun ResultsContent(state: MultiplayerUiState, onLeave: () -> Unit) {
+private fun ResultsContent(state: MultiplayerUiState, onReplay: () -> Unit, onLeave: () -> Unit) {
     ScreenScaffold(title = "Résultats", onBack = onLeave, backLabel = "< Quitter") {
         val ranked = state.players.sortedByDescending { it.score }
         ranked.forEachIndexed { position, player ->
@@ -386,9 +388,27 @@ private fun ResultsContent(state: MultiplayerUiState, onLeave: () -> Unit) {
             }
         }
         Spacer(Modifier.height(24.dp))
-        Button(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
-            Text("Revenir à l'accueil")
+        if (state.isHost) {
+            Button(onClick = onReplay, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
+                Text("Rejouer")
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
+                Text("Revenir à l'accueil")
+            }
+        } else {
+            Text(
+                text = "En attente de l'hôte (nouvelle partie ou fin)…",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(16.dp))
+            OutlinedButton(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
+                Text("Quitter")
+            }
         }
+        ErrorAndBusy(state)
     }
 }
 

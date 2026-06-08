@@ -72,6 +72,15 @@ internal data class PlayerAnswerDto(
     val lastChoice: Int = -1
 )
 
+/** Remise en salon pour rejouer : retour LOBBY + nouvelles questions, écrit en merge. */
+@Serializable
+internal data class RoomReplayDto(
+    val status: String = "LOBBY",
+    val currentIndex: Int = 0,
+    val currentStartedAt: Long = 0,
+    val questionIds: List<String> = emptyList()
+)
+
 internal fun GameRoomDto.toDomain(code: String) = GameRoom(
     code = code,
     hostId = hostId,

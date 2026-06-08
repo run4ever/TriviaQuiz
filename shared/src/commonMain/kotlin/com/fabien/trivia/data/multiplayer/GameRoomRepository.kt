@@ -97,6 +97,25 @@ class GameRoomRepository(private val firestore: FirebaseFirestore = Firebase.fir
     }
 
     /**
+     * Rejouer : remet tous les joueurs à 0 et la partie en salon (LOBBY) avec de nouvelles
+     * questions. L'hôte n'a plus qu'à relancer « Démarrer ».
+     */
+    suspend fun resetForReplay(code: String, questionIds: List<String>) {
+        playersCol(code).get().documents.forEach { player ->
+            playersCol(code).document(player.id).set(
+                PlayerAnswerDto.serializer(),
+                PlayerAnswerDto(score = 0, answeredIndex = -1, lastChoice = -1),
+                merge = true
+            )
+        }
+        roomDoc(code).set(
+            RoomReplayDto.serializer(),
+            RoomReplayDto(status = GameStatus.LOBBY.name, currentIndex = 0, currentStartedAt = 0, questionIds = questionIds),
+            merge = true
+        )
+    }
+
+    /**
      * Quitter la partie. Si l'hôte part (v1, pas de transfert d'hôte), la partie est supprimée :
      * les autres joueurs reçoivent la suppression via le listener et reviennent à l'accueil.
      */

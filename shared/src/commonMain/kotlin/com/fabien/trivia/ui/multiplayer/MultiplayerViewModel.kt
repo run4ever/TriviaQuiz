@@ -195,6 +195,9 @@ class MultiplayerViewModel(
         val room = _state.value.room
         if (room == null || room.status != GameStatus.PLAYING) {
             if (_state.value.round != null) _state.value = _state.value.copy(round = null)
+            // Hors partie (salon / résultats) : on repart d'une ardoise propre pour la prochaine manche.
+            lastSeenIndex = -1
+            myChoice = null
             return
         }
         val total = room.questionIds.size
@@ -244,6 +247,18 @@ class MultiplayerViewModel(
         val code = roomCode ?: return
         hostJob?.cancel()
         viewModelScope.launch { runCatching { rooms.finishGame(code) } }
+    }
+
+    /** L'hôte relance une partie avec les mêmes joueurs : scores remis à 0, nouvelles questions, retour salon. */
+    fun replay() {
+        val code = roomCode ?: return
+        val room = _state.value.room ?: return
+        if (!_state.value.isHost) return
+        hostJob?.cancel()
+        launchBusy {
+            val questionIds = buildQuestionIds(room.category, room.questionCount)
+            rooms.resetForReplay(code, questionIds)
+        }
     }
 
     /** Le joueur courant répond à la question en cours (une seule fois, pendant la phase ANSWERING). */
