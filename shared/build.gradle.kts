@@ -66,6 +66,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.sqldelight.android.driver)
+            // BoM Firebase : fixe les versions des SDK natifs Android (firebase-auth,
+            // firebase-common) que GitLive déclare sans version.
+            implementation(project.dependencies.platform(libs.firebase.bom))
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -78,6 +81,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.sqldelight.runtime)
             implementation(libs.compose.material.icons.core)
+            implementation(libs.kotlinx.coroutines.core)
+            // GitLive Firebase Kotlin SDK (auth). iOS : nécessite de linker les pods Firebase
+            // côté iosApp (voir Podfile) ; Android : auto-init via google-services.json.
+            implementation(libs.firebase.auth)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)

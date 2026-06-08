@@ -1,5 +1,6 @@
 package com.fabien.trivia.ui.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,7 +36,9 @@ private fun Int.levelName(): String = when {
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     playerRating: Int,
-    categoryRatings: Map<Category, Int>
+    categoryRatings: Map<Category, Int>,
+    accountStatus: String,
+    onOpenAccount: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -47,6 +50,29 @@ fun ProfileScreen(
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+
+        Spacer(Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onOpenAccount),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+        ) {
+            Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                Text(
+                    text = "Compte",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = accountStatus,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        }
 
         Spacer(Modifier.height(24.dp))
 

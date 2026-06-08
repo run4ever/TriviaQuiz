@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fabien.trivia.data.DatabaseDriverFactory
+import com.fabien.trivia.ui.account.AccountScreen
+import com.fabien.trivia.ui.account.AuthViewModel
 import com.fabien.trivia.ui.category.CategoryScreen
 import com.fabien.trivia.ui.game.GamePhase
 import com.fabien.trivia.ui.game.GameScreen
@@ -32,10 +34,19 @@ private enum class AppTab { GAME, PROFILE }
 @Composable
 fun App(driverFactory: DatabaseDriverFactory) {
     val viewModel = viewModel { GameViewModel(driverFactory) }
+    val authViewModel = viewModel { AuthViewModel() }
     var currentTab by remember { mutableStateOf(AppTab.GAME) }
+    var showAccount by remember { mutableStateOf(false) }
 
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
+        val authState by authViewModel.state.collectAsState()
+
+        val accountStatus = when {
+            authState.user == null -> "Non connecté — appuyez pour vous connecter"
+            authState.isGuest -> "Invité — appuyez pour créer un compte"
+            else -> authState.user?.email ?: "Connecté"
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
@@ -58,11 +69,29 @@ fun App(driverFactory: DatabaseDriverFactory) {
             }
         ) { innerPadding ->
             when {
-                currentTab == AppTab.PROFILE -> ProfileScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    playerRating = state.playerRating,
-                    categoryRatings = state.categoryRatings
-                )
+                currentTab == AppTab.PROFILE -> if (showAccount) {
+                    AccountScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        state = authState,
+                        onSignIn = authViewModel::signIn,
+                        onRegister = authViewModel::register,
+                        onContinueAsGuest = authViewModel::continueAsGuest,
+                        onLinkEmail = authViewModel::linkEmail,
+                        onSignOut = authViewModel::signOut,
+                        onBack = {
+                            showAccount = false
+                            authViewModel.clearError()
+                        }
+                    )
+                } else {
+                    ProfileScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        playerRating = state.playerRating,
+                        categoryRatings = state.categoryRatings,
+                        accountStatus = accountStatus,
+                        onOpenAccount = { showAccount = true }
+                    )
+                }
                 else -> when (state.phase) {
                     GamePhase.HOME -> HomeScreen(
                         modifier = Modifier.padding(innerPadding),

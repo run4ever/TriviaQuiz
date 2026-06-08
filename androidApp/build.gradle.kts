@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    // Traite google-services.json (config Firebase Android). Nécessite le fichier dans androidApp/.
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {

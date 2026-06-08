@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977168986850",
+    "project_id": "trivia-quiz-24e25",
+    "storage_bucket": "trivia-quiz-24e25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977168986850:android:6aa7ed76854cf1cb2de4bb",
+        "android_client_info": {
+          "package_name": "com.fabien.trivia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJB8oTsnnGh-e_X52gAdMYMvowMDiniwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
