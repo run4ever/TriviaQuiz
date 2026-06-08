@@ -27,6 +27,8 @@ import com.fabien.trivia.ui.game.GamePhase
 import com.fabien.trivia.ui.game.GameScreen
 import com.fabien.trivia.ui.game.GameViewModel
 import com.fabien.trivia.ui.home.HomeScreen
+import com.fabien.trivia.ui.multiplayer.MultiplayerScreen
+import com.fabien.trivia.ui.multiplayer.MultiplayerViewModel
 import com.fabien.trivia.ui.profile.ProfileScreen
 import com.fabien.trivia.ui.theme.CultureGeneraleTheme
 
@@ -36,8 +38,10 @@ private enum class AppTab { GAME, PROFILE }
 fun App(driverFactory: DatabaseDriverFactory) {
     val viewModel = viewModel { GameViewModel(driverFactory) }
     val authViewModel = viewModel { AuthViewModel() }
+    val multiplayerViewModel = viewModel { MultiplayerViewModel() }
     var currentTab by remember { mutableStateOf(AppTab.GAME) }
     var showAccount by remember { mutableStateOf(false) }
+    var showMultiplayer by remember { mutableStateOf(false) }
 
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
@@ -46,6 +50,15 @@ fun App(driverFactory: DatabaseDriverFactory) {
         // À chaque changement d'utilisateur connecté, on (re)synchronise le rating avec Firestore.
         LaunchedEffect(authState.user?.uid) {
             viewModel.onUserChanged(authState.user?.uid)
+        }
+
+        // Le multijoueur s'affiche en plein écran (sans la barre de navigation).
+        if (showMultiplayer) {
+            MultiplayerScreen(
+                viewModel = multiplayerViewModel,
+                onExit = { showMultiplayer = false }
+            )
+            return@CultureGeneraleTheme
         }
 
         val accountStatus = when {
@@ -87,7 +100,9 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         onBack = {
                             showAccount = false
                             authViewModel.clearError()
-                        }
+                        },
+                        onPseudoChange = authViewModel::setPseudo,
+                        onSavePseudo = authViewModel::savePseudo
                     )
                 } else {
                     ProfileScreen(
@@ -102,7 +117,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     GamePhase.HOME -> HomeScreen(
                         modifier = Modifier.padding(innerPadding),
                         onStartAllCategories = { viewModel.startGame(null) },
-                        onChooseCategory = viewModel::goToCategorySelect
+                        onChooseCategory = viewModel::goToCategorySelect,
+                        onPlayMultiplayer = { showMultiplayer = true }
                     )
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),

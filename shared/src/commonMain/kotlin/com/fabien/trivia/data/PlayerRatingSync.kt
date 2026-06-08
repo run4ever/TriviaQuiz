@@ -46,12 +46,15 @@ class PlayerRatingSync(private val firestore: FirebaseFirestore = Firebase.fires
         )
     }
 
-    /** Écrase le doc cloud avec l'état local fourni. */
+    /**
+     * Met à jour les champs de rating du doc cloud. `merge = true` pour ne pas écraser les
+     * autres champs du même document `players/{uid}` (ex. le pseudo, cf. [UserProfileRepository]).
+     */
     suspend fun push(uid: String, ratings: PlayerRatings) {
         val dto = PlayerRatingsDto(
             global = ratings.global,
             categories = ratings.categories.entries.associate { (category, rating) -> category.name to rating }
         )
-        doc(uid).set(PlayerRatingsDto.serializer(), dto)
+        doc(uid).set(PlayerRatingsDto.serializer(), dto, merge = true)
     }
 }

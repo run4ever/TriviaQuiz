@@ -46,7 +46,9 @@ fun AccountScreen(
     onContinueAsGuest: () -> Unit,
     onLinkEmail: (String, String) -> Unit,
     onSignOut: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onPseudoChange: (String) -> Unit = {},
+    onSavePseudo: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -72,7 +74,14 @@ fun AccountScreen(
         when {
             user == null -> SignedOutContent(state, onSignIn, onRegister, onContinueAsGuest)
             user.isAnonymous -> GuestContent(state, onLinkEmail, onSignOut)
-            else -> SignedInContent(email = user.email, onSignOut = onSignOut)
+            else -> SignedInContent(
+                email = user.email,
+                pseudo = state.pseudo,
+                isBusy = state.isBusy,
+                onPseudoChange = onPseudoChange,
+                onSavePseudo = onSavePseudo,
+                onSignOut = onSignOut
+            )
         }
 
         if (state.error != null) {
@@ -199,7 +208,14 @@ private fun ColumnScope.GuestContent(
 }
 
 @Composable
-private fun SignedInContent(email: String?, onSignOut: () -> Unit) {
+private fun SignedInContent(
+    email: String?,
+    pseudo: String,
+    isBusy: Boolean,
+    onPseudoChange: (String) -> Unit,
+    onSavePseudo: () -> Unit,
+    onSignOut: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -220,6 +236,25 @@ private fun SignedInContent(email: String?, onSignOut: () -> Unit) {
                 color = MaterialTheme.colorScheme.primary
             )
         }
+    }
+
+    Spacer(Modifier.height(16.dp))
+
+    // Pseudo (nom affiché en multijoueur). Pas d'unicité, l'email reste la clé du compte.
+    OutlinedTextField(
+        value = pseudo,
+        onValueChange = onPseudoChange,
+        label = { Text("Pseudo (affiché en multijoueur)") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(Modifier.height(8.dp))
+    Button(
+        onClick = onSavePseudo,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = !isBusy && pseudo.isNotBlank()
+    ) {
+        Text("Enregistrer le pseudo")
     }
 
     Spacer(Modifier.height(16.dp))

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,8 @@ import com.fabien.trivia.AppVersion
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onStartAllCategories: () -> Unit,
-    onChooseCategory: () -> Unit
+    onChooseCategory: () -> Unit,
+    onPlayMultiplayer: () -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -68,6 +70,17 @@ fun HomeScreen(
                     .height(56.dp)
             ) {
                 Text("Choisir une catégorie", style = MaterialTheme.typography.titleMedium)
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = onPlayMultiplayer,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text("Jouer à plusieurs", style = MaterialTheme.typography.titleMedium)
             }
         }
 
