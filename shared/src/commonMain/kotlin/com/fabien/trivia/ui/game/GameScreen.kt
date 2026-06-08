@@ -1,5 +1,7 @@
 package com.fabien.trivia.ui.game
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,9 +42,23 @@ fun GameScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
 
+        val tapInteractionSource = remember { MutableInteractionSource() }
+
         Column(
             modifier = Modifier
                 .weight(1f)
+                // Réponse confirmée : un tap n'importe où avance ; un glissement scrolle l'explication.
+                .then(
+                    if (state.answerConfirmed) {
+                        Modifier.clickable(
+                            interactionSource = tapInteractionSource,
+                            indication = null,
+                            onClick = onNextQuestion
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
@@ -72,28 +89,27 @@ fun GameScreen(
                 val containerColor = when {
                     state.answerConfirmed && isOptionCorrect -> ColorCorrect
                     state.answerConfirmed && isSelected -> ColorWrong
+                    state.answerConfirmed -> MaterialTheme.colorScheme.surfaceVariant
                     else -> MaterialTheme.colorScheme.primary
                 }
-                val disabledContainerColor = when {
-                    isOptionCorrect -> ColorCorrect
-                    isSelected -> ColorWrong
-                    else -> MaterialTheme.colorScheme.surfaceVariant
-                }
-                val disabledContentColor = when {
-                    isOptionCorrect || isSelected -> Color.White
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                val contentColor = when {
+                    state.answerConfirmed && (isOptionCorrect || isSelected) -> Color.White
+                    state.answerConfirmed -> MaterialTheme.colorScheme.onSurfaceVariant
+                    else -> MaterialTheme.colorScheme.onPrimary
                 }
 
+                // Une fois la réponse confirmée, les boutons restent actifs mais avancent
+                // (sinon un bouton désactivé bloque le tap « continuer » du conteneur parent).
                 Button(
-                    onClick = { onSelectAnswer(index) },
+                    onClick = {
+                        if (state.answerConfirmed) onNextQuestion() else onSelectAnswer(index)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    enabled = !state.answerConfirmed,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = containerColor,
-                        disabledContainerColor = disabledContainerColor,
-                        disabledContentColor = disabledContentColor
+                        contentColor = contentColor
                     )
                 ) {
                     Text(option, style = MaterialTheme.typography.bodyLarge)
@@ -151,8 +167,16 @@ fun GameScreen(
             }
 
             if (state.answerConfirmed) {
-                Button(onClick = onNextQuestion) {
-                    Text("Question suivante", style = MaterialTheme.typography.bodyMedium)
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Touchez l'écran pour continuer",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Button(onClick = onNextQuestion) {
+                        Text("Question suivante", style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
             }
         }
