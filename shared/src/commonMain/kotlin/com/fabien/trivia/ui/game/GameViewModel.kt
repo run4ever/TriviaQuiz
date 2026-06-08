@@ -10,6 +10,7 @@ import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
+import com.fabien.trivia.data.RemoteQuestionRepository
 import com.fabien.trivia.data.TriviaDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,14 +41,40 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val ratingsRepository = RatingsRepository(database)
     private val questionStatsRepository = QuestionStatsRepository(database)
     private val ratingSync = PlayerRatingSync()
+    private val remoteQuestions = RemoteQuestionRepository()
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings()
     ))
     val state: StateFlow<GameState> = _state.asStateFlow()
 
+    /**
+     * Banque de questions effective. Démarre sur le set bundlé (disponible instantanément,
+     * offline-first) puis est remplacée par les questions distantes dès qu'elles sont récupérées.
+     */
+    private var questionPool: List<Question> = QuestionRepository.questions
+
     /** UID du compte connecté, null si déconnecté. Détermine si on pousse vers Firestore. */
     private var currentUid: String? = null
+
+    init {
+        refreshQuestions()
+    }
+
+    /** Récupère les questions distantes ; en cas d'échec (hors-ligne), on garde le set bundlé. */
+    private fun refreshQuestions() {
+        viewModelScope.launch {
+            try {
+                val remote = remoteQuestions.fetchAll()
+                if (remote.isNotEmpty()) questionPool = remote
+            } catch (_: Exception) {
+                // Hors-ligne / collection absente : fallback sur le set bundlé déjà en place.
+            }
+        }
+    }
+
+    private fun questionsFor(category: Category?): List<Question> =
+        if (category != null) questionPool.filter { it.category == category } else questionPool
 
     /**
      * Appelé quand l'utilisateur connecté change (connexion / déconnexion / changement de compte).
@@ -104,11 +131,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     }
 
     fun startGame(category: Category? = null) {
-        val questions = if (category != null) {
-            QuestionRepository.getByCategory(category).shuffled()
-        } else {
-            QuestionRepository.questions.shuffled()
-        }
+        val questions = questionsFor(category).shuffled()
         _state.value = GameState(
             phase = GamePhase.PLAYING,
             questions = questions,
@@ -175,12 +198,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val current = _state.value
         val nextIndex = current.currentIndex + 1
         val (newIndex, newQuestions) = if (nextIndex >= current.questions.size) {
-            val questions = if (current.selectedCategory != null) {
-                QuestionRepository.getByCategory(current.selectedCategory).shuffled()
-            } else {
-                QuestionRepository.questions.shuffled()
-            }
-            0 to questions
+            0 to questionsFor(current.selectedCategory).shuffled()
         } else {
             nextIndex to current.questions
         }
