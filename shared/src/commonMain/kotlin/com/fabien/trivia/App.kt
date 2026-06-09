@@ -52,6 +52,11 @@ fun App(driverFactory: DatabaseDriverFactory) {
             viewModel.onUserChanged(authState.user?.uid)
         }
 
+        // Une partie multijoueur qui démarre compte aussi pour la série quotidienne.
+        LaunchedEffect(mpState.room?.status) {
+            if (mpState.room?.status == GameStatus.PLAYING) viewModel.registerPlay()
+        }
+
         val accountStatus = when {
             authState.user == null -> "Non connecté — appuyez pour vous connecter"
             authState.isGuest -> "Invité — appuyez pour créer un compte"
@@ -128,6 +133,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         modifier = Modifier.padding(innerPadding),
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
+                        streak = state.streak,
                         onStartAllCategories = { viewModel.startGame(null) },
                         onChooseCategory = viewModel::goToCategorySelect
                     )

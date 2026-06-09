@@ -11,6 +11,7 @@ import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
+import com.fabien.trivia.data.StreakRepository
 import com.fabien.trivia.data.TriviaDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +31,8 @@ data class GameState(
     val playerRating: Int = 750,
     val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 750 },
     val lastRatingDelta: Int = 0,
-    val selectedCategory: Category? = null
+    val selectedCategory: Category? = null,
+    val streak: Int = 0
 ) {
     val displayedRating: Int
         get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 750 else playerRating
@@ -40,11 +42,13 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val database = TriviaDatabase(driverFactory.createDriver())
     private val ratingsRepository = RatingsRepository(database)
     private val questionStatsRepository = QuestionStatsRepository(database)
+    private val streakRepository = StreakRepository(database)
     private val ratingSync = PlayerRatingSync()
     private val remoteQuestions = RemoteQuestionRepository()
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
-        categoryRatings = ratingsRepository.getAllCategoryRatings()
+        categoryRatings = ratingsRepository.getAllCategoryRatings(),
+        streak = streakRepository.currentStreak()
     ))
     val state: StateFlow<GameState> = _state.asStateFlow()
 
@@ -132,13 +136,24 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
 
     fun startGame(category: Category? = null) {
         val questions = questionsFor(category).shuffled()
+        // Jouer aujourd'hui (re)alimente la série quotidienne.
+        val streak = streakRepository.registerPlay()
         _state.value = GameState(
             phase = GamePhase.PLAYING,
             questions = questions,
             selectedCategory = category,
             playerRating = _state.value.playerRating,
-            categoryRatings = _state.value.categoryRatings
+            categoryRatings = _state.value.categoryRatings,
+            streak = streak
         )
+    }
+
+    /**
+     * Enregistre une partie jouée aujourd'hui pour la série (idempotent dans la journée).
+     * Appelé aussi au démarrage d'une partie multijoueur (cf. `App.kt`), pas seulement en solo.
+     */
+    fun registerPlay() {
+        _state.value = _state.value.copy(streak = streakRepository.registerPlay())
     }
 
     fun selectAnswer(index: Int) {
@@ -214,7 +229,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     fun goHome() {
         _state.value = GameState(
             playerRating = _state.value.playerRating,
-            categoryRatings = _state.value.categoryRatings
+            categoryRatings = _state.value.categoryRatings,
+            streak = _state.value.streak
         )
     }
 

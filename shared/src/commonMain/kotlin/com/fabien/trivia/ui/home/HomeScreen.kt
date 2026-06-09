@@ -52,6 +52,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     playerRating: Int,
     categoryRatings: Map<Category, Int>,
+    streak: Int,
     onStartAllCategories: () -> Unit,
     onChooseCategory: () -> Unit
 ) {
@@ -62,7 +63,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 14.dp)
     ) {
-        PlayerHeader()
+        PlayerHeader(streak)
         Spacer(Modifier.height(18.dp))
         LevelHeroCard(playerRating)
         Spacer(Modifier.height(16.dp))
@@ -90,8 +91,8 @@ private fun greetingWord(): String {
 }
 
 @Composable
-private fun PlayerHeader() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+private fun PlayerHeader(streak: Int) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
                 .size(46.dp)
@@ -105,8 +106,25 @@ private fun PlayerHeader() {
         Text(
             text = greetingWord(),
             style = MaterialTheme.typography.headlineSmall,
-            color = TriviaPalette.ink
+            color = TriviaPalette.ink,
+            modifier = Modifier.weight(1f)
         )
+        if (streak > 0) StreakPill(streak)
+    }
+}
+
+@Composable
+private fun StreakPill(streak: Int) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(TriviaPalette.card)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Icon(AppIcons.Flame, contentDescription = null, tint = TriviaPalette.gold, modifier = Modifier.size(19.dp))
+        Text("$streak", style = MaterialTheme.typography.titleMedium, color = TriviaPalette.ink)
     }
 }
 
