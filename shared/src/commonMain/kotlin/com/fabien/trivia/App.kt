@@ -124,6 +124,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
                         accountStatus = accountStatus,
+                        stats = state.profileStats,
                         onOpenAccount = { showAccount = true }
                     )
                 }

@@ -43,7 +43,7 @@ import com.fabien.trivia.ui.theme.levelName
 import com.fabien.trivia.ui.theme.progressToNextRank
 import com.fabien.trivia.ui.theme.strengths
 import com.fabien.trivia.ui.theme.weaknesses
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 

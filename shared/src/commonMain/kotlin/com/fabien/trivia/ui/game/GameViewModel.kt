@@ -17,10 +17,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
 enum class GamePhase { HOME, CATEGORY_SELECT, PLAYING }
+
+/** Données affichées sur l'écran Profil : meilleures séries (records) globale + par catégorie, et leur date. */
+data class ProfileStats(
+    val globalBest: Int = 0,
+    val globalBestDate: LocalDate? = null,
+    val categoryBest: Map<Category, Int> = emptyMap(),
+    val categoryBestDate: Map<Category, LocalDate?> = emptyMap(),
+)
 
 data class GameState(
     val phase: GamePhase = GamePhase.HOME,
@@ -36,7 +45,9 @@ data class GameState(
     /** Bonnes réponses consécutives (solo), PERSISTÉE : continue d'un jour/session à l'autre, remise à 0 sur erreur. ≠ série de jours [streak]. */
     val correctStreak: Int = 0,
     /** Meilleure suite de bonnes réponses (record persistant, pour le futur écran de stats). */
-    val bestCorrectStreak: Int = 0
+    val bestCorrectStreak: Int = 0,
+    /** Stats du profil (records de série + dates), global + par catégorie. */
+    val profileStats: ProfileStats = ProfileStats()
 ) {
     val displayedRating: Int
         get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 750 else playerRating
@@ -54,8 +65,16 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         categoryRatings = ratingsRepository.getAllCategoryRatings(),
         streak = streakRepository.currentStreak(),
         correctStreak = streakRepository.correctStreak(null),
-        bestCorrectStreak = streakRepository.bestCorrectStreak(null)
+        bestCorrectStreak = streakRepository.bestCorrectStreak(null),
+        profileStats = readProfileStats()
     ))
+
+    private fun readProfileStats() = ProfileStats(
+        globalBest = streakRepository.bestCorrectStreak(null),
+        globalBestDate = streakRepository.bestStreakDate(null),
+        categoryBest = Category.entries.associateWith { streakRepository.bestCorrectStreak(it) },
+        categoryBestDate = Category.entries.associateWith { streakRepository.bestStreakDate(it) },
+    )
     val state: StateFlow<GameState> = _state.asStateFlow()
 
     /**
@@ -154,7 +173,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             // Suite de bonnes réponses CONTEXTUELLE (catégorie choisie, ou globale en « toutes catégories »),
             // persistée (ne repart pas à 0 à chaque partie).
             correctStreak = streakRepository.correctStreak(category),
-            bestCorrectStreak = streakRepository.bestCorrectStreak(category)
+            bestCorrectStreak = streakRepository.bestCorrectStreak(category),
+            profileStats = _state.value.profileStats
         )
     }
 
@@ -201,7 +221,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 categoryRatings = newCategoryRatings,
                 lastRatingDelta = categoryDelta,
                 correctStreak = newCorrectStreak,
-                bestCorrectStreak = newBestCorrectStreak
+                bestCorrectStreak = newBestCorrectStreak,
+                profileStats = readProfileStats()
             )
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
@@ -214,7 +235,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 categoryRatings = newCategoryRatings,
                 lastRatingDelta = globalDelta,
                 correctStreak = newCorrectStreak,
-                bestCorrectStreak = newBestCorrectStreak
+                bestCorrectStreak = newBestCorrectStreak,
+                profileStats = readProfileStats()
             )
             ratingsRepository.savePlayerRating(newPlayerRating)
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
@@ -254,7 +276,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             categoryRatings = _state.value.categoryRatings,
             streak = _state.value.streak,
             correctStreak = streakRepository.correctStreak(null),
-            bestCorrectStreak = streakRepository.bestCorrectStreak(null)
+            bestCorrectStreak = streakRepository.bestCorrectStreak(null),
+            profileStats = _state.value.profileStats
         )
     }
 
