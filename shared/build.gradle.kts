@@ -111,3 +111,9 @@ sqldelight {
         }
     }
 }
+
+// Package déterministe pour la classe Res générée (fonts, drawables) → import stable.
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.fabien.trivia.resources"
+}

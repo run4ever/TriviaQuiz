@@ -1,6 +1,5 @@
 package com.fabien.trivia.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -84,12 +83,14 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun CultureGeneraleTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Refonte « Vitamine » : palette claire uniquement pour l'instant (pas de mode sombre).
+    // `darkScheme` est conservé si on veut réactiver le dark plus tard.
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) darkScheme else lightScheme,
-        typography = AppTypography,
+        typography = appTypography(),
         content = content
     )
 }

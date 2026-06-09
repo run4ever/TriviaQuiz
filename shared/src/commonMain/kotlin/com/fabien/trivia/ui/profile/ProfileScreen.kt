@@ -22,15 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
-
-private fun Int.levelName(): String = when {
-    this < 500 -> "Débutant"
-    this < 800 -> "Amateur"
-    this < 1100 -> "Intermédiaire"
-    this < 1400 -> "Confirmé"
-    this < 1700 -> "Expert"
-    else -> "Maître"
-}
+import com.fabien.trivia.ui.theme.levelName
 
 @Composable
 fun ProfileScreen(
