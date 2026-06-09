@@ -53,8 +53,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings(),
         streak = streakRepository.currentStreak(),
-        correctStreak = streakRepository.correctStreak(),
-        bestCorrectStreak = streakRepository.bestCorrectStreak()
+        correctStreak = streakRepository.correctStreak(null),
+        bestCorrectStreak = streakRepository.bestCorrectStreak(null)
     ))
     val state: StateFlow<GameState> = _state.asStateFlow()
 
@@ -151,9 +151,10 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
             streak = streak,
-            // La suite de bonnes réponses persiste (ne repart pas à 0 à chaque partie).
-            correctStreak = _state.value.correctStreak,
-            bestCorrectStreak = _state.value.bestCorrectStreak
+            // Suite de bonnes réponses CONTEXTUELLE (catégorie choisie, ou globale en « toutes catégories »),
+            // persistée (ne repart pas à 0 à chaque partie).
+            correctStreak = streakRepository.correctStreak(category),
+            bestCorrectStreak = streakRepository.bestCorrectStreak(category)
         )
     }
 
@@ -185,8 +186,13 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
-        // Suite de bonnes réponses (persistée) : +1 si correct, remise à 0 sinon ; on garde la meilleure.
-        val (newCorrectStreak, newBestCorrectStreak) = streakRepository.recordAnswer(isCorrect)
+        // Suite de bonnes réponses (persistée, miroir des ratings) : on met à jour la suite de la
+        // catégorie de la question, et la globale uniquement en mode « toutes catégories ».
+        val allCategories = current.selectedCategory == null
+        streakRepository.recordAnswer(question.category, isCorrect, includeGlobal = allCategories)
+        // Suite contextuelle affichée dans l'en-tête : catégorie en mode catégorie, sinon globale.
+        val newCorrectStreak = streakRepository.correctStreak(current.selectedCategory)
+        val newBestCorrectStreak = streakRepository.bestCorrectStreak(current.selectedCategory)
 
         if (current.selectedCategory != null) {
             _state.value = current.copy(
@@ -247,8 +253,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
             streak = _state.value.streak,
-            correctStreak = _state.value.correctStreak,
-            bestCorrectStreak = _state.value.bestCorrectStreak
+            correctStreak = streakRepository.correctStreak(null),
+            bestCorrectStreak = streakRepository.bestCorrectStreak(null)
         )
     }
 

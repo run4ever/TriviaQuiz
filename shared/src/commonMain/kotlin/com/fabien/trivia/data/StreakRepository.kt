@@ -43,25 +43,38 @@ class StreakRepository(database: TriviaDatabase) {
     }
 
     // --- Suite de bonnes réponses consécutives (solo) ---
-    // Persistée : elle continue d'une session/d'un jour à l'autre et ne se brise QUE sur une
-    // mauvaise réponse (aucune notion de date ici, contrairement à la série de jours ci-dessus).
+    // Persistée : continue d'une session/d'un jour à l'autre, se brise QUE sur une mauvaise
+    // réponse (pas de notion de date). Calquée sur les ratings : une **globale** (mode « toutes
+    // catégories ») + une **par catégorie**. [category] = null → globale.
 
-    fun correctStreak(): Int = read(KEY_CORRECT) ?: 0
-    fun bestCorrectStreak(): Int = read(KEY_BEST_CORRECT) ?: 0
+    fun correctStreak(category: Category?): Int = read(currentKey(category)) ?: 0
+    fun bestCorrectStreak(category: Category?): Int = read(bestKey(category)) ?: 0
 
-    /** Enregistre une réponse : +1 si correcte, remise à 0 sinon. Renvoie (suite courante, meilleure). */
-    fun recordAnswer(correct: Boolean): Pair<Int, Int> {
-        val current = if (correct) (read(KEY_CORRECT) ?: 0) + 1 else 0
-        queries.upsertRating(KEY_CORRECT, current.toLong())
-        val best = maxOf(read(KEY_BEST_CORRECT) ?: 0, current)
-        queries.upsertRating(KEY_BEST_CORRECT, best.toLong())
-        return current to best
+    /**
+     * Enregistre une réponse à une question de [category] : met à jour la suite de cette catégorie,
+     * et — seulement en mode « toutes catégories » ([includeGlobal] = true) — la suite globale.
+     * Le mode catégorie ne touche donc PAS la globale.
+     */
+    fun recordAnswer(category: Category, correct: Boolean, includeGlobal: Boolean) {
+        bump(currentKey(category), bestKey(category), correct)
+        if (includeGlobal) bump(currentKey(null), bestKey(null), correct)
     }
+
+    private fun bump(currentKey: String, bestKey: String, correct: Boolean) {
+        val current = if (correct) (read(currentKey) ?: 0) + 1 else 0
+        queries.upsertRating(currentKey, current.toLong())
+        val best = maxOf(read(bestKey) ?: 0, current)
+        queries.upsertRating(bestKey, best.toLong())
+    }
+
+    private fun currentKey(category: Category?) =
+        if (category == null) "correct_streak" else "correct_streak_${category.name}"
+
+    private fun bestKey(category: Category?) =
+        if (category == null) "best_correct_streak" else "best_correct_streak_${category.name}"
 
     private companion object {
         const val KEY_COUNT = "streak_count"
         const val KEY_LAST_DAY = "streak_lastday"
-        const val KEY_CORRECT = "correct_streak"
-        const val KEY_BEST_CORRECT = "best_correct_streak"
     }
 }
