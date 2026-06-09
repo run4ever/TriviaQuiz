@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TriviaQuiz — Notes d'intégration Compose</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+<style>
+  :root{
+    --ink:#1E1B2E; --soft:#6B6680; --faint:#A7A2B6; --line:#ECE6F0;
+    --brand:#7A5AF8; --brandDeep:#553BD0; --bg:#FBF7F2; --card:#fff;
+    --code-bg:#1E1B33; --good:#1FA84B;
+    --fd:"Baloo 2",system-ui,sans-serif; --fb:"Nunito",system-ui,sans-serif; --fm:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .page{max-width:860px;margin:0 auto;padding:64px 60px 80px;}
+  h1{font-family:var(--fd);font-weight:800;font-size:42px;line-height:1.05;margin:0 0 6px;letter-spacing:-.5px;}
+  .sub{font-size:17px;color:var(--soft);font-weight:700;margin-bottom:8px;}
+  .lede{font-size:15px;color:var(--soft);font-weight:700;line-height:1.6;max-width:62ch;}
+  h2{font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brand);margin:54px 0 4px;}
+  h3{font-family:var(--fd);font-weight:800;font-size:24px;margin:6px 0 6px;}
+  p{font-size:14.5px;line-height:1.6;color:#3a3450;font-weight:600;margin:0 0 12px;max-width:64ch;}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-family:var(--fd);font-weight:800;font-size:14px;margin-right:10px;vertical-align:2px;}
+  pre{background:var(--code-bg);border-radius:16px;padding:20px 22px;overflow-x:auto;margin:14px 0 8px;box-shadow:0 10px 30px #2a1f5a22;}
+  code{font-family:var(--fm);font-size:13px;line-height:1.62;color:#E7E2FF;font-weight:500;}
+  .k{color:#FF9F6B;} .t{color:#65D6AD;} .s{color:#F5D76E;} .c{color:#8B86A8;font-style:italic;} .f{color:#9DB6FF;} .n{color:#F58CC0;}
+  .tag{display:inline-block;font-family:var(--fb);font-weight:800;font-size:11px;padding:3px 10px;border-radius:20px;background:#7A5AF815;color:var(--brand);margin-left:8px;vertical-align:3px;}
+  .row{display:flex;gap:14px;align-items:flex-start;margin:10px 0;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);margin-top:7px;flex-shrink:0;}
+  .callout{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 22px;margin:18px 0;box-shadow:0 6px 20px #0000000a;}
+  .callout b{color:var(--ink);}
+  .hr{height:1px;background:var(--line);margin:46px 0 0;border:0;}
+  .swatches{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;}
+  .sw{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 12px 7px 8px;font-family:var(--fm);font-size:12px;font-weight:500;}
+  .sw i{width:22px;height:22px;border-radius:7px;display:block;}
+  .lead{font-family:var(--fd);font-weight:800;font-size:15px;color:var(--ink);}
+  @media print{ .page{padding:32px 28px;} pre{box-shadow:none;} h2{margin-top:34px;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Intégrer la refonte<br/>dans TriviaQuiz</h1>
+  <div class="sub">Recettes Compose Multiplatform — prêtes pour Claude Code</div>
+  <p class="lede">Chaque maquette de <b>TriviaQuiz Concepts.html</b> se traduit en composants Compose simples et <b>communs aux deux plateformes</b> (commonMain → Android &amp; iOS). Voici les blocs réutilisables, du thème jusqu'aux confettis, plus le détail des <b>deux écrans Accueil &amp; Catégories</b> dans leur version actuelle. Tout repose sur les API d'animation standard de Compose — aucune dépendance lourde.</p>
+
+  <div class="callout">
+    🧭 <b>Noms d'enum réels</b> — ce document utilise les valeurs exactes de <code style="font-family:var(--fm);font-size:12px">data/Question.kt</code> : <code style="font-family:var(--fm);font-size:12px">GEOGRAPHIE, HISTOIRE, SCIENCES_ET_NATURE, ART_ET_CULTURE, SPORTS, DIVERTISSEMENT</code>. Les libellés viennent déjà de l'extension <code style="font-family:var(--fm);font-size:12px">Category.displayName</code>.
+  </div>
+
+  <div class="callout">
+    💡 <b>Conseil Claude Code :</b> commence par le thème (§1–2), puis traite la section <b>« Les deux écrans »</b> (A–C) pour l'Accueil et les Catégories, et pioche les recettes d'animation au fil des besoins. Demande « adapte ça à mon code existant dans <code style="font-family:var(--fm);font-size:12px">ui/home</code> / <code style="font-family:var(--fm);font-size:12px">ui/category</code> ». Tout est écrit pour <b>commonMain</b>, donc ré-utilisable tel quel pour la future version iOS.
+  </div>
+
+  <!-- 1 — THEME -->
+  <h2>Fondations</h2>
+  <h3><span class="num">1</span>Couleurs par catégorie<span class="tag">ui/theme/Color.kt</span></h3>
+  <p>Le cœur du système : chaque catégorie porte sa teinte de l'accueil au feedback. Une <code>enum</code> + une fonction de mapping suffisent.</p>
+  <div class="swatches">
+    <span class="sw"><i style="background:#0FA697"></i>Géographie</span>
+    <span class="sw"><i style="background:#E5890F"></i>Histoire</span>
+    <span class="sw"><i style="background:#7A5AF8"></i>Sciences</span>
+    <span class="sw"><i style="background:#EC4899"></i>Art</span>
+    <span class="sw"><i style="background:#1FA84B"></i>Sports</span>
+    <span class="sw"><i style="background:#3B82F6"></i>Divertissement</span>
+  </div>
+  <pre><code><span class="k">data class</span> <span class="t">CatColors</span>(<span class="k">val</span> main: <span class="t">Color</span>, <span class="k">val</span> deep: <span class="t">Color</span>, <span class="k">val</span> tint: <span class="t">Color</span>)
+
+<span class="k">val</span> <span class="f">categoryColors</span>: <span class="t">Map</span>&lt;<span class="t">Category</span>, <span class="t">CatColors</span>&gt; = <span class="f">mapOf</span>(
+    <span class="t">Category</span>.GEOGRAPHIE         <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFF0FA697</span>), <span class="t">Color</span>(<span class="n">0xFF0A6F63</span>), <span class="t">Color</span>(<span class="n">0xFFD6F4EF</span>)),
+    <span class="t">Category</span>.HISTOIRE           <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFFE5890F</span>), <span class="t">Color</span>(<span class="n">0xFF9C5A05</span>), <span class="t">Color</span>(<span class="n">0xFFFBEBCF</span>)),
+    <span class="t">Category</span>.SCIENCES_ET_NATURE <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFF7A5AF8</span>), <span class="t">Color</span>(<span class="n">0xFF553BD0</span>), <span class="t">Color</span>(<span class="n">0xFFE7E1FF</span>)),
+    <span class="t">Category</span>.ART_ET_CULTURE     <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFFEC4899</span>), <span class="t">Color</span>(<span class="n">0xFFC42B73</span>), <span class="t">Color</span>(<span class="n">0xFFFBDFEC</span>)),
+    <span class="t">Category</span>.SPORTS             <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFF1FA84B</span>), <span class="t">Color</span>(<span class="n">0xFF157A36</span>), <span class="t">Color</span>(<span class="n">0xFFD5F2DD</span>)),
+    <span class="t">Category</span>.DIVERTISSEMENT     <span class="k">to</span> <span class="t">CatColors</span>(<span class="t">Color</span>(<span class="n">0xFF3B82F6</span>), <span class="t">Color</span>(<span class="n">0xFF1D5FD8</span>), <span class="t">Color</span>(<span class="n">0xFFDCE9FF</span>)),
+)
+
+<span class="c">// usage : val c = categoryColors.getValue(question.category)</span></code></pre>
+
+  <h3><span class="num">2</span>Typo « jeu » Baloo 2 + Nunito<span class="tag">ui/theme/Type.kt</span></h3>
+  <p>Place les <code>.ttf</code> dans <code>commonMain/composeResources/font/</code>, puis construis les <code>FontFamily</code>. Baloo 2 pour titres/scores/boutons, Nunito pour le corps.</p>
+  <pre><code><span class="k">val</span> <span class="f">Baloo</span> = <span class="t">FontFamily</span>(
+    <span class="t">Font</span>(<span class="t">Res</span>.font.baloo2_semibold, <span class="t">FontWeight</span>.SemiBold),
+    <span class="t">Font</span>(<span class="t">Res</span>.font.baloo2_bold,     <span class="t">FontWeight</span>.Bold),
+    <span class="t">Font</span>(<span class="t">Res</span>.font.baloo2_extrabold, <span class="t">FontWeight</span>.ExtraBold),
+)
+<span class="k">val</span> <span class="f">Nunito</span> = <span class="t">FontFamily</span>(<span class="c">/* 400 / 700 / 800 */</span>)
+
+<span class="k">val</span> <span class="f">AppTypography</span> = <span class="t">Typography</span>().<span class="f">run</span> {
+    <span class="f">copy</span>(
+        displaySmall = displaySmall.<span class="f">copy</span>(fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.ExtraBold),
+        titleLarge   = titleLarge.<span class="f">copy</span>(fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.Bold),
+        bodyMedium   = bodyMedium.<span class="f">copy</span>(fontFamily = <span class="f">Nunito</span>, fontWeight = <span class="t">FontWeight</span>.SemiBold),
+        labelLarge   = labelLarge.<span class="f">copy</span>(fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.Bold),
+    )
+}</code></pre>
+
+  <hr class="hr" />
+
+  <!-- SCREENS -->
+  <h2>Les deux écrans</h2>
+  <p>État actuel de l'<b>Accueil</b> et des <b>Catégories</b> (cf. artboards 1 &amp; 2 de <b>TriviaQuiz Concepts.html</b>). Réécriture côté <code>ui/home</code> et <code>ui/category</code> ; les callbacks existent déjà dans <code>App.kt</code>.</p>
+
+  <h3><span class="num">A</span>Niveau par catégorie<span class="tag">déjà dans le state</span></h3>
+  <p>Bonne nouvelle : le <code>GameViewModel</code> expose déjà <code>state.categoryRatings: Map&lt;Category, Int&gt;</code> et <code>state.playerRating</code>. Les deux écrans <b>consomment ce map</b> — rien à inventer côté données. Il manque juste l'<b>échelle de rang</b> partagée et les <b>seuils</b> de l'accueil.</p>
+  <pre><code><span class="c">// ui/theme/Rank.kt (nouveau) — libellé de niveau commun Accueil + Catégories</span>
+<span class="k">const val</span> <span class="f">SIGNUP_RATING</span> = <span class="n">750</span>          <span class="c">// rating d'une catégorie à l'inscription</span>
+
+<span class="k">enum class</span> <span class="t">Rank</span>(<span class="k">val</span> min: <span class="t">Int</span>, <span class="k">val</span> label: <span class="t">String</span>) {
+    NOVICE(<span class="n">800</span>, <span class="s">"Novice"</span>), APPRENTI(<span class="n">1000</span>, <span class="s">"Apprenti"</span>), CONFIRME(<span class="n">1200</span>, <span class="s">"Confirmé"</span>),
+    EXPERT(<span class="n">1400</span>, <span class="s">"Expert"</span>), MAITRE(<span class="n">1600</span>, <span class="s">"Maître"</span>);
+    <span class="k">companion object</span> { <span class="k">fun</span> <span class="f">of</span>(r: <span class="t">Int</span>) = entries.<span class="f">lastOrNull</span> { r &gt;= it.min } ?: NOVICE }
+}
+
+<span class="c">// Seuils des blocs de l'accueil — AJUSTABLES</span>
+<span class="k">const val</span> <span class="f">STRENGTH_MIN</span> = <span class="n">1200</span>          <span class="c">// « Tes points forts » : rating &gt;= ce seuil</span>
+<span class="k">const val</span> <span class="f">WEAKNESS_MAX</span> = <span class="n">1000</span>          <span class="c">// « Tes axes d'amélioration » : rating &lt;= ce seuil</span>
+
+<span class="k">fun</span> <span class="t">Map</span>&lt;<span class="t">Category</span>,<span class="t">Int</span>&gt;.<span class="f">strengths</span>()  = entries.<span class="f">filter</span> { it.value &gt;= STRENGTH_MIN }.<span class="f">sortedByDescending</span> { it.value }.<span class="f">take</span>(<span class="n">3</span>)
+<span class="k">fun</span> <span class="t">Map</span>&lt;<span class="t">Category</span>,<span class="t">Int</span>&gt;.<span class="f">weaknesses</span>() = entries.<span class="f">filter</span> { it.value &lt;= WEAKNESS_MAX }.<span class="f">sortedBy</span> { it.value }.<span class="f">take</span>(<span class="n">3</span>)</code></pre>
+  <div class="callout">À l'inscription toutes les catégories valent <b>750</b> (sous Novice, et ≤ WEAKNESS_MAX) : elles apparaissent d'abord dans « axes d'amélioration » jusqu'à dépasser 1000. <b>Chaque bloc se masque</b> si sa liste est vide (<code>if (strengths.isNotEmpty())</code>).</div>
+
+  <h3><span class="num">B</span>Accueil<span class="tag">ui/home/HomeScreen.kt</span></h3>
+  <p>Une <code>Column</code> (fond <code>#FBF7F2</code>, <code>verticalScroll</code> si besoin), de haut en bas :</p>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">En-tête joueur</b> — avatar dégradé 46.dp + salutation <b>dynamique</b> (« Bonjour, » si <code>LocalTime &lt; 17h</code>, sinon « Bonsoir, ») + prénom ; à droite la pill de série (flamme).</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Carte « Niveau actuel »</b> — héros violet foncé, <code>ProgressRing</code> (§8) à gauche + sur-titre <b>NIVEAU ACTUEL</b>, nom du rang, rating en points. (Anciennement « Rang actuel ».)</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">CTA « Jouer »</b> — <code>ChunkyButton</code> (§3) violet pleine largeur → <code>onStartAllCategories()</code>. (Anciennement « Partie rapide ».)</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Bouton « Jouer une catégorie »</b> — même forme &amp; <b>même hauteur</b> que le CTA, mais <b>fond noir</b> <code>#161320</code> : 6 jetons colorés qui se chevauchent + titre + « Au choix parmi 6 » → <code>onChooseCategory()</code>.</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Tes points forts</b> — si <code>categoryRatings.strengths().isNotEmpty()</code> : <code>Row</code> de max 3 colonnes (pastille + nom + pill de niveau <code>Rank.of(rating).label</code>).</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Tes axes d'amélioration</b> — idem avec <code>weaknesses()</code>, triées croissant, max 3.</p></div>
+  <pre><code><span class="k">val</span> greeting = <span class="k">if</span> (<span class="f">currentHour</span>() &lt; <span class="n">17</span>) <span class="s">"Bonjour,"</span> <span class="k">else</span> <span class="s">"Bonsoir,"</span>
+
+<span class="f">CatStrip</span>(title = <span class="s">"Tes points forts"</span>,        cats = categoryRatings.<span class="f">strengths</span>())
+<span class="f">CatStrip</span>(title = <span class="s">"Tes axes d'amélioration"</span>, cats = categoryRatings.<span class="f">weaknesses</span>())
+
+<span class="k">@Composable</span> <span class="k">fun</span> <span class="f">CatStrip</span>(title: <span class="t">String</span>, cats: <span class="t">List</span>&lt;<span class="t">Map.Entry</span>&lt;<span class="t">Category</span>,<span class="t">Int</span>&gt;&gt;) {
+    <span class="k">if</span> (cats.<span class="f">isEmpty</span>()) <span class="k">return</span>                       <span class="c">// bloc masqué si vide</span>
+    <span class="t">Text</span>(title, fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.ExtraBold)
+    <span class="t">Row</span>(horizontalArrangement = <span class="t">Arrangement</span>.<span class="f">spacedBy</span>(<span class="n">10</span>.dp)) {
+        cats.<span class="f">forEach</span> { (cat, rating) -&gt; <span class="f">CatPick</span>(cat, <span class="t">Rank</span>.<span class="f">of</span>(rating).label, <span class="t">Modifier</span>.<span class="f">weight</span>(<span class="n">1f</span>)) }
+    }
+}</code></pre>
+  <div class="callout"><b>Multijoueur</b> — le bouton disparaît de l'accueil. Il faut donc l'ajouter à la <code>NavigationBar</code> d'<code>App.kt</code> (3<sup>e</sup> onglet) au lieu de le lancer via <code>onPlayMultiplayer</code> depuis <code>HomeScreen</code> ; ce paramètre peut être retiré de la signature de <code>HomeScreen</code>.</div>
+
+  <h3><span class="num">C</span>Catégories<span class="tag">ui/category/CategoryScreen.kt</span></h3>
+  <p>En-tête (retour + « Choisis un thème ») puis <b>grille 2 colonnes</b> des 6 catégories. <b>Le bouton « Toutes les catégories » est retiré</b> — il vit désormais sur l'accueil (bouton noir « Jouer une catégorie »). Chaque carte = fond <code>main</code>, ombre chunky <code>deep</code>, tuile-icône, nom (<code>displayName</code>) et pill de niveau <code>Rank.of(rating).label</code> — la <b>même</b> source que l'accueil.</p>
+  <pre><code><span class="t">LazyVerticalGrid</span>(<span class="t">GridCells</span>.<span class="f">Fixed</span>(<span class="n">2</span>), horizontalArrangement = <span class="t">Arrangement</span>.<span class="f">spacedBy</span>(<span class="n">13</span>.dp)) {
+    <span class="f">items</span>(<span class="t">Category</span>.entries) { cat -&gt;
+        <span class="f">CategoryCard</span>(
+            cat   = cat,
+            level = <span class="t">Rank</span>.<span class="f">of</span>(categoryRatings[cat] ?: SIGNUP_RATING).label,
+            onClick = { onSelectCategory(cat) },
+        )
+    }
+}</code></pre>
+
+  <hr class="hr" />
+
+  <!-- ANIMATIONS -->
+  <h2>Les animations</h2>
+
+  <h3><span class="num">3</span>Bouton « chunky » qui s'enfonce<span class="tag">micro-interaction</span></h3>
+  <p>L'effet le plus rentable : une ombre portée colorée + un enfoncement au toucher. <code>collectIsPressedAsState</code> + <code>animateDpAsState</code> sur un offset, sans <code>ripple</code>.</p>
+  <pre><code><span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">ChunkyButton</span>(text: <span class="t">String</span>, color: <span class="t">Color</span>, deep: <span class="t">Color</span>, onClick: () -&gt; <span class="t">Unit</span>) {
+    <span class="k">val</span> interaction = <span class="f">remember</span> { <span class="t">MutableInteractionSource</span>() }
+    <span class="k">val</span> pressed <span class="k">by</span> interaction.<span class="f">collectIsPressedAsState</span>()
+    <span class="k">val</span> offset <span class="k">by</span> <span class="f">animateDpAsState</span>(<span class="k">if</span> (pressed) <span class="n">4</span>.dp <span class="k">else</span> <span class="n">0</span>.dp, <span class="f">spring</span>(stiffness = <span class="t">Spring</span>.StiffnessMediumLow))
+
+    <span class="t">Box</span>(
+        <span class="t">Modifier</span>
+            .<span class="f">offset</span>(y = offset)                              <span class="c">// le bouton descend</span>
+            .<span class="f">drawBehind</span> { <span class="c">/* dessine 'deep' 6.dp plus bas = la tranche 3D */</span> }
+            .<span class="f">background</span>(color, <span class="t">RoundedCornerShape</span>(<span class="n">18</span>.dp))
+            .<span class="f">clickable</span>(interaction, indication = <span class="k">null</span>, onClick = onClick)
+            .<span class="f">padding</span>(horizontal = <span class="n">26</span>.dp, vertical = <span class="n">16</span>.dp),
+        contentAlignment = <span class="t">Alignment</span>.Center,
+    ) { <span class="t">Text</span>(text, fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.Bold, color = <span class="t">Color</span>.White) }
+}</code></pre>
+
+  <h3><span class="num">4</span>Transition entre écrans<span class="tag">Accueil → Jeu</span></h3>
+  <p>Avec <code>androidx.navigation.compose</code> (multiplateforme), déclare les specs sur le <code>NavHost</code>. Glissement horizontal + fondu.</p>
+  <pre><code><span class="t">NavHost</span>(
+    navController, startDestination = <span class="s">"home"</span>,
+    enterTransition = { <span class="f">slideInHorizontally</span> { it / <span class="n">3</span> } + <span class="f">fadeIn</span>() },
+    exitTransition  = { <span class="f">fadeOut</span>() + <span class="f">scaleOut</span>(targetScale = <span class="n">0.96f</span>) },
+    popEnterTransition = { <span class="f">slideInHorizontally</span> { -it / <span class="n">3</span> } + <span class="f">fadeIn</span>() },
+) { <span class="c">/* composable("home") { … }  composable("game/{cat}") { … } */</span> }</code></pre>
+
+  <h3><span class="num">5</span>Apparition en cascade des réponses<span class="tag">stagger</span></h3>
+  <p>Chaque réponse entre avec un léger décalage. Un <code>AnimatedVisibility</code> par item, déclenché par un index qui monte dans un <code>LaunchedEffect</code>.</p>
+  <pre><code><span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">AnswerList</span>(answers: <span class="t">List</span>&lt;<span class="t">String</span>&gt;) {
+    <span class="k">var</span> shown <span class="k">by</span> <span class="f">remember</span> { <span class="f">mutableStateOf</span>(<span class="n">0</span>) }
+    <span class="f">LaunchedEffect</span>(answers) {                          <span class="c">// relance à chaque question</span>
+        shown = <span class="n">0</span>
+        answers.indices.<span class="f">forEach</span> { <span class="f">delay</span>(<span class="n">90</span>); shown++ }
+    }
+    <span class="t">Column</span>(verticalArrangement = <span class="t">Arrangement</span>.<span class="f">spacedBy</span>(<span class="n">11</span>.dp)) {
+        answers.<span class="f">forEachIndexed</span> { i, a -&gt;
+            <span class="t">AnimatedVisibility</span>(
+                visible = i &lt; shown,
+                enter = <span class="f">slideInVertically</span> { <span class="n">40</span> } + <span class="f">fadeIn</span>(),
+            ) { <span class="f">AnswerCard</span>(a) }
+        }
+    }
+}</code></pre>
+
+  <h3><span class="num">6</span>Feedback couleur bonne / mauvaise réponse<span class="tag">cœur du jeu</span></h3>
+  <p>La carte passe en vert ou rouge en douceur via <code>animateColorAsState</code>, plus un <code>pop</code> (scale) sur la bonne réponse et un <code>shake</code> sur l'erreur.</p>
+  <pre><code><span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">AnswerCard</span>(label: <span class="t">String</span>, state: <span class="t">AnswerState</span>) {   <span class="c">// IDLE, CORRECT, WRONG</span>
+    <span class="k">val</span> target = <span class="k">when</span> (state) {
+        <span class="t">AnswerState</span>.CORRECT -&gt; <span class="t">Color</span>(<span class="n">0xFFD5F2DD</span>)
+        <span class="t">AnswerState</span>.WRONG   -&gt; <span class="t">Color</span>(<span class="n">0xFFFBE0E0</span>)
+        <span class="k">else</span> -&gt; <span class="t">Color</span>.White
+    }
+    <span class="k">val</span> bg <span class="k">by</span> <span class="f">animateColorAsState</span>(target, <span class="f">tween</span>(<span class="n">280</span>))
+    <span class="k">val</span> scale <span class="k">by</span> <span class="f">animateFloatAsState</span>(
+        <span class="k">if</span> (state == <span class="t">AnswerState</span>.CORRECT) <span class="n">1.04f</span> <span class="k">else</span> <span class="n">1f</span>,
+        <span class="f">spring</span>(dampingRatio = <span class="t">Spring</span>.DampingRatioMediumBouncy),
+    )
+    <span class="t">Row</span>(<span class="t">Modifier</span>.<span class="f">scale</span>(scale).<span class="f">background</span>(bg, <span class="t">RoundedCornerShape</span>(<span class="n">18</span>.dp)) <span class="c">/* … */</span>) { <span class="c">/* badge + texte */</span> }
+}
+
+<span class="c">// SHAKE sur l'erreur : anime un offset X qui oscille</span>
+<span class="k">val</span> shake = <span class="f">remember</span> { <span class="t">Animatable</span>(<span class="n">0f</span>) }
+<span class="f">LaunchedEffect</span>(wrong) {
+    <span class="k">if</span> (wrong) shake.<span class="f">animateTo</span>(<span class="n">0f</span>, <span class="f">keyframes</span> {
+        durationMillis = <span class="n">400</span>; -<span class="n">7f</span> <span class="k">at</span> <span class="n">80</span>; <span class="n">6f</span> <span class="k">at</span> <span class="n">160</span>; -<span class="n">4f</span> <span class="k">at</span> <span class="n">240</span>; <span class="n">0f</span> <span class="k">at</span> <span class="n">400</span>
+    })
+}</code></pre>
+
+  <h3><span class="num">7</span>Compteur de classement qui s'incrémente<span class="tag">résultats</span></h3>
+  <p>Le rating ELO grimpe de l'ancienne à la nouvelle valeur. <code>animateIntAsState</code> fait tout le travail.</p>
+  <pre><code><span class="k">var</span> ratingTarget <span class="k">by</span> <span class="f">remember</span> { <span class="f">mutableStateOf</span>(oldRating) }
+<span class="f">LaunchedEffect</span>(<span class="t">Unit</span>) { <span class="f">delay</span>(<span class="n">300</span>); ratingTarget = newRating }
+<span class="k">val</span> rating <span class="k">by</span> <span class="f">animateIntAsState</span>(ratingTarget, <span class="f">tween</span>(<span class="n">1100</span>, easing = <span class="t">FastOutSlowInEasing</span>))
+
+<span class="t">Text</span>(<span class="s">"</span>$rating<span class="s">"</span>, fontFamily = <span class="f">Baloo</span>, fontWeight = <span class="t">FontWeight</span>.ExtraBold, fontSize = <span class="n">30</span>.sp)</code></pre>
+
+  <h3><span class="num">8</span>Anneau de progression / chrono<span class="tag">timer</span></h3>
+  <p>Un arc dessiné au <code>Canvas</code>, dont la fraction est animée. Pour un compte à rebours, anime de <code>1f</code> vers <code>0f</code> en <code>tween(durée)</code>.</p>
+  <pre><code><span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">ProgressRing</span>(fraction: <span class="t">Float</span>, color: <span class="t">Color</span>) {
+    <span class="k">val</span> f <span class="k">by</span> <span class="f">animateFloatAsState</span>(fraction, <span class="f">tween</span>(<span class="n">1000</span>, easing = <span class="t">FastOutSlowInEasing</span>))
+    <span class="t">Canvas</span>(<span class="t">Modifier</span>.<span class="f">size</span>(<span class="n">64</span>.dp)) {
+        <span class="k">val</span> sw = <span class="n">7</span>.dp.toPx()
+        <span class="f">drawArc</span>(color.<span class="f">copy</span>(alpha = <span class="n">.15f</span>), <span class="n">0f</span>, <span class="n">360f</span>, <span class="k">false</span>, style = <span class="t">Stroke</span>(sw))
+        <span class="f">drawArc</span>(color, -<span class="n">90f</span>, <span class="n">360f</span> * f, <span class="k">false</span>, style = <span class="t">Stroke</span>(sw, cap = <span class="t">StrokeCap</span>.Round))
+    }
+}</code></pre>
+
+  <h3><span class="num">9</span>Confettis de victoire<span class="tag">100% commonMain</span></h3>
+  <p>Pas besoin de librairie native (qui casserait sur iOS). Une poignée de particules simulées dans un <code>Canvas</code> + <code>withFrameNanos</code> suffit, et tourne partout.</p>
+  <pre><code><span class="k">private data class</span> <span class="t">Conf</span>(<span class="k">var</span> x:<span class="t">Float</span>,<span class="k">var</span> y:<span class="t">Float</span>,<span class="k">val</span> vx:<span class="t">Float</span>,<span class="k">var</span> vy:<span class="t">Float</span>,<span class="k">val</span> c:<span class="t">Color</span>,<span class="k">val</span> r:<span class="t">Float</span>)
+
+<span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">Confetti</span>(palette: <span class="t">List</span>&lt;<span class="t">Color</span>&gt;) {
+    <span class="k">val</span> parts = <span class="f">remember</span> { <span class="t">List</span>(<span class="n">40</span>) { <span class="t">Conf</span>(<span class="n">0.5f</span>, <span class="n">0.15f</span>,
+        (<span class="t">Random</span>.<span class="f">nextFloat</span>()-<span class="n">.5f</span>)*<span class="n">.9f</span>, -<span class="t">Random</span>.<span class="f">nextFloat</span>()*<span class="n">.4f</span>,
+        palette.<span class="f">random</span>(), <span class="t">Random</span>.<span class="f">nextFloat</span>()*<span class="n">6</span>+<span class="n">4</span>) } }
+    <span class="k">var</span> t <span class="k">by</span> <span class="f">remember</span> { <span class="f">mutableStateOf</span>(<span class="n">0f</span>) }
+    <span class="f">LaunchedEffect</span>(<span class="t">Unit</span>) { <span class="k">while</span> (<span class="k">true</span>) { <span class="f">withFrameNanos</span> { t += <span class="n">0.016f</span> }
+        parts.<span class="f">forEach</span> { it.x += it.vx*<span class="n">.016f</span>; it.vy += <span class="n">.9f</span>*<span class="n">.016f</span>; it.y += it.vy*<span class="n">.016f</span> } } }
+    <span class="t">Canvas</span>(<span class="t">Modifier</span>.<span class="f">fillMaxSize</span>()) {
+        parts.<span class="f">forEach</span> { <span class="f">drawCircle</span>(it.c, it.r, <span class="t">Offset</span>(it.x*size.width, it.y*size.height)) }
+    }
+}</code></pre>
+
+  <hr class="hr" />
+
+  <!-- 10 — MULTIPLAYER SCREENS -->
+  <h2>Le classement de partie (multijoueur)</h2>
+  <h3><span class="num">10</span>Solo sans fin, multi qui s'arrête</h3>
+  <p>Le <b>mode solo</b> reste volontairement <b>sans fin</b> — aucun changement à faire. C'est la <b>partie multijoueur</b> qui se termine : après un <b>nombre fixé de questions</b>, ou quand <b>l'hôte</b> décide d'arrêter. C'est elle qui porte le classement.</p>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Score de partie</b> — distinct de l'ELO : des <b>points par partie</b> (bonne réponse × rapidité). C'est ce score qui trie le podium.</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Entre 2 questions</b> — émets <code>standings</code> (liste triée) ; l'UI affiche le classement provisoire, puis l'hôte appelle <code>nextQuestion()</code>.</p></div>
+  <div class="row"><div class="dot"></div><p style="margin:0"><b class="lead">Fin de partie</b> — sur <code>questionIndex == total</code> <b>ou</b> <code>host.endGame()</code>, émets <code>Finished</code> : même écran, état final + confettis (§9) + gain ELO animé (§7).</p></div>
+  <pre><code><span class="c">// MultiplayerViewModel — pseudo-diff</span>
+<span class="k">data class</span> <span class="t">Standing</span>(<span class="k">val</span> player: <span class="t">Player</span>, <span class="k">val</span> points: <span class="t">Int</span>, <span class="k">val</span> correct: <span class="t">Int</span>)
+
+<span class="k">fun</span> <span class="f">onRoundComplete</span>() {
+    <span class="k">val</span> standings = players.<span class="f">map</span> { <span class="t">Standing</span>(it, it.points, it.correct) }.<span class="f">sortedByDescending</span> { it.points }
+    _state.value = <span class="k">if</span> (questionIndex + <span class="n">1</span> &gt;= totalQuestions || host.ended)
+        <span class="t">MultiState</span>.<span class="f">Finished</span>(standings, ratingDelta = me.rating - startRating)
+    <span class="k">else</span>
+        <span class="t">MultiState</span>.<span class="f">Standings</span>(standings, questionIndex + <span class="n">1</span>, totalQuestions)   <span class="c">// classement provisoire</span>
+}
+
+<span class="k">fun</span> <span class="f">nextQuestion</span>() { <span class="c">/* hôte uniquement */</span> questionIndex++; <span class="f">loadQuestion</span>() }</code></pre>
+
+  <h3><span class="num">11</span>Le podium + la liste<span class="tag">un seul composable, 2 états</span></h3>
+  <p>Provisoire et fin de partie partagent le <b>même</b> <code>Composable</code> — seul change l'en-tête (« Question 5/10 » vs « Partie terminée »), le pied (bouton <b>Manche suivante</b> de l'hôte vs <b>Rejouer</b>) et les confettis. Podium top 3 = un <code>Row</code> de trois colonnes de hauteurs différentes ; le reste = un <code>LazyColumn</code> avec ta ligne mise en avant. <i>Une vraie page « statistiques de session » (graphes, précision par thème…) pourra venir plus tard — la maquette « Pour plus tard » en pose la première pierre.</i></p>
+  <pre><code><span class="k">@Composable</span>
+<span class="k">fun</span> <span class="f">GameStandings</span>(standings: <span class="t">List</span>&lt;<span class="t">Standing</span>&gt;, final: <span class="t">Boolean</span>, isHost: <span class="t">Boolean</span>, onNext: () -&gt; <span class="t">Unit</span>) {
+    <span class="t">Column</span> {
+        <span class="k">if</span> (final) <span class="f">Confetti</span>(palette)                        <span class="c">// §9</span>
+        <span class="f">Header</span>(final)                                     <span class="c">// "Partie terminée" / "Question 5/10"</span>
+        <span class="f">Podium</span>(standings.<span class="f">take</span>(<span class="n">3</span>))                        <span class="c">// Row de 3 colonnes</span>
+        <span class="t">LazyColumn</span> { <span class="f">itemsIndexed</span>(standings.<span class="f">drop</span>(<span class="n">3</span>)) { i, s -&gt; <span class="f">StandingRow</span>(i + <span class="n">4</span>, s) } }
+        <span class="k">if</span> (final) <span class="f">ChunkyButton</span>(<span class="s">"Rejouer"</span>, …)             <span class="c">// §3</span>
+        <span class="k">else if</span> (isHost) <span class="f">ChunkyButton</span>(<span class="s">"Manche suivante"</span>, onClick = onNext)
+    }
+}</code></pre>
+
+  <div class="callout">
+    <b>Ordre d'intégration suggéré</b> — ① thème (§1–2) qui transforme déjà tout · ② les deux écrans (A–C) + boutons « chunky » (§3) · ③ feedback de réponse (§6) · ④ classement de partie + confettis + gain ELO (§7,9,10,11) · ⑤ transitions &amp; stagger (§4–5) en finition.
+  </div>
+
+</div>
+</body>
+</html>
