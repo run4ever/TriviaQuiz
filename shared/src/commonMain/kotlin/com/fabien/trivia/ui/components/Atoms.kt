@@ -26,8 +26,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import kotlin.random.Random
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.TriviaPalette
+import com.fabien.trivia.ui.theme.levelName
 
 /**
  * Bouton « chunky » 3D : une tranche pleine [deep] sous la face [color], qui s'enfonce au
@@ -116,10 +122,62 @@ fun ProgressRing(
     }
 }
 
-/** Pastille de niveau : couronne + libellé, sur fond [bg], texte/icône [fg]. */
+private class Confetto(
+    var x: Float,
+    var y: Float,
+    val vx: Float,
+    var vy: Float,
+    val color: Color,
+    val radius: Float,
+)
+
+/**
+ * Confettis de victoire — particules simulées dans un Canvas (100 % commonMain, marche sur iOS).
+ * Émises depuis le bas, projetées vers le haut puis retombent (gravité). Burst unique.
+ */
+@Composable
+fun Confetti(
+    palette: List<Color>,
+    modifier: Modifier = Modifier,
+    count: Int = 30,
+) {
+    val parts = remember {
+        List(count) {
+            Confetto(
+                x = 0.5f + (Random.nextFloat() - 0.5f) * 0.5f,
+                y = 1f,
+                vx = (Random.nextFloat() - 0.5f) * 0.9f,
+                vy = -(Random.nextFloat() * 0.7f + 0.7f),
+                color = palette.random(),
+                radius = Random.nextFloat() * 6f + 4f,
+            )
+        }
+    }
+    var tick by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            withFrameNanos {
+                parts.forEach { p ->
+                    p.x += p.vx * 0.016f
+                    p.vy += 1.4f * 0.016f // gravité
+                    p.y += p.vy * 0.016f
+                }
+                tick++
+            }
+        }
+    }
+    Canvas(modifier = modifier.fillMaxSize()) {
+        tick // lecture pour redessiner à chaque frame
+        parts.forEach { p ->
+            drawCircle(p.color, p.radius, Offset(p.x * size.width, p.y * size.height))
+        }
+    }
+}
+
+/** Pastille de niveau : couronne + points + libellé du niveau, sur fond [bg], texte/icône [fg]. */
 @Composable
 fun LevelPill(
-    label: String,
+    rating: Int,
     bg: Color,
     fg: Color,
     modifier: Modifier = Modifier,
@@ -132,6 +190,7 @@ fun LevelPill(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(AppIcons.Crown, contentDescription = null, tint = fg, modifier = Modifier.size(12.dp))
-        Text(label, style = MaterialTheme.typography.labelSmall, color = fg)
+        Text("$rating", style = MaterialTheme.typography.labelSmall, color = fg)
+        Text(rating.levelName(), style = MaterialTheme.typography.labelSmall, color = fg)
     }
 }

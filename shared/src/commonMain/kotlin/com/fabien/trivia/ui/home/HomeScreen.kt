@@ -283,6 +283,6 @@ private fun CatPick(category: Category, rating: Int, modifier: Modifier) {
             color = TriviaPalette.ink
         )
         Spacer(Modifier.height(4.dp))
-        LevelPill(label = rating.levelName(), bg = colors.tint, fg = colors.deep)
+        LevelPill(rating = rating, bg = colors.tint, fg = colors.deep)
     }
 }

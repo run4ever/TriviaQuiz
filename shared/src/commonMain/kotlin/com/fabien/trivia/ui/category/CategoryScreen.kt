@@ -44,7 +44,6 @@ import com.fabien.trivia.ui.theme.SIGNUP_RATING
 import com.fabien.trivia.ui.theme.TriviaPalette
 import com.fabien.trivia.ui.theme.catColors
 import com.fabien.trivia.ui.theme.categoryIcon
-import com.fabien.trivia.ui.theme.levelName
 
 @Composable
 fun CategoryScreen(
@@ -146,7 +145,7 @@ private fun CategoryCard(category: Category, rating: Int, onClick: () -> Unit) {
             Column {
                 Text(category.displayName, style = MaterialTheme.typography.titleMedium, color = Color.White)
                 Spacer(Modifier.height(6.dp))
-                LevelPill(label = rating.levelName(), bg = Color.White.copy(alpha = 0.18f), fg = Color.White)
+                LevelPill(rating = rating, bg = Color.White.copy(alpha = 0.18f), fg = Color.White)
             }
         }
     }

@@ -42,8 +42,26 @@ class StreakRepository(database: TriviaDatabase) {
         return if (last == today || last == today - 1) streak else 0
     }
 
+    // --- Suite de bonnes réponses consécutives (solo) ---
+    // Persistée : elle continue d'une session/d'un jour à l'autre et ne se brise QUE sur une
+    // mauvaise réponse (aucune notion de date ici, contrairement à la série de jours ci-dessus).
+
+    fun correctStreak(): Int = read(KEY_CORRECT) ?: 0
+    fun bestCorrectStreak(): Int = read(KEY_BEST_CORRECT) ?: 0
+
+    /** Enregistre une réponse : +1 si correcte, remise à 0 sinon. Renvoie (suite courante, meilleure). */
+    fun recordAnswer(correct: Boolean): Pair<Int, Int> {
+        val current = if (correct) (read(KEY_CORRECT) ?: 0) + 1 else 0
+        queries.upsertRating(KEY_CORRECT, current.toLong())
+        val best = maxOf(read(KEY_BEST_CORRECT) ?: 0, current)
+        queries.upsertRating(KEY_BEST_CORRECT, best.toLong())
+        return current to best
+    }
+
     private companion object {
         const val KEY_COUNT = "streak_count"
         const val KEY_LAST_DAY = "streak_lastday"
+        const val KEY_CORRECT = "correct_streak"
+        const val KEY_BEST_CORRECT = "best_correct_streak"
     }
 }

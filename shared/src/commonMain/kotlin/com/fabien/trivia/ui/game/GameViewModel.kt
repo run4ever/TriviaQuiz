@@ -32,7 +32,11 @@ data class GameState(
     val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 750 },
     val lastRatingDelta: Int = 0,
     val selectedCategory: Category? = null,
-    val streak: Int = 0
+    val streak: Int = 0,
+    /** Bonnes réponses consécutives (solo), PERSISTÉE : continue d'un jour/session à l'autre, remise à 0 sur erreur. ≠ série de jours [streak]. */
+    val correctStreak: Int = 0,
+    /** Meilleure suite de bonnes réponses (record persistant, pour le futur écran de stats). */
+    val bestCorrectStreak: Int = 0
 ) {
     val displayedRating: Int
         get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 750 else playerRating
@@ -48,7 +52,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings(),
-        streak = streakRepository.currentStreak()
+        streak = streakRepository.currentStreak(),
+        correctStreak = streakRepository.correctStreak(),
+        bestCorrectStreak = streakRepository.bestCorrectStreak()
     ))
     val state: StateFlow<GameState> = _state.asStateFlow()
 
@@ -144,7 +150,10 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             selectedCategory = category,
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
-            streak = streak
+            streak = streak,
+            // La suite de bonnes réponses persiste (ne repart pas à 0 à chaque partie).
+            correctStreak = _state.value.correctStreak,
+            bestCorrectStreak = _state.value.bestCorrectStreak
         )
     }
 
@@ -176,12 +185,17 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
+        // Suite de bonnes réponses (persistée) : +1 si correct, remise à 0 sinon ; on garde la meilleure.
+        val (newCorrectStreak, newBestCorrectStreak) = streakRepository.recordAnswer(isCorrect)
+
         if (current.selectedCategory != null) {
             _state.value = current.copy(
                 selectedAnswerIndex = index,
                 answerConfirmed = true,
                 categoryRatings = newCategoryRatings,
-                lastRatingDelta = categoryDelta
+                lastRatingDelta = categoryDelta,
+                correctStreak = newCorrectStreak,
+                bestCorrectStreak = newBestCorrectStreak
             )
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
@@ -192,7 +206,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 answerConfirmed = true,
                 playerRating = newPlayerRating,
                 categoryRatings = newCategoryRatings,
-                lastRatingDelta = globalDelta
+                lastRatingDelta = globalDelta,
+                correctStreak = newCorrectStreak,
+                bestCorrectStreak = newBestCorrectStreak
             )
             ratingsRepository.savePlayerRating(newPlayerRating)
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
@@ -230,7 +246,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         _state.value = GameState(
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
-            streak = _state.value.streak
+            streak = _state.value.streak,
+            correctStreak = _state.value.correctStreak,
+            bestCorrectStreak = _state.value.bestCorrectStreak
         )
     }
 
