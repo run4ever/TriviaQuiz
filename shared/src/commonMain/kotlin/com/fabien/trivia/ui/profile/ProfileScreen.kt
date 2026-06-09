@@ -57,6 +57,7 @@ fun ProfileScreen(
     playerRating: Int,
     categoryRatings: Map<Category, Int>,
     accountStatus: String,
+    pseudo: String,
     stats: ProfileStats,
     onOpenAccount: () -> Unit
 ) {
@@ -75,7 +76,7 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        AccountCard(accountStatus, onOpenAccount)
+        AccountCard(pseudo, accountStatus, onOpenAccount)
         GlobalLevelCard(playerRating, stats.globalBest, stats.globalBestDate)
 
         Text(
@@ -104,7 +105,11 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun AccountCard(accountStatus: String, onOpenAccount: () -> Unit) {
+private fun AccountCard(pseudo: String, accountStatus: String, onOpenAccount: () -> Unit) {
+    val hasPseudo = pseudo.isNotBlank()
+    val title = if (hasPseudo) "PSEUDO" else "COMPTE"
+    val value = if (hasPseudo) pseudo else accountStatus
+    val initial = value.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,20 +127,12 @@ private fun AccountCard(accountStatus: String, onOpenAccount: () -> Unit) {
                 .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = accountStatus.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White
-            )
+            Text(text = initial, style = MaterialTheme.typography.titleLarge, color = Color.White)
         }
         Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, style = MaterialTheme.typography.labelSmall, color = TriviaPalette.inkFaint)
             Text(
-                text = "COMPTE",
-                style = MaterialTheme.typography.labelSmall,
-                color = TriviaPalette.inkFaint
-            )
-            Text(
-                text = accountStatus,
+                text = value,
                 style = MaterialTheme.typography.titleMedium,
                 color = TriviaPalette.ink,
                 maxLines = 1

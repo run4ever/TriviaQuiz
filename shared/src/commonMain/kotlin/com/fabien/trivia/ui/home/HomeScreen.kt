@@ -53,6 +53,7 @@ fun HomeScreen(
     playerRating: Int,
     categoryRatings: Map<Category, Int>,
     streak: Int,
+    pseudo: String,
     onStartAllCategories: () -> Unit,
     onChooseCategory: () -> Unit
 ) {
@@ -63,7 +64,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 14.dp)
     ) {
-        PlayerHeader(streak)
+        PlayerHeader(streak, pseudo)
         Spacer(Modifier.height(18.dp))
         LevelHeroCard(playerRating)
         Spacer(Modifier.height(16.dp))
@@ -91,7 +92,8 @@ private fun greetingWord(): String {
 }
 
 @Composable
-private fun PlayerHeader(streak: Int) {
+private fun PlayerHeader(streak: Int, pseudo: String) {
+    val hasPseudo = pseudo.isNotBlank()
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
@@ -100,11 +102,19 @@ private fun PlayerHeader(streak: Int) {
                 .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
             contentAlignment = Alignment.Center
         ) {
-            Icon(AppIcons.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+            if (hasPseudo) {
+                Text(
+                    text = pseudo.take(1).uppercase(),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White
+                )
+            } else {
+                Icon(AppIcons.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+            }
         }
         Spacer(Modifier.width(12.dp))
         Text(
-            text = greetingWord(),
+            text = if (hasPseudo) "${greetingWord()}, $pseudo" else greetingWord(),
             style = MaterialTheme.typography.headlineSmall,
             color = TriviaPalette.ink,
             modifier = Modifier.weight(1f)

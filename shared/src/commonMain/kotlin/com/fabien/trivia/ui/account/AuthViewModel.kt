@@ -54,8 +54,24 @@ class AuthViewModel(
 
     fun continueAsGuest() = launchAuth { repository.signInAnonymously() }
     fun signIn(email: String, password: String) = launchAuth { repository.signIn(email.trim(), password) }
-    fun register(email: String, password: String) = launchAuth { repository.register(email.trim(), password) }
-    fun linkEmail(email: String, password: String) = launchAuth { repository.linkEmail(email.trim(), password) }
+
+    /** Crée un compte email + enregistre le pseudo (les 3 champs sont obligatoires côté UI). */
+    fun register(email: String, password: String, pseudo: String) = launchAuth {
+        repository.register(email.trim(), password)
+        savePseudoFor(repository.currentUser?.uid, pseudo)
+    }
+
+    /** Convertit le compte invité en compte email (garde l'UID) + enregistre le pseudo. */
+    fun linkEmail(email: String, password: String, pseudo: String) = launchAuth {
+        repository.linkEmail(email.trim(), password)
+        savePseudoFor(repository.currentUser?.uid, pseudo)
+    }
+
+    private suspend fun savePseudoFor(uid: String?, pseudo: String) {
+        val p = pseudo.trim()
+        if (uid != null && p.isNotEmpty()) profiles.setPseudo(uid, p)
+    }
+
     fun signOut() = launchAuth { repository.signOut() }
 
     fun clearError() {

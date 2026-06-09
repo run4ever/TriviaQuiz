@@ -124,6 +124,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
                         accountStatus = accountStatus,
+                        pseudo = authState.pseudo,
                         stats = state.profileStats,
                         onOpenAccount = { showAccount = true }
                     )
@@ -135,6 +136,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
                         streak = state.streak,
+                        pseudo = authState.pseudo,
                         onStartAllCategories = { viewModel.startGame(null) },
                         onChooseCategory = viewModel::goToCategorySelect
                     )

@@ -42,9 +42,9 @@ fun AccountScreen(
     modifier: Modifier = Modifier,
     state: AuthUiState,
     onSignIn: (String, String) -> Unit,
-    onRegister: (String, String) -> Unit,
+    onRegister: (email: String, password: String, pseudo: String) -> Unit,
     onContinueAsGuest: () -> Unit,
-    onLinkEmail: (String, String) -> Unit,
+    onLinkEmail: (email: String, password: String, pseudo: String) -> Unit,
     onSignOut: () -> Unit,
     onBack: () -> Unit,
     onPseudoChange: (String) -> Unit = {},
@@ -104,32 +104,53 @@ fun AccountScreen(
 private fun ColumnScope.SignedOutContent(
     state: AuthUiState,
     onSignIn: (String, String) -> Unit,
-    onRegister: (String, String) -> Unit,
+    onRegister: (String, String, String) -> Unit,
     onContinueAsGuest: () -> Unit
 ) {
     var registerMode by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var pseudo by remember { mutableStateOf("") }
+    var pseudoEdited by remember { mutableStateOf(false) }
 
     EmailPasswordFields(
         email = email,
         password = password,
-        onEmailChange = { email = it },
+        onEmailChange = {
+            email = it
+            // Tant que l'utilisateur n'a pas touché au pseudo, on le suggère depuis l'email.
+            if (registerMode && !pseudoEdited) pseudo = it.substringBefore("@")
+        },
         onPasswordChange = { password = it }
     )
+
+    if (registerMode) {
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(
+            value = pseudo,
+            onValueChange = { pseudo = it; pseudoEdited = true },
+            label = { Text("Pseudo") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 
     Spacer(Modifier.height(16.dp))
 
     Button(
-        onClick = { if (registerMode) onRegister(email, password) else onSignIn(email, password) },
+        onClick = { if (registerMode) onRegister(email, password, pseudo) else onSignIn(email, password) },
         modifier = Modifier.fillMaxWidth(),
-        enabled = !state.isBusy && email.isNotBlank() && password.isNotBlank()
+        enabled = !state.isBusy && email.isNotBlank() && password.isNotBlank() &&
+            (!registerMode || pseudo.isNotBlank())
     ) {
         Text(if (registerMode) "Créer un compte" else "Se connecter")
     }
 
     TextButton(
-        onClick = { registerMode = !registerMode },
+        onClick = {
+            registerMode = !registerMode
+            if (registerMode && !pseudoEdited) pseudo = email.substringBefore("@")
+        },
         modifier = Modifier.align(Alignment.CenterHorizontally)
     ) {
         Text(
@@ -152,11 +173,13 @@ private fun ColumnScope.SignedOutContent(
 @Composable
 private fun ColumnScope.GuestContent(
     state: AuthUiState,
-    onLinkEmail: (String, String) -> Unit,
+    onLinkEmail: (String, String, String) -> Unit,
     onSignOut: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var pseudo by remember { mutableStateOf("") }
+    var pseudoEdited by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -182,16 +205,28 @@ private fun ColumnScope.GuestContent(
     EmailPasswordFields(
         email = email,
         password = password,
-        onEmailChange = { email = it },
+        onEmailChange = {
+            email = it
+            if (!pseudoEdited) pseudo = it.substringBefore("@")
+        },
         onPasswordChange = { password = it }
+    )
+
+    Spacer(Modifier.height(8.dp))
+    OutlinedTextField(
+        value = pseudo,
+        onValueChange = { pseudo = it; pseudoEdited = true },
+        label = { Text("Pseudo") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
     )
 
     Spacer(Modifier.height(16.dp))
 
     Button(
-        onClick = { onLinkEmail(email, password) },
+        onClick = { onLinkEmail(email, password, pseudo) },
         modifier = Modifier.fillMaxWidth(),
-        enabled = !state.isBusy && email.isNotBlank() && password.isNotBlank()
+        enabled = !state.isBusy && email.isNotBlank() && password.isNotBlank() && pseudo.isNotBlank()
     ) {
         Text("Créer mon compte")
     }
