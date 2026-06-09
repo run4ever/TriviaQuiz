@@ -133,6 +133,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     )
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),
+                        categoryRatings = state.categoryRatings,
                         onSelectCategory = { viewModel.startGame(it) },
                         onGoBack = viewModel::goHome
                     )

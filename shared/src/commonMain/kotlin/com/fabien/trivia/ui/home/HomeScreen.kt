@@ -140,18 +140,20 @@ private fun LevelHeroCard(playerRating: Int) {
                     color = Color.White
                 )
                 Spacer(Modifier.height(2.dp))
-                Row(verticalAlignment = Alignment.Bottom) {
+                Row {
                     Text(
                         text = "$playerRating",
                         style = MaterialTheme.typography.titleLarge,
-                        color = TriviaPalette.gold
+                        color = TriviaPalette.gold,
+                        modifier = Modifier.alignByBaseline()
                     )
                     Spacer(Modifier.width(6.dp))
                     val next = Rank.next(playerRating)
                     Text(
                         text = if (next != null) "pts · ${next.min - playerRating} pour ${next.label}" else "pts · rang max",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFFC9BEFF)
+                        color = Color(0xFFC9BEFF),
+                        modifier = Modifier.alignByBaseline()
                     )
                 }
             }
