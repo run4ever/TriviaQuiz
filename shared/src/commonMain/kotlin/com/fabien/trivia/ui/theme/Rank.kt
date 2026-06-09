@@ -44,8 +44,15 @@ fun progressToNextRank(rating: Int): Float {
 const val STRENGTH_MIN = 1200 // « Tes points forts » : rating >= ce seuil
 const val WEAKNESS_MAX = 1000  // « Tes axes d'amélioration » : rating <= ce seuil
 
-fun Map<Category, Int>.strengths(): List<Map.Entry<Category, Int>> =
-    entries.filter { it.value >= STRENGTH_MIN }.sortedByDescending { it.value }.take(3)
+fun Map<Category, Int>.strengths(): List<Map.Entry<Category, Int>> {
+    val strong = entries.filter { it.value >= STRENGTH_MIN }.sortedByDescending { it.value }.take(3)
+    if (strong.isNotEmpty()) return strong
+    // Secours : si aucune catégorie ne dépasse STRENGTH_MIN, on met en avant la meilleure —
+    // mais seulement si elle est au-dessus de la zone « faible » (évite un 750 affiché comme
+    // point fort, et tout doublon avec weaknesses()).
+    val best = entries.maxByOrNull { it.value }
+    return if (best != null && best.value > WEAKNESS_MAX) listOf(best) else emptyList()
+}
 
 fun Map<Category, Int>.weaknesses(): List<Map.Entry<Category, Int>> =
     entries.filter { it.value <= WEAKNESS_MAX }.sortedBy { it.value }.take(3)
