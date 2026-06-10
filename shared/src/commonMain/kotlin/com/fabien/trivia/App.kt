@@ -21,6 +21,7 @@ import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.ui.account.AccountScreen
 import com.fabien.trivia.ui.account.AuthViewModel
+import com.fabien.trivia.ui.admin.AdminExportScreen
 import com.fabien.trivia.ui.category.CategoryScreen
 import com.fabien.trivia.ui.game.GamePhase
 import com.fabien.trivia.ui.game.GameScreen
@@ -41,6 +42,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
     val multiplayerViewModel = viewModel { MultiplayerViewModel() }
     var currentTab by remember { mutableStateOf(AppTab.GAME) }
     var showAccount by remember { mutableStateOf(false) }
+    var showAdmin by remember { mutableStateOf(false) }
 
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
@@ -118,7 +120,12 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     )
                 }
 
-                AppTab.PROFILE -> if (showAccount) {
+                AppTab.PROFILE -> if (showAdmin) {
+                    AdminExportScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        onBack = { showAdmin = false },
+                    )
+                } else if (showAccount) {
                     AccountScreen(
                         modifier = Modifier.padding(innerPadding),
                         state = authState,
@@ -138,6 +145,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                             showAccount = false
                             authViewModel.clearError()
                         },
+                        isAdmin = authState.isAdmin,
+                        onOpenAdmin = { showAdmin = true },
                     )
                 } else {
                     ProfileScreen(

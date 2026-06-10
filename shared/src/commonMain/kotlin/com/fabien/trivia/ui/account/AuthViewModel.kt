@@ -21,7 +21,13 @@ data class AuthUiState(
 
     /** Vrai compte email (≠ invité anonyme) → écran « Mon compte » (maquette 9). */
     val isEmailUser: Boolean get() = user != null && user.isAnonymous == false
+
+    /** Compte administrateur (Fabien) → débloque l'écran d'export Firestore. */
+    val isAdmin: Boolean get() = user?.email?.equals(ADMIN_EMAIL, ignoreCase = true) == true
 }
+
+/** Email du seul compte autorisé à voir les outils d'administration (export Firestore). */
+const val ADMIN_EMAIL = "fabien.laurette@gmail.com"
 
 class AuthViewModel(
     private val repository: AuthRepository = AuthRepository(),

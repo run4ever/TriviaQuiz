@@ -4,6 +4,8 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 
 /**
  * Document Firestore d'une question, dans la collection `questions`.
@@ -30,6 +32,27 @@ private fun Question.toDto() = QuestionDto(
 )
 
 /**
+ * Question telle qu'exportée (collection `questions` → JSON pour partager le set, p. ex. avec une IA
+ * à qui demander d'en générer de nouvelles). Contrairement au [QuestionDto] interne, on **inclut le
+ * slug `id`** (qui est l'id du document Firestore) car c'est lui qui porte la convention de nommage.
+ */
+@Serializable
+private data class QuestionExportDto(
+    val id: String,
+    val category: String,
+    val text: String,
+    val options: List<String>,
+    val correctIndex: Int,
+    val explanation: String,
+    val rating: Int
+)
+
+/** Résultat d'un export : le JSON formaté + le nombre de questions, pour le retour UI. */
+data class QuestionsExport(val count: Int, val json: String)
+
+private val exportJson = Json { prettyPrint = true; prettyPrintIndent = "  " }
+
+/**
  * Source distante des questions (Firestore, collection `questions`).
  *
  * Offline-first : Firestore sert les lectures depuis son cache local quand le réseau manque
@@ -40,6 +63,29 @@ private fun Question.toDto() = QuestionDto(
 class RemoteQuestionRepository(private val firestore: FirebaseFirestore = Firebase.firestore) {
 
     private val collection get() = firestore.collection("questions")
+
+    /**
+     * Exporte toute la collection `questions` en JSON formaté (indenté, trié par catégorie puis par
+     * slug pour que la couverture et les trous sautent aux yeux). Inclut le slug `id` de chaque doc.
+     * Sert à partager le set existant (sauvegarde, ou à donner à une IA pour générer de nouvelles
+     * questions dans le même format).
+     */
+    suspend fun exportAsJson(): QuestionsExport {
+        val questions = fetchAll().sortedWith(compareBy({ it.category.ordinal }, { it.id }))
+        val dtos = questions.map { q ->
+            QuestionExportDto(
+                id = q.id,
+                category = q.category.name,
+                text = q.text,
+                options = q.options,
+                correctIndex = q.correctIndex,
+                explanation = q.explanation,
+                rating = q.rating
+            )
+        }
+        val json = exportJson.encodeToString(ListSerializer(QuestionExportDto.serializer()), dtos)
+        return QuestionsExport(count = dtos.size, json = json)
+    }
 
     /** Récupère toutes les questions distantes. Liste vide si la collection est vide/inaccessible. */
     suspend fun fetchAll(): List<Question> {

@@ -68,6 +68,8 @@ fun AccountScreen(
     onSavePseudo: (String) -> Unit,
     onSignOut: () -> Unit,
     onBack: () -> Unit,
+    isAdmin: Boolean = false,
+    onOpenAdmin: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -84,6 +86,8 @@ fun AccountScreen(
                 error = state.error,
                 onSavePseudo = onSavePseudo,
                 onSignOut = onSignOut,
+                isAdmin = isAdmin,
+                onOpenAdmin = onOpenAdmin,
             )
         } else {
             AuthContent(
@@ -308,6 +312,8 @@ private fun ColumnScope.SignedInContent(
     error: String?,
     onSavePseudo: (String) -> Unit,
     onSignOut: () -> Unit,
+    isAdmin: Boolean,
+    onOpenAdmin: () -> Unit,
 ) {
     val baloo = MaterialTheme.typography.titleMedium.fontFamily
     val nunito = MaterialTheme.typography.bodyMedium.fontFamily
@@ -402,6 +408,20 @@ private fun ColumnScope.SignedInContent(
 
         if (error != null) {
             Text(error, style = MaterialTheme.typography.bodyMedium, color = TriviaPalette.bad)
+        }
+
+        // Outils d'administration (réservé au compte admin) : export Firestore.
+        if (isAdmin) {
+            ChunkyButton(
+                onClick = onOpenAdmin,
+                color = TriviaPalette.night,
+                deep = Color(0xFF000000),
+                shape = RoundedCornerShape(15.dp),
+                depth = 6.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                CenteredButtonLabel(icon = AppIcons.Share, text = "Admin — Exporter les questions", baloo = baloo)
+            }
         }
 
         Spacer(Modifier.weight(1f))
