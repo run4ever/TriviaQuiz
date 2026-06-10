@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,6 +38,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.shape.CircleShape
+import com.fabien.trivia.ui.components.Confetti
 import com.fabien.trivia.ui.components.ProgressRing
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,6 +56,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -808,100 +809,184 @@ private fun MScoreRow(
     }
 }
 
+// ── Écran 7 · Résultats (podium festif, fond nuit) — refonte Vitamine ──────
+private val ResultsNavy = Color(0xFF1B1733)
+private val ResultsSubtle = Color(0xFFB6ACDF)
+
 @Composable
 private fun ResultsContent(state: MultiplayerUiState, onReplay: () -> Unit, onLeave: () -> Unit) {
-    ScreenScaffold(title = "Résultats", onBack = onLeave, backLabel = "< Quitter") {
-        val ranked = state.players.sortedByDescending { it.score }
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val ranked = state.players.sortedByDescending { it.score }
+    val colorOf = playerColorMap(state.players)
+    val winner = ranked.firstOrNull()?.pseudo
 
-        if (ranked.isNotEmpty()) Podium(ranked)
+    Box(modifier = Modifier.fillMaxSize().background(ResultsNavy)) {
+        // Halo radial violet en haut
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-70).dp)
+                .size(320.dp)
+                .background(Brush.radialGradient(listOf(Color(0x557A5AF8), Color(0x007A5AF8))))
+        )
+        // Confettis de célébration
+        Confetti(
+            palette = listOf(Color(0xFFF5B716), TriviaPalette.brand, Color(0xFFEC4899), Color(0xFF1FA84B), Color(0xFF3B82F6), Color(0xFF0FA697)),
+            modifier = Modifier.fillMaxSize(),
+            count = 40
+        )
 
-        // Les joueurs au-delà du podium, en liste.
-        ranked.drop(3).forEachIndexed { i, player ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 20.dp)
+        ) {
+            // Lien Quitter
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onLeave).padding(horizontal = 4.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "${i + 4}. ${player.pseudo}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Text("${player.score} pts", style = MaterialTheme.typography.titleMedium)
+                Icon(AppIcons.ChevronLeft, contentDescription = null, tint = ResultsSubtle, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.size(3.dp))
+                Text("Quitter", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = ResultsSubtle))
             }
-        }
 
-        Spacer(Modifier.height(24.dp))
-        if (state.isHost) {
-            Button(onClick = onReplay, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
-                Text("Rejouer")
+            // Trophée + titre
+            Column(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier.size(72.dp).clip(CircleShape).background(Brush.linearGradient(listOf(Color(0xFFF5B716), Color(0xFFE5890F)))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(AppIcons.Trophy, contentDescription = null, tint = Color.White, modifier = Modifier.size(38.dp))
+                }
+                Spacer(Modifier.height(10.dp))
+                Text("Résultats", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 27.sp, color = Color.White))
+                if (winner != null) {
+                    Text("$winner remporte la partie 🎉", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 13.5.sp, color = ResultsSubtle), modifier = Modifier.padding(top = 2.dp))
+                }
             }
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
-                Text("Revenir à l'accueil")
+
+            Spacer(Modifier.height(26.dp))
+            if (ranked.isNotEmpty()) ResultsPodium(ranked, colorOf)
+
+            // Joueurs au-delà du podium (4e+)
+            ranked.drop(3).forEachIndexed { i, player ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("${i + 4}. ${player.pseudo}", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.White), modifier = Modifier.weight(1f))
+                    Text("${player.score} pts", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = ResultsSubtle))
+                }
             }
-        } else {
-            Text(
-                text = "En attente de l'hôte (nouvelle partie ou fin)…",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(16.dp))
-            OutlinedButton(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
-                Text("Quitter")
+
+            Spacer(Modifier.height(24.dp))
+            if (state.isHost) {
+                MChunkyButton(text = "Rejouer", icon = AppIcons.Play, onClick = onReplay, enabled = !state.isBusy, modifier = Modifier.fillMaxWidth())
+                Spacer(Modifier.height(11.dp))
+                NightOutlineButton(text = "Revenir à l'accueil", icon = AppIcons.Home, onClick = onLeave)
+            } else {
+                Text(
+                    text = "En attente de l'hôte (nouvelle partie ou fin)…",
+                    style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = ResultsSubtle),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(14.dp))
+                NightOutlineButton(text = "Quitter", icon = null, onClick = onLeave)
+            }
+
+            if (state.error != null) {
+                Spacer(Modifier.height(14.dp))
+                Text(state.error, style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color(0xFFFFB4AB)), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             }
         }
-        ErrorAndBusy(state)
     }
 }
 
+/** Podium festif (2e à gauche, 1er au centre avec couronne, 3e à droite), aligné en bas. */
 @Composable
-private fun Podium(ranked: List<GamePlayer>) {
+private fun ResultsPodium(ranked: List<GamePlayer>, colorOf: Map<String, Color>) {
     val first = ranked.getOrNull(0)
     val second = ranked.getOrNull(1)
     val third = ranked.getOrNull(2)
-    Spacer(Modifier.height(8.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.Bottom
     ) {
-        // Disposition classique : 2e à gauche, 1er au centre (plus haut), 3e à droite.
-        if (second != null) PodiumColumn(second, 2, 96.dp, Modifier.weight(1f))
-        if (first != null) PodiumColumn(first, 1, 128.dp, Modifier.weight(1f))
-        if (third != null) PodiumColumn(third, 3, 72.dp, Modifier.weight(1f))
+        if (second != null) ResultsPodiumColumn(second, 2, 96.dp, colorOf[second.id] ?: TriviaPalette.brand, Modifier.weight(1f))
+        if (first != null) ResultsPodiumColumn(first, 1, 150.dp, colorOf[first.id] ?: TriviaPalette.brand, Modifier.weight(1f))
+        if (third != null) ResultsPodiumColumn(third, 3, 72.dp, colorOf[third.id] ?: TriviaPalette.brand, Modifier.weight(1f))
     }
-    Spacer(Modifier.height(16.dp))
 }
 
 @Composable
-private fun PodiumColumn(player: GamePlayer, rank: Int, barHeight: Dp, modifier: Modifier) {
-    val barColor = when (rank) {
-        1 -> Color(0xFFFFD54F) // or
-        2 -> Color(0xFFB0BEC5) // argent
-        else -> Color(0xFFBCAAA4) // bronze
+private fun ResultsPodiumColumn(player: GamePlayer, rank: Int, barHeight: Dp, color: Color, modifier: Modifier) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val initial = player.pseudo.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+    val barGradient = when (rank) {
+        1 -> listOf(Color(0xFFF5B716), Color(0xFFE5890F))      // or
+        2 -> listOf(Color(0xFFC5CCD6), Color(0xFF9AA4B2))      // argent
+        else -> listOf(Color(0xFFCDA879), Color(0xFFA67044))   // bronze
     }
+    val avatarSize = if (rank == 1) 60.dp else 50.dp
+
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = player.pseudo,
-            style = MaterialTheme.typography.labelLarge,
-            maxLines = 1
-        )
-        Text(
-            text = "${player.score} pts",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.height(4.dp))
+        if (rank == 1) {
+            Icon(AppIcons.Crown, contentDescription = null, tint = Color(0xFFF5B716), modifier = Modifier.size(26.dp))
+            Spacer(Modifier.height(2.dp))
+        }
+        Box(
+            modifier = Modifier
+                .size(avatarSize)
+                .clip(CircleShape)
+                .background(color)
+                .border(3.dp, Color.White, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(initial, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = if (rank == 1) 25.sp else 21.sp, color = Color.White))
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(player.pseudo, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = Color.White), maxLines = 1)
+        Text("${player.score} pts", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 12.5.sp, color = ResultsSubtle))
+        Spacer(Modifier.height(9.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(barHeight)
-                .background(barColor, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
-            contentAlignment = Alignment.Center
+                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                .background(Brush.verticalGradient(barGradient)),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text("$rank", style = MaterialTheme.typography.headlineMedium, color = Color(0xFF333333))
+            Text("$rank", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 30.sp, color = Color.White), modifier = Modifier.padding(top = 12.dp))
         }
+    }
+}
+
+/** Bouton « contour clair » sur fond nuit (Revenir à l'accueil / Quitter). */
+@Composable
+private fun NightOutlineButton(text: String, icon: ImageVector?, onClick: () -> Unit) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color(0x1FFFFFFF))
+            .border(2.dp, Color(0x33FFFFFF), RoundedCornerShape(18.dp))
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        if (icon != null) {
+            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(19.dp))
+            Spacer(Modifier.size(9.dp))
+        }
+        Text(text, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 16.5.sp, color = Color.White))
     }
 }
 
