@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.animation.animateColorAsState
@@ -257,6 +253,7 @@ private fun CreateContent(
     }
 }
 
+// ── Écran « Rejoindre une partie » (saisie du code) — refonte Vitamine ─────
 @Composable
 private fun JoinContent(
     state: MultiplayerUiState,
@@ -266,26 +263,27 @@ private fun JoinContent(
 ) {
     var code by remember { mutableStateOf("") }
 
-    ScreenScaffold(title = "Rejoindre une partie", onBack = onBack, backLabel = "< Retour") {
-        PseudoField(state.pseudo, onPseudo)
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(
-            value = code,
-            onValueChange = { if (it.length <= 4) code = it.uppercase() },
-            label = { Text("Code de la partie") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(24.dp))
-        Button(
-            onClick = { onJoin(code) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isBusy && code.isNotBlank()
+    Column(modifier = Modifier.fillMaxSize().background(TriviaPalette.bg).imePadding()) {
+        MHeader(title = "Rejoindre une partie", backLabel = "Retour", onBack = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Text("Rejoindre")
+            MField(label = "Pseudo", value = state.pseudo, onValueChange = onPseudo)
+            MCodeField(value = code, onValueChange = { code = it })
+            MChunkyButton(
+                text = "Rejoindre",
+                icon = AppIcons.Play,
+                onClick = { onJoin(code) },
+                enabled = !state.isBusy && code.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            ErrorAndBusy(state)
         }
-        ErrorAndBusy(state)
     }
 }
 
@@ -991,39 +989,6 @@ private fun NightOutlineButton(text: String, icon: ImageVector?, onClick: () -> 
 }
 
 // ---------- Helpers ----------
-
-@Composable
-private fun ScreenScaffold(
-    title: String,
-    onBack: () -> Unit,
-    backLabel: String,
-    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)
-    ) {
-        TextButton(onClick = onBack) { Text(backLabel, style = MaterialTheme.typography.labelLarge) }
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(Modifier.height(24.dp))
-        content()
-    }
-}
-
-@Composable
-private fun PseudoField(pseudo: String, onPseudo: (String) -> Unit) {
-    OutlinedTextField(
-        value = pseudo,
-        onValueChange = onPseudo,
-        label = { Text("Pseudo") },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
 
 @Composable
 private fun androidx.compose.foundation.layout.ColumnScope.ErrorAndBusy(state: MultiplayerUiState) {

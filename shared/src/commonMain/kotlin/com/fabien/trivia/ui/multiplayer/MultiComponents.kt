@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -180,6 +181,53 @@ fun MContourButton(
             style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = textColor),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+/** Champ de saisie du code de partie : 4 caractères, centré, en majuscules. */
+@Composable
+fun MCodeField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val shape = RoundedCornerShape(15.dp)
+    Column(modifier) {
+        Text(
+            "CODE DE LA PARTIE",
+            style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 10.5.sp, letterSpacing = 0.6.sp, color = TriviaPalette.inkFaint),
+            modifier = Modifier.padding(start = 2.dp, bottom = 6.dp),
+        )
+        BasicTextField(
+            value = value,
+            onValueChange = { onValueChange(it.uppercase().filter { c -> c.isLetterOrDigit() }.take(4)) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            interactionSource = interaction,
+            textStyle = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp, letterSpacing = 8.sp, color = TriviaPalette.brand, textAlign = TextAlign.Center),
+            cursorBrush = SolidColor(TriviaPalette.brand),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
+            decorationBox = { inner ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .background(Color.White, shape)
+                        .then(if (focused) Modifier.border(4.dp, TriviaPalette.brand.copy(alpha = 0.13f), shape) else Modifier)
+                        .border(1.5.dp, if (focused) TriviaPalette.brand else TriviaPalette.line, shape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (value.isEmpty()) {
+                        Text("– – – –", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp, letterSpacing = 4.sp, color = TriviaPalette.inkFaint))
+                    }
+                    inner()
+                }
+            },
         )
     }
 }
