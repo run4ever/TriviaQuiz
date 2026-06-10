@@ -52,12 +52,22 @@ object AppIcons {
     val Close = line("x", "M6 6l12 12M18 6L6 18")
     val Check = line("check", "M5 12.5l4.5 4.5L19 6")
 
+    // Compte / formulaire (contour)
+    val Cloud = line("cloud", "M7 18a4 4 0 01-.5-7.97 5.5 5.5 0 0110.6-1.2A3.75 3.75 0 0117 18zM9.5 13.5l1.8 1.8 3.2-3.5")
+    val Mail = line("mail", "M3.5 6h17v12h-17zM3.8 6.6L12 13l8.2-6.4")
+    val User = line("user", "M12 12a4 4 0 100-8 4 4 0 000 8zM5 20v-.5a6 6 0 016-6h2a6 6 0 016 6v.5")
+    val Lock = line("lock", "M6 11V8a6 6 0 0112 0v3M5 11h14v9H5zM12 15v2.5")
+    val Eye = line("eye", "M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12zM12 15a3 3 0 100-6 3 3 0 000 6z")
+    val Shield = line("shield", "M12 3l8 3v5.5c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6z")
+    val Logout = line("logout", "M14 17l5-5-5-5M19 12H8M11 5H5a1 1 0 00-1 1v12a1 1 0 001 1h6")
+
     // Pleins
     val Star = fill("star", "M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8L3.5 9.2l5.9-.9z")
     val Crown = fill("crown", "M4 8l3.5 3L12 5l4.5 6L20 8l-1.5 10h-13L4 8z")
     val Flame = fill("flame", "M12 3c1 3 4 4.5 4 8a4 4 0 01-8 0c0-1.2.5-2 1-2.7C9.2 9.8 10 8 12 3z")
     val Play = fill("play", "M7 4l13 8-13 8V4z")
     val Bolt = fill("bolt", "M13 2L4.5 13.5H11l-1 8.5L18.5 10H12z")
+    val Sparkle = fill("sparkle", "M12 3.5l1.7 5 4.8 1.6-4.8 1.6L12 16.7l-1.7-5L5.5 10l4.8-1.6zM18.5 15.5l.7 2 .8.3-.8.3-.7 2-.7-2-.8-.3.8-.3z")
 }
 
 /** Icône de la catégorie (carte Catégories, pastilles de l'Accueil). */

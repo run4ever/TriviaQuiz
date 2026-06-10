@@ -47,9 +47,25 @@ fun App(driverFactory: DatabaseDriverFactory) {
         val authState by authViewModel.state.collectAsState()
         val mpState by multiplayerViewModel.state.collectAsState()
 
+        // Par défaut on a toujours un compte (anonyme) : à froid ou après une déconnexion,
+        // on crée/recrée un invité anonyme. L'UI traite `null` comme un invité le temps que
+        // ça se fasse (et reste utilisable hors-ligne si la création échoue).
+        LaunchedEffect(authState.user == null) {
+            if (authState.user == null) authViewModel.continueAsGuest()
+        }
+
         // À chaque changement d'utilisateur connecté, on (re)synchronise le rating avec Firestore.
         LaunchedEffect(authState.user?.uid) {
             viewModel.onUserChanged(authState.user?.uid)
+        }
+
+        // Pré-remplissage du pseudo multijoueur depuis le compte connecté (modifiable ensuite).
+        // Repli sur le préfixe de l'email si aucun pseudo n'est encore enregistré.
+        LaunchedEffect(authState.isEmailUser, authState.pseudo, authState.user?.email) {
+            if (authState.isEmailUser) {
+                val prefill = authState.pseudo.ifBlank { authState.user?.email?.substringBefore("@").orEmpty() }
+                if (prefill.isNotBlank()) multiplayerViewModel.prefillPseudo(prefill)
+            }
         }
 
         // Une partie multijoueur qui démarre compte aussi pour la série quotidienne.
@@ -107,16 +123,21 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         modifier = Modifier.padding(innerPadding),
                         state = authState,
                         onSignIn = authViewModel::signIn,
-                        onRegister = authViewModel::register,
-                        onContinueAsGuest = authViewModel::continueAsGuest,
-                        onLinkEmail = authViewModel::linkEmail,
+                        onSignUp = { email, password, pseudo ->
+                            // Invité anonyme → on convertit le compte (linkEmail garde l'UID et la
+                            // progression déjà synchronisée). Sinon création d'un compte neuf.
+                            if (authState.isGuest) authViewModel.linkEmail(email, password, pseudo)
+                            else authViewModel.register(email, password, pseudo)
+                        },
+                        onSavePseudo = { pseudo ->
+                            authViewModel.setPseudo(pseudo)
+                            authViewModel.savePseudo()
+                        },
                         onSignOut = authViewModel::signOut,
                         onBack = {
                             showAccount = false
                             authViewModel.clearError()
                         },
-                        onPseudoChange = authViewModel::setPseudo,
-                        onSavePseudo = authViewModel::savePseudo
                     )
                 } else {
                     ProfileScreen(
@@ -125,6 +146,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         categoryRatings = state.categoryRatings,
                         accountStatus = accountStatus,
                         pseudo = authState.pseudo,
+                        isSignedIn = authState.isEmailUser,
                         stats = state.profileStats,
                         onOpenAccount = { showAccount = true }
                     )

@@ -58,6 +58,7 @@ fun ProfileScreen(
     categoryRatings: Map<Category, Int>,
     accountStatus: String,
     pseudo: String,
+    isSignedIn: Boolean,
     stats: ProfileStats,
     onOpenAccount: () -> Unit
 ) {
@@ -76,7 +77,7 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        AccountCard(pseudo, accountStatus, onOpenAccount)
+        AccountCard(isSignedIn, pseudo, accountStatus, onOpenAccount)
         GlobalLevelCard(playerRating, stats.globalBest, stats.globalBestDate)
 
         Text(
@@ -105,7 +106,7 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun AccountCard(pseudo: String, accountStatus: String, onOpenAccount: () -> Unit) {
+private fun AccountCard(isSignedIn: Boolean, pseudo: String, accountStatus: String, onOpenAccount: () -> Unit) {
     val hasPseudo = pseudo.isNotBlank()
     val title = if (hasPseudo) "PSEUDO" else "COMPTE"
     val value = if (hasPseudo) pseudo else accountStatus
@@ -130,7 +131,12 @@ private fun AccountCard(pseudo: String, accountStatus: String, onOpenAccount: ()
             Text(text = initial, style = MaterialTheme.typography.titleLarge, color = Color.White)
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, style = MaterialTheme.typography.labelSmall, color = TriviaPalette.inkFaint)
+            if (isSignedIn) {
+                ConnectedBadge()
+                Spacer(Modifier.height(3.dp))
+            } else {
+                Text(text = title, style = MaterialTheme.typography.labelSmall, color = TriviaPalette.inkFaint)
+            }
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
@@ -139,6 +145,29 @@ private fun AccountCard(pseudo: String, accountStatus: String, onOpenAccount: ()
             )
         }
         Icon(AppIcons.ChevronRight, contentDescription = null, tint = TriviaPalette.inkFaint, modifier = Modifier.size(20.dp))
+    }
+}
+
+/** Badge « ✓ Connecté » (même style que la carte de l'écran « Mon compte »). */
+@Composable
+private fun ConnectedBadge() {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(TriviaPalette.goodTint)
+            .padding(horizontal = 9.dp, vertical = 3.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Icon(AppIcons.Check, contentDescription = null, tint = TriviaPalette.good, modifier = Modifier.size(12.dp))
+        Text(
+            text = "Connecté",
+            fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 10.5.sp,
+            letterSpacing = 0.3.sp,
+            color = TriviaPalette.good
+        )
     }
 }
 

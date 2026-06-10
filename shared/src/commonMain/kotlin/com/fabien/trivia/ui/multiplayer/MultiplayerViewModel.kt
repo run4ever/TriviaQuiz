@@ -67,6 +67,8 @@ class MultiplayerViewModel(
 
     private var myId: String? = null
     private var roomCode: String? = null
+    /** L'utilisateur a saisi son pseudo à la main → on ne le réécrase plus par un pré-remplissage. */
+    private var pseudoEdited: Boolean = false
     private var roomJob: Job? = null
     private var playersJob: Job? = null
     private var hostJob: Job? = null
@@ -111,6 +113,16 @@ class MultiplayerViewModel(
     }
 
     fun setPseudo(value: String) {
+        pseudoEdited = true
+        _state.value = _state.value.copy(pseudo = value)
+    }
+
+    /**
+     * Pré-remplit le pseudo depuis le compte connecté (piloté par [App] sur l'état d'auth).
+     * Ne fait rien si l'utilisateur l'a déjà modifié à la main, pour ne pas écraser sa saisie.
+     */
+    fun prefillPseudo(value: String) {
+        if (pseudoEdited || value.isBlank() || _state.value.pseudo == value) return
         _state.value = _state.value.copy(pseudo = value)
     }
 

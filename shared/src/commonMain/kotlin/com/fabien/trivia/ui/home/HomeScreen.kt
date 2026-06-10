@@ -114,7 +114,7 @@ private fun PlayerHeader(streak: Int, pseudo: String) {
         }
         Spacer(Modifier.width(12.dp))
         Text(
-            text = if (hasPseudo) "${greetingWord()}, $pseudo" else greetingWord(),
+            text = if (hasPseudo) "${greetingWord()} $pseudo" else greetingWord(),
             style = MaterialTheme.typography.headlineSmall,
             color = TriviaPalette.ink,
             modifier = Modifier.weight(1f)

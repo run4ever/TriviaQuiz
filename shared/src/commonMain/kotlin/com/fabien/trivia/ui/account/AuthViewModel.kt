@@ -18,6 +18,9 @@ data class AuthUiState(
 ) {
     val isSignedIn: Boolean get() = user != null
     val isGuest: Boolean get() = user?.isAnonymous == true
+
+    /** Vrai compte email (≠ invité anonyme) → écran « Mon compte » (maquette 9). */
+    val isEmailUser: Boolean get() = user != null && user.isAnonymous == false
 }
 
 class AuthViewModel(
