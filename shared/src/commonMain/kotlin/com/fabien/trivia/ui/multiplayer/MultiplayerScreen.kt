@@ -12,8 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,11 +31,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.shape.CircleShape
+import com.fabien.trivia.ui.components.ProgressRing
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -70,9 +72,6 @@ import com.fabien.trivia.data.multiplayer.GamePlayer
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.data.multiplayer.ScoringMode
 import kotlin.math.ceil
-
-private val ColorCorrect = Color(0xFF4CAF50)
-private val ColorWrong = Color(0xFFF44336)
 
 /** Point d'entrée du multijoueur. Rend l'écran selon la phase du [MultiplayerViewModel]. */
 @Composable
@@ -504,6 +503,7 @@ private fun LobbyWaitingSlot() {
     }
 }
 
+// ── Écrans 4-6 · Partie (question / faux / bon) — refonte Vitamine ──────────
 @Composable
 private fun GameContent(
     state: MultiplayerUiState,
@@ -511,142 +511,300 @@ private fun GameContent(
     onEndGame: () -> Unit,
     onLeave: () -> Unit
 ) {
-    ScreenScaffold(title = "Partie", onBack = onLeave, backLabel = "Quitter") {
-        val round = state.round
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val round = state.round
+
+    Column(modifier = Modifier.fillMaxSize().background(TriviaPalette.bg)) {
         if (round == null) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            return@ScreenScaffold
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = TriviaPalette.brand)
+            }
+            return
         }
 
         val reveal = round.phase == RoundPhase.REVEAL
-        // En mode illimité (questionCount null), le total n'a pas de sens → on masque le compteur.
         val unlimited = state.room?.questionCount == null
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            if (unlimited) {
-                Spacer(Modifier.weight(1f))
-            } else {
-                Text(
-                    text = "Question ${round.index + 1} / ${round.total}",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            if (!reveal) {
-                val seconds = ceil(round.remainingMs / 1000.0).toInt()
-                Text("⏱ $seconds s", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-            }
-        }
+        val colors = catColors(round.question.category)
+        val onHeader = Color.White
+        val translucent = Color.White.copy(alpha = 0.18f)
 
-        Spacer(Modifier.height(12.dp))
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-        ) {
-            Text(
-                text = round.question.text,
-                modifier = Modifier.padding(20.dp),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-
-        Spacer(Modifier.height(16.dp))
-        round.question.options.forEachIndexed { index, option ->
-            val isCorrect = index == round.question.correctIndex
-            val isMine = round.myChoice == index
-            val container = when {
-                reveal && isCorrect -> ColorCorrect
-                reveal && isMine -> ColorWrong
-                isMine -> MaterialTheme.colorScheme.tertiary
-                else -> MaterialTheme.colorScheme.primary
-            }
-            val content = when {
-                reveal && (isCorrect || isMine) -> Color.White
-                isMine -> MaterialTheme.colorScheme.onTertiary
-                else -> MaterialTheme.colorScheme.onPrimary
-            }
-            Button(
-                onClick = { onAnswer(index) },
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                enabled = round.phase == RoundPhase.ANSWERING && round.myChoice == null,
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = container,
-                    contentColor = content,
-                    disabledContainerColor = container,
-                    disabledContentColor = content
-                )
+        // En-tête coloré (couleur de la catégorie de la question)
+        Column(modifier = Modifier.fillMaxWidth().background(colors.main).padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = 16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(option, style = MaterialTheme.typography.bodyLarge)
+                Row(
+                    modifier = Modifier.clip(RoundedCornerShape(13.dp)).background(translucent).clickable(onClick = onLeave).padding(horizontal = 14.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(AppIcons.Close, contentDescription = null, tint = onHeader, modifier = Modifier.size(17.dp))
+                    Text("Quitter", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = onHeader))
+                }
+                Row(
+                    modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(translucent).padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
+                    Icon(categoryIcon(round.question.category), contentDescription = null, tint = onHeader, modifier = Modifier.size(15.dp))
+                    Text(round.question.category.displayName, style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = onHeader), maxLines = 1)
+                }
+                if (!reveal) {
+                    ProgressRing(
+                        fraction = round.timerFraction,
+                        ringSize = 40.dp,
+                        stroke = 5.dp,
+                        color = onHeader,
+                        track = Color.White.copy(alpha = 0.22f)
+                    ) {
+                        Text("${ceil(round.remainingMs / 1000.0).toInt()}", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = onHeader))
+                    }
+                } else {
+                    Spacer(Modifier.size(40.dp))
+                }
             }
-            Spacer(Modifier.height(8.dp))
-        }
-
-        if (!reveal && round.myChoice != null) {
-            Text(
-                text = "Réponse enregistrée — en attente des autres…",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        if (reveal) {
-            Scoreboard(state, round.index, round.question.correctIndex)
-        }
-
-        if (state.isHost) {
-            Spacer(Modifier.height(16.dp))
-            OutlinedButton(onClick = onEndGame, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
-                Text("Terminer la partie")
+            // Barre de progression + compteur (masqué en illimité)
+            Spacer(Modifier.height(14.dp))
+            if (!unlimited) {
+                Box(modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)).background(Color.White.copy(alpha = 0.25f))) {
+                    val pct = ((round.index + 1).toFloat() / round.total.coerceAtLeast(1)).coerceIn(0.04f, 1f)
+                    Box(modifier = Modifier.fillMaxWidth(pct).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(onHeader))
+                }
+                Spacer(Modifier.height(7.dp))
+                Text("Question ${round.index + 1} / ${round.total}", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 12.sp, color = onHeader.copy(alpha = 0.9f)))
+            } else {
+                Text("Question ${round.index + 1}", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 12.sp, color = onHeader.copy(alpha = 0.9f)))
             }
         }
-        ErrorAndBusy(state)
-    }
-}
 
-@Composable
-private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctIndex: Int) {
-    SectionLabel("Scores")
-    val ranked = state.players.sortedByDescending { it.score }
-    val rowHeight = 44.dp
-    Box(modifier = Modifier.fillMaxWidth().height(rowHeight * ranked.size.coerceAtLeast(1))) {
-        // Ordre d'itération STABLE (par id) + key() : chaque ligne garde son identité et
-        // glisse vers sa nouvelle position quand son rang change (remontée visible).
-        state.players.sortedBy { it.id }.forEach { player ->
-            key(player.id) {
-                val rank = ranked.indexOfFirst { it.id == player.id }.coerceAtLeast(0)
-                val offsetY by animateDpAsState(targetValue = rowHeight * rank, label = "rank")
-                ScoreRow(
-                    player = player,
-                    currentIndex = currentIndex,
-                    correctIndex = correctIndex,
-                    modifier = Modifier.fillMaxWidth().height(rowHeight).offset(y = offsetY)
+        // Contenu scrollable : carte question + réponses + scores + action
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            // Carte question
+            Box(
+                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(TriviaPalette.card).padding(horizontal = 20.dp, vertical = 18.dp)
+            ) {
+                Text(round.question.text, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = TriviaPalette.ink, lineHeight = 26.sp))
+            }
+
+            // Réponses (lettrées)
+            round.question.options.forEachIndexed { index, option ->
+                MAnswerRow(
+                    letter = ('A' + index).toString(),
+                    text = option,
+                    isCorrect = index == round.question.correctIndex,
+                    isMine = round.myChoice == index,
+                    reveal = reveal,
+                    catColors = colors,
+                    enabled = round.phase == RoundPhase.ANSWERING && round.myChoice == null,
+                    onClick = { onAnswer(index) }
                 )
             }
+
+            if (!reveal && round.myChoice != null) {
+                Text(
+                    text = "Réponse enregistrée — en attente des autres…",
+                    style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TriviaPalette.inkSoft),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
+                )
+            }
+
+            if (reveal) {
+                MScores(state, round.index, round.question.correctIndex)
+            }
+
+            if (state.isHost) {
+                MContourButton(
+                    text = "Terminer la partie",
+                    onClick = onEndGame,
+                    enabled = !state.isBusy,
+                    textColor = TriviaPalette.inkSoft,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            ErrorAndBusy(state)
+        }
+    }
+}
+
+/** Une réponse de l'écran de jeu : badge lettre (→ check/croix à la révélation) + libellé, couleurs animées. */
+@Composable
+private fun MAnswerRow(
+    letter: String,
+    text: String,
+    isCorrect: Boolean,
+    isMine: Boolean,
+    reveal: Boolean,
+    catColors: com.fabien.trivia.ui.theme.CatColors,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val correctChosen = reveal && isCorrect
+    val wrongChosen = reveal && isMine && !isCorrect
+
+    val targetBg = when {
+        correctChosen -> TriviaPalette.goodTint
+        wrongChosen -> TriviaPalette.badTint
+        else -> TriviaPalette.card
+    }
+    val targetBorder = when {
+        correctChosen -> TriviaPalette.good
+        wrongChosen -> TriviaPalette.bad
+        else -> TriviaPalette.line
+    }
+    val targetFg = when {
+        correctChosen -> Color(0xFF15723A)
+        wrongChosen -> Color(0xFFB42121)
+        else -> TriviaPalette.ink
+    }
+    val targetBadgeBg = when {
+        correctChosen -> TriviaPalette.good
+        wrongChosen -> TriviaPalette.bad
+        else -> catColors.main.copy(alpha = 0.11f)
+    }
+    val badgeFg = if (correctChosen || wrongChosen) Color.White else catColors.deep
+
+    val bg by animateColorAsState(targetBg, label = "answBg")
+    val border by animateColorAsState(targetBorder, label = "answBorder")
+    val fg by animateColorAsState(targetFg, label = "answFg")
+    val badgeBg by animateColorAsState(targetBadgeBg, label = "answBadge")
+
+    val shape = RoundedCornerShape(16.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(bg)
+            .border(2.dp, border, shape)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 13.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Box(
+            modifier = Modifier.size(32.dp).clip(RoundedCornerShape(10.dp)).background(badgeBg),
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                correctChosen -> Icon(AppIcons.Check, contentDescription = null, tint = badgeFg, modifier = Modifier.size(19.dp))
+                wrongChosen -> Icon(AppIcons.Close, contentDescription = null, tint = badgeFg, modifier = Modifier.size(17.dp))
+                else -> Text(letter, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = badgeFg))
+            }
+        }
+        Text(text, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 16.5.sp, color = fg), modifier = Modifier.weight(1f))
+    }
+}
+
+// Palette de couleurs de joueurs (avatars du panneau de scores / podium), attribuée par ordre stable.
+private val PlayerColors = listOf(
+    Color(0xFF7A5AF8), Color(0xFF0FA697), Color(0xFFEC4899),
+    Color(0xFF1FA84B), Color(0xFF3B82F6), Color(0xFFE5890F)
+)
+
+private fun playerColorMap(players: List<GamePlayer>): Map<String, Color> =
+    players.sortedBy { it.id }.mapIndexed { i, p -> p.id to PlayerColors[i % PlayerColors.size] }.toMap()
+
+/** Panneau de scores (bas de l'écran de jeu) : pastille statut + avatar + pseudo + delta + total, rangs animés. */
+@Composable
+private fun MScores(state: MultiplayerUiState, currentIndex: Int, correctIndex: Int) {
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val ranked = state.players.sortedByDescending { it.score }
+    val colorOf = playerColorMap(state.players)
+    val rowHeight = 50.dp
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(18.dp))
+            .padding(horizontal = 16.dp, vertical = 13.dp)
+    ) {
+        Text(
+            "SCORES",
+            style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 11.sp, letterSpacing = 0.6.sp, color = TriviaPalette.inkFaint)
+        )
+        Spacer(Modifier.height(6.dp))
+        Box(modifier = Modifier.fillMaxWidth().height(rowHeight * ranked.size.coerceAtLeast(1))) {
+            // Ordre d'itération STABLE (par id) + key() : chaque ligne glisse vers son nouveau rang.
+            state.players.sortedBy { it.id }.forEach { player ->
+                key(player.id) {
+                    val rank = ranked.indexOfFirst { it.id == player.id }.coerceAtLeast(0)
+                    val offsetY by animateDpAsState(targetValue = rowHeight * rank, label = "rank")
+                    MScoreRow(
+                        player = player,
+                        currentIndex = currentIndex,
+                        correctIndex = correctIndex,
+                        color = colorOf[player.id] ?: TriviaPalette.brand,
+                        isMe = player.id == state.myId,
+                        modifier = Modifier.fillMaxWidth().height(rowHeight).offset(y = offsetY)
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun ScoreRow(player: GamePlayer, currentIndex: Int, correctIndex: Int, modifier: Modifier) {
+private fun MScoreRow(
+    player: GamePlayer,
+    currentIndex: Int,
+    correctIndex: Int,
+    color: Color,
+    isMe: Boolean,
+    modifier: Modifier
+) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
     val answeredThis = player.answeredIndex == currentIndex
     val gotItRight = answeredThis && player.lastChoice == correctIndex
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = (if (answeredThis) (if (gotItRight) "✓ " else "✗ ") else "") + player.pseudo,
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (gotItRight) ColorCorrect else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f)
-        )
-        if (answeredThis && player.lastPoints > 0) {
-            Text(
-                text = "+${player.lastPoints}",
-                style = MaterialTheme.typography.labelLarge,
-                color = ColorCorrect,
-                modifier = Modifier.padding(end = 10.dp)
-            )
+    val initial = player.pseudo.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(11.dp)) {
+        // Pastille de statut
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(if (!answeredThis) Color(0xFFEDEAF2) else if (gotItRight) TriviaPalette.goodTint else TriviaPalette.badTint),
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                !answeredThis -> Box(Modifier.size(7.dp).clip(CircleShape).background(TriviaPalette.inkFaint))
+                gotItRight -> Icon(AppIcons.Check, contentDescription = null, tint = TriviaPalette.good, modifier = Modifier.size(15.dp))
+                else -> Icon(AppIcons.Close, contentDescription = null, tint = TriviaPalette.bad, modifier = Modifier.size(14.dp))
+            }
         }
-        Text("${player.score}", style = MaterialTheme.typography.titleMedium)
+        // Avatar
+        Box(
+            modifier = Modifier.size(28.dp).clip(RoundedCornerShape(9.dp)).background(color),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(initial, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = Color.White))
+        }
+        // Pseudo (+ « · toi »)
+        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            Text(player.pseudo, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TriviaPalette.ink), maxLines = 1)
+            if (isMe) {
+                Text(" · toi", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TriviaPalette.inkFaint))
+            }
+        }
+        // Delta
+        if (answeredThis && player.lastPoints > 0) {
+            Text("+${player.lastPoints}", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = TriviaPalette.good), modifier = Modifier.padding(end = 8.dp))
+        }
+        // Total
+        Text("${player.score}", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = TriviaPalette.ink))
     }
 }
 
@@ -780,17 +938,6 @@ private fun PseudoField(pseudo: String, onPseudo: (String) -> Unit) {
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-@Composable
-private fun SectionLabel(text: String) {
-    Spacer(Modifier.height(20.dp))
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-    Spacer(Modifier.height(8.dp))
 }
 
 @Composable

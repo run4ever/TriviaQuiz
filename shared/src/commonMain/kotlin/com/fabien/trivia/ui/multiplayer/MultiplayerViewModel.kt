@@ -33,7 +33,8 @@ data class RoundInfo(
     val total: Int,
     val phase: RoundPhase,
     val remainingMs: Long,
-    val myChoice: Int?
+    val myChoice: Int?,
+    val timerFraction: Float = 0f  // remainingMs / durée totale (0..1) pour l'anneau de minuterie
 )
 
 data class MultiplayerUiState(
@@ -43,6 +44,7 @@ data class MultiplayerUiState(
     val room: GameRoom? = null,
     val players: List<GamePlayer> = emptyList(),
     val round: RoundInfo? = null,
+    val myId: String? = null,    // UID du joueur local (pour marquer « · toi » dans les scores)
     val isBusy: Boolean = false,
     val error: String? = null
 )
@@ -175,7 +177,7 @@ class MultiplayerViewModel(
     private fun enterRoom(code: String, uid: String, isHost: Boolean) {
         myId = uid
         roomCode = code
-        _state.value = _state.value.copy(phase = MpPhase.LOBBY, isHost = isHost, error = null)
+        _state.value = _state.value.copy(phase = MpPhase.LOBBY, isHost = isHost, myId = uid, error = null)
         roomJob?.cancel()
         playersJob?.cancel()
         roomJob = viewModelScope.launch {
@@ -228,8 +230,9 @@ class MultiplayerViewModel(
         val reveal = room.revealStartedAt != 0L || elapsed >= QUESTION_DURATION_MS
         val phase = if (reveal) RoundPhase.REVEAL else RoundPhase.ANSWERING
         val remainingMs = (QUESTION_DURATION_MS - elapsed).coerceAtLeast(0)
+        val timerFraction = (remainingMs.toFloat() / QUESTION_DURATION_MS).coerceIn(0f, 1f)
         _state.value = _state.value.copy(
-            round = RoundInfo(question, room.currentIndex, total, phase, remainingMs, myChoice)
+            round = RoundInfo(question, room.currentIndex, total, phase, remainingMs, myChoice, timerFraction)
         )
     }
 
@@ -342,7 +345,8 @@ class MultiplayerViewModel(
             isHost = false,
             room = null,
             players = emptyList(),
-            round = null
+            round = null,
+            myId = null
         )
     }
 
