@@ -130,7 +130,7 @@ private fun CreateContent(
 
         SectionLabel("Nombre de questions")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ChoiceButton("Ouverte", count == null, Modifier.weight(1f)) { count = null }
+            ChoiceButton("Illimité", count == null, Modifier.weight(1f)) { count = null }
             ChoiceButton("20", count == 20, Modifier.weight(1f)) { count = 20 }
             ChoiceButton("40", count == 40, Modifier.weight(1f)) { count = 40 }
             ChoiceButton("60", count == 60, Modifier.weight(1f)) { count = 60 }
@@ -217,7 +217,7 @@ private fun LobbyContent(
         }
 
         Spacer(Modifier.height(8.dp))
-        val countLabel = room.questionCount?.let { "$it questions" } ?: "partie ouverte"
+        val countLabel = room.questionCount?.let { "$it questions" } ?: "partie illimitée"
         val categoryLabel = room.category?.displayName ?: "Toutes catégories"
         val scoringLabel = if (room.scoringMode == ScoringMode.RAPIDITE) "Rapidité" else "Simple"
         Text(
@@ -272,13 +272,19 @@ private fun GameContent(
         }
 
         val reveal = round.phase == RoundPhase.REVEAL
+        // En mode illimité (questionCount null), le total n'a pas de sens → on masque le compteur.
+        val unlimited = state.room?.questionCount == null
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "Question ${round.index + 1} / ${round.total}",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
-            )
+            if (unlimited) {
+                Spacer(Modifier.weight(1f))
+            } else {
+                Text(
+                    text = "Question ${round.index + 1} / ${round.total}",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
+                )
+            }
             if (!reveal) {
                 val seconds = ceil(round.remainingMs / 1000.0).toInt()
                 Text("⏱ $seconds s", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
@@ -371,6 +377,24 @@ private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctInde
                 )
             }
         }
+    }
+
+    // ⚠️ DEBUG TEMPORAIRE — à retirer. Montre les valeurs brutes lues depuis Firestore pour
+    // chaque joueur, pour diagnostiquer pourquoi le « +points » ne s'affiche pas chez les autres.
+    Spacer(Modifier.height(12.dp))
+    Text(
+        text = "DEBUG  currentIndex=$currentIndex  correctIndex=$correctIndex",
+        style = MaterialTheme.typography.labelSmall,
+        color = ColorWrong
+    )
+    state.players.sortedBy { it.id }.forEach { p ->
+        val answeredThis = p.answeredIndex == currentIndex
+        Text(
+            text = "• ${p.pseudo}: answeredIndex=${p.answeredIndex} lastChoice=${p.lastChoice} " +
+                "lastPoints=${p.lastPoints} score=${p.score} → answeredThis=$answeredThis",
+            style = MaterialTheme.typography.labelSmall,
+            color = ColorWrong
+        )
     }
 }
 
