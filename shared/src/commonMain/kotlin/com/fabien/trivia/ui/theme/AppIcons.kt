@@ -60,6 +60,7 @@ object AppIcons {
     val Eye = line("eye", "M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12zM12 15a3 3 0 100-6 3 3 0 000 6z")
     val Shield = line("shield", "M12 3l8 3v5.5c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6z")
     val Logout = line("logout", "M14 17l5-5-5-5M19 12H8M11 5H5a1 1 0 00-1 1v12a1 1 0 001 1h6")
+    val Share = line("share", "M16 6l-4-4-4 4M12 2v13M5 12v7a1 1 0 001 1h12a1 1 0 001-1v-7")
 
     // Pleins
     val Star = fill("star", "M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8L3.5 9.2l5.9-.9z")

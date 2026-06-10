@@ -15,7 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -36,10 +35,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import com.fabien.trivia.ui.theme.AppIcons
+import com.fabien.trivia.ui.theme.TriviaPalette
+import com.fabien.trivia.ui.theme.catColors
+import com.fabien.trivia.ui.theme.categoryIcon
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.data.multiplayer.GamePlayer
@@ -86,6 +110,7 @@ private fun RoomContent(
     }
 }
 
+// ── Écran 1 · Lancement (« Jouer à plusieurs ») — refonte Vitamine ──────────
 @Composable
 private fun EntryContent(
     state: MultiplayerUiState,
@@ -94,20 +119,67 @@ private fun EntryContent(
     onJoin: () -> Unit,
     onExit: () -> Unit
 ) {
-    ScreenScaffold(title = "Jouer à plusieurs", onBack = onExit, backLabel = "< Accueil") {
-        PseudoField(state.pseudo, onPseudo)
-        Spacer(Modifier.height(24.dp))
-        Button(onClick = onCreate, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
-            Text("Créer une partie")
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    Column(
+        modifier = Modifier.fillMaxSize().background(TriviaPalette.bg).imePadding()
+    ) {
+        MHeader(title = "Jouer à plusieurs", backLabel = "Accueil", onBack = onExit)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Héros : tuile dégradée + sous-texte
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(76.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFF9B7DFF)))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(AppIcons.Users, contentDescription = null, tint = Color.White, modifier = Modifier.size(40.dp))
+                }
+                Text(
+                    text = "Affronte tes amis en temps réel — crée un salon ou rejoins une partie avec un code.",
+                    style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 14.5.sp, color = TriviaPalette.inkSoft),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.widthIn(max = 280.dp)
+                )
+            }
+
+            MField(label = "Pseudo", value = state.pseudo, onValueChange = onPseudo)
+
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                MChunkyButton(
+                    text = "Créer une partie",
+                    icon = AppIcons.Users,
+                    onClick = onCreate,
+                    enabled = !state.isBusy,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                MContourButton(
+                    text = "Rejoindre une partie",
+                    icon = AppIcons.ChevronRight,
+                    onClick = onJoin,
+                    enabled = !state.isBusy,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            ErrorAndBusy(state)
         }
-        Spacer(Modifier.height(8.dp))
-        OutlinedButton(onClick = onJoin, modifier = Modifier.fillMaxWidth(), enabled = !state.isBusy) {
-            Text("Rejoindre une partie")
-        }
-        ErrorAndBusy(state)
     }
 }
 
+// ── Écran 2 · Créer une partie — refonte Vitamine ──────────────────────────
 @Composable
 private fun CreateContent(
     state: MultiplayerUiState,
@@ -119,39 +191,69 @@ private fun CreateContent(
     var count by remember { mutableStateOf<Int?>(20) }
     var category by remember { mutableStateOf<Category?>(null) }
 
-    ScreenScaffold(title = "Créer une partie", onBack = onBack, backLabel = "< Retour") {
-        PseudoField(state.pseudo, onPseudo)
+    val countOptions = listOf<Int?>(null, 20, 40, 60)
+    val countLabels = listOf("Illimité", "20", "40", "60")
 
-        SectionLabel("Score")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ChoiceButton("Simple", scoring == ScoringMode.SIMPLE, Modifier.weight(1f)) { scoring = ScoringMode.SIMPLE }
-            ChoiceButton("Rapidité", scoring == ScoringMode.RAPIDITE, Modifier.weight(1f)) { scoring = ScoringMode.RAPIDITE }
-        }
-
-        SectionLabel("Nombre de questions")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ChoiceButton("Illimité", count == null, Modifier.weight(1f)) { count = null }
-            ChoiceButton("20", count == 20, Modifier.weight(1f)) { count = 20 }
-            ChoiceButton("40", count == 40, Modifier.weight(1f)) { count = 40 }
-            ChoiceButton("60", count == 60, Modifier.weight(1f)) { count = 60 }
-        }
-
-        SectionLabel("Catégorie")
-        ChoiceButton("Toutes catégories", category == null, Modifier.fillMaxWidth()) { category = null }
-        Category.entries.forEach { cat ->
-            Spacer(Modifier.height(8.dp))
-            ChoiceButton(cat.displayName, category == cat, Modifier.fillMaxWidth()) { category = cat }
-        }
-
-        Spacer(Modifier.height(24.dp))
-        Button(
-            onClick = { onCreate(scoring, count, category) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isBusy
+    Column(modifier = Modifier.fillMaxSize().background(TriviaPalette.bg).imePadding()) {
+        MHeader(title = "Créer une partie", backLabel = "Retour", onBack = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Text("Créer la partie")
+            MField(label = "Pseudo", value = state.pseudo, onValueChange = onPseudo)
+
+            Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                MLabel("Score")
+                MSeg(
+                    options = listOf("Simple", "Rapidité"),
+                    selectedIndex = if (scoring == ScoringMode.SIMPLE) 0 else 1,
+                    onSelect = { scoring = if (it == 0) ScoringMode.SIMPLE else ScoringMode.RAPIDITE }
+                )
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                MLabel("Nombre de questions")
+                MSeg(
+                    options = countLabels,
+                    selectedIndex = countOptions.indexOf(count).coerceAtLeast(0),
+                    onSelect = { count = countOptions[it] }
+                )
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                MLabel("Catégorie")
+                MCatRow(
+                    name = "Toutes catégories",
+                    icon = AppIcons.Sparkle,
+                    isAll = true,
+                    selected = category == null,
+                    onClick = { category = null }
+                )
+                Category.entries.forEach { cat ->
+                    MCatRow(
+                        name = cat.displayName,
+                        icon = categoryIcon(cat),
+                        tileColor = catColors(cat).main,
+                        selected = category == cat,
+                        onClick = { category = cat }
+                    )
+                }
+            }
+
+            MChunkyButton(
+                text = "Créer la partie",
+                icon = AppIcons.Play,
+                onClick = { onCreate(scoring, count, category) },
+                enabled = !state.isBusy,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            ErrorAndBusy(state)
         }
-        ErrorAndBusy(state)
     }
 }
 
@@ -187,6 +289,8 @@ private fun JoinContent(
     }
 }
 
+// ── Écran 3 · Salon (code à partager) — refonte Vitamine ───────────────────
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun LobbyContent(
     state: MultiplayerUiState,
@@ -194,66 +298,209 @@ private fun LobbyContent(
     onLeave: () -> Unit
 ) {
     val room = state.room ?: return
-    ScreenScaffold(title = "Salon", onBack = onLeave, backLabel = "< Retour") {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+
+    val chips = listOf(
+        room.category?.displayName ?: "Toutes catégories",
+        room.questionCount?.let { "$it questions" } ?: "Partie illimitée",
+        "Score " + if (room.scoringMode == ScoringMode.RAPIDITE) "Rapidité" else "Simple"
+    )
+
+    Column(modifier = Modifier.fillMaxSize().background(TriviaPalette.bg)) {
+        MHeader(title = "Salon", backLabel = "Retour", onBack = onLeave)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            SalonCodeCard(room.code)
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "Code de la partie",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = room.code,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                chips.forEach { ParamChip(it) }
             }
-        }
 
-        Spacer(Modifier.height(8.dp))
-        val countLabel = room.questionCount?.let { "$it questions" } ?: "partie illimitée"
-        val categoryLabel = room.category?.displayName ?: "Toutes catégories"
-        val scoringLabel = if (room.scoringMode == ScoringMode.RAPIDITE) "Rapidité" else "Simple"
-        Text(
-            text = "$categoryLabel · $countLabel · score $scoringLabel",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        SectionLabel("Joueurs (${state.players.size})")
-        state.players.forEach { player ->
-            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                Text(player.pseudo, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                if (player.isHost) {
-                    Text("Hôte", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Joueurs", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = TriviaPalette.ink))
+                    Spacer(Modifier.size(6.dp))
+                    Text("(${state.players.size})", style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = TriviaPalette.inkFaint))
                 }
+                state.players.forEach { LobbyPlayerRow(it.pseudo, it.isHost) }
+                LobbyWaitingSlot()
             }
-        }
 
-        Spacer(Modifier.height(24.dp))
-        if (state.isHost) {
-            Button(
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isBusy && state.players.isNotEmpty()
-            ) {
-                Text("Démarrer la partie")
+            if (state.isHost) {
+                MChunkyButton(
+                    text = "Démarrer la partie",
+                    icon = AppIcons.Play,
+                    onClick = onStart,
+                    enabled = !state.isBusy && state.players.isNotEmpty(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = "En attente que l'hôte démarre…",
+                    style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TriviaPalette.inkSoft),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                )
             }
-        } else {
+
+            ErrorAndBusy(state)
+        }
+    }
+}
+
+/** Carte « code de la partie » (dégradé lilas) + bouton qui copie le code dans le presse-papiers. */
+@Composable
+private fun SalonCodeCard(code: String) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val clipboard = LocalClipboardManager.current
+    var copied by remember { mutableStateOf(false) }
+    LaunchedEffect(copied) { if (copied) { delay(1500); copied = false } }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(Brush.linearGradient(listOf(Color(0xFFEFE9FF), Color(0xFFF7F3FF))))
+            .border(1.5.dp, Color(0xFFE4DBFF), RoundedCornerShape(22.dp))
+            .padding(horizontal = 18.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            "CODE DE LA PARTIE",
+            style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, letterSpacing = 0.5.sp, color = TriviaPalette.brandDeep)
+        )
+        Text(
+            code,
+            style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 52.sp, letterSpacing = 8.sp, color = TriviaPalette.brand),
+            modifier = Modifier.padding(top = 4.dp)
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier
+                .height(42.dp)
+                .clip(RoundedCornerShape(13.dp))
+                .background(TriviaPalette.brand)
+                .clickable {
+                    clipboard.setText(AnnotatedString(code))
+                    copied = true
+                }
+                .padding(horizontal = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(if (copied) AppIcons.Check else AppIcons.Share, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
             Text(
-                text = "En attente que l'hôte démarre…",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                if (copied) "Code copié !" else "Partager le code",
+                style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
             )
         }
-        ErrorAndBusy(state)
+    }
+}
+
+/** Petite étiquette de paramètre de partie (chip blanc bordé). */
+@Composable
+private fun ParamChip(text: String) {
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    Text(
+        text,
+        style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 12.5.sp, color = TriviaPalette.inkSoft),
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(20.dp))
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    )
+}
+
+/** Ligne joueur du salon : avatar dégradé + pseudo + badge « Hôte » doré. */
+@Composable
+private fun LobbyPlayerRow(pseudo: String, isHost: Boolean) {
+    val baloo = MaterialTheme.typography.titleMedium.fontFamily
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val initial = pseudo.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(16.dp))
+            .padding(horizontal = 14.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(initial, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 17.sp, color = Color.White))
+        }
+        Text(
+            pseudo,
+            style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = TriviaPalette.ink),
+            modifier = Modifier.weight(1f)
+        )
+        if (isHost) {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFFFDF3D6))
+                    .padding(horizontal = 11.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Icon(AppIcons.Crown, contentDescription = null, tint = TriviaPalette.gold, modifier = Modifier.size(13.dp))
+                Text("Hôte", style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 12.sp, color = TriviaPalette.gold))
+            }
+        }
+    }
+}
+
+/** Emplacement vide « En attente d'autres joueurs… » (bordure pointillée). */
+@Composable
+private fun LobbyWaitingSlot() {
+    val nunito = MaterialTheme.typography.bodyMedium.fontFamily
+    val line = TriviaPalette.line
+    val dash = remember { PathEffect.dashPathEffect(floatArrayOf(10f, 8f)) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .drawBehind {
+                drawRoundRect(
+                    color = line,
+                    style = Stroke(width = 1.5.dp.toPx(), pathEffect = dash),
+                    cornerRadius = CornerRadius(16.dp.toPx())
+                )
+            }
+            .padding(horizontal = 14.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(AppIcons.Users, contentDescription = null, tint = TriviaPalette.inkFaint, modifier = Modifier.size(18.dp))
+        }
+        Text(
+            "En attente d'autres joueurs…",
+            style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 14.5.sp, color = TriviaPalette.inkFaint)
+        )
     }
 }
 
@@ -377,24 +624,6 @@ private fun Scoreboard(state: MultiplayerUiState, currentIndex: Int, correctInde
                 )
             }
         }
-    }
-
-    // ⚠️ DEBUG TEMPORAIRE — à retirer. Montre les valeurs brutes lues depuis Firestore pour
-    // chaque joueur, pour diagnostiquer pourquoi le « +points » ne s'affiche pas chez les autres.
-    Spacer(Modifier.height(12.dp))
-    Text(
-        text = "DEBUG  currentIndex=$currentIndex  correctIndex=$correctIndex",
-        style = MaterialTheme.typography.labelSmall,
-        color = ColorWrong
-    )
-    state.players.sortedBy { it.id }.forEach { p ->
-        val answeredThis = p.answeredIndex == currentIndex
-        Text(
-            text = "• ${p.pseudo}: answeredIndex=${p.answeredIndex} lastChoice=${p.lastChoice} " +
-                "lastPoints=${p.lastPoints} score=${p.score} → answeredThis=$answeredThis",
-            style = MaterialTheme.typography.labelSmall,
-            color = ColorWrong
-        )
     }
 }
 
@@ -562,15 +791,6 @@ private fun SectionLabel(text: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(Modifier.height(8.dp))
-}
-
-@Composable
-private fun ChoiceButton(text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    if (selected) {
-        FilledTonalButton(onClick = onClick, modifier = modifier) { Text(text) }
-    } else {
-        OutlinedButton(onClick = onClick, modifier = modifier) { Text(text) }
-    }
 }
 
 @Composable
