@@ -43,8 +43,9 @@ import kotlinx.coroutines.delay
 
 /**
  * Écran d'administration (réservé au compte [com.fabien.trivia.ui.account.ADMIN_EMAIL]).
- * Un seul bouton : exporte la collection Firestore `questions` en JSON et la copie dans le
- * presse-papiers — destiné à être collé dans un chat IA pour faire générer de nouvelles questions.
+ * Deux actions, chacune précédée de sa carte explicative : export de la collection Firestore
+ * `questions` en JSON dans le presse-papiers (à coller dans un chat IA pour générer de nouvelles
+ * questions), et seed du jeu de questions embarqué vers Firestore.
  */
 @Composable
 fun AdminExportScreen(
@@ -89,7 +90,7 @@ fun AdminExportScreen(
                 )
             }
             Text(
-                "Admin",
+                "Fonctions Admin",
                 style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 23.sp, color = TriviaPalette.ink),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -100,58 +101,16 @@ fun AdminExportScreen(
             modifier = Modifier.fillMaxWidth().weight(1f).padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Carte explicative
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(TriviaPalette.card)
-                    .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(20.dp))
-                    .padding(horizontal = 16.dp, vertical = 15.dp),
-                horizontalArrangement = Arrangement.spacedBy(13.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(RoundedCornerShape(13.dp))
-                        .background(TriviaPalette.brand),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(AppIcons.Cloud, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "Export des questions",
-                        style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.5.sp, color = TriviaPalette.ink)
-                    )
-                    Spacer(Modifier.height(3.dp))
-                    Text(
-                        "Copie toute la collection Firestore « questions » au format JSON dans le presse-papiers. " +
-                            "À coller dans une IA pour lui demander d'en générer de nouvelles.",
-                        style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = TriviaPalette.inkSoft)
-                    )
-                }
-            }
-
-            // Retour d'état (succès / erreur)
-            when {
-                copied -> StatusRow(
-                    icon = AppIcons.Check,
-                    tint = TriviaPalette.good,
-                    bg = TriviaPalette.goodTint,
-                    text = "${state.count} question(s) copiée(s) dans le presse-papiers.",
-                    nunito = nunito
-                )
-                state.error != null -> StatusRow(
-                    icon = AppIcons.Close,
-                    tint = TriviaPalette.bad,
-                    bg = TriviaPalette.badTint,
-                    text = state.error ?: "",
-                    nunito = nunito
-                )
-            }
-
-            Spacer(Modifier.weight(1f))
+            // Carte explicative — export
+            ExplainerCard(
+                icon = AppIcons.Share,
+                iconBg = TriviaPalette.brand,
+                title = "Export des questions",
+                text = "Copie toute la collection Firestore « questions » au format JSON dans le presse-papiers. " +
+                    "À coller dans une IA pour lui demander d'en générer de nouvelles.",
+                baloo = baloo,
+                nunito = nunito
+            )
 
             ChunkyButton(
                 onClick = viewModel::exportQuestions,
@@ -173,6 +132,104 @@ fun AdminExportScreen(
                     )
                 }
             }
+
+            // Carte explicative — seed
+            ExplainerCard(
+                icon = AppIcons.Cloud,
+                iconBg = TriviaPalette.night,
+                title = "Seed des questions",
+                text = "Pousse le jeu de questions embarqué dans l'app vers Firestore, en écrasant chaque question " +
+                    "par son slug. Nécessite d'ouvrir temporairement la règle d'écriture sur « questions ».",
+                baloo = baloo,
+                nunito = nunito
+            )
+
+            // Bouton « night » pour distinguer le seed de l'export.
+            ChunkyButton(
+                onClick = viewModel::seedQuestions,
+                color = if (state.isSeeding) TriviaPalette.inkFaint else TriviaPalette.night,
+                deep = if (state.isSeeding) TriviaPalette.inkSoft else Color(0xFF000000),
+                shape = RoundedCornerShape(18.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(AppIcons.Cloud, contentDescription = null, tint = Color.White, modifier = Modifier.size(21.dp))
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        if (state.isSeeding) "Envoi en cours…" else "Pousser les questions (seed)",
+                        style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.White)
+                    )
+                }
+            }
+            // Retour d'état (succès / erreur)
+            when {
+                copied -> StatusRow(
+                    icon = AppIcons.Check,
+                    tint = TriviaPalette.good,
+                    bg = TriviaPalette.goodTint,
+                    text = "${state.count} question(s) copiée(s) dans le presse-papiers.",
+                    nunito = nunito
+                )
+                state.seededCount != null -> StatusRow(
+                    icon = AppIcons.Check,
+                    tint = TriviaPalette.good,
+                    bg = TriviaPalette.goodTint,
+                    text = "${state.seededCount} question(s) poussée(s) vers Firestore.",
+                    nunito = nunito
+                )
+                state.error != null -> StatusRow(
+                    icon = AppIcons.Close,
+                    tint = TriviaPalette.bad,
+                    bg = TriviaPalette.badTint,
+                    text = state.error ?: "",
+                    nunito = nunito
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExplainerCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconBg: Color,
+    title: String,
+    text: String,
+    baloo: androidx.compose.ui.text.font.FontFamily?,
+    nunito: androidx.compose.ui.text.font.FontFamily?
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(20.dp))
+            .padding(horizontal = 16.dp, vertical = 15.dp),
+        horizontalArrangement = Arrangement.spacedBy(13.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(RoundedCornerShape(13.dp))
+                .background(iconBg),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                title,
+                style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 15.5.sp, color = TriviaPalette.ink)
+            )
+            Spacer(Modifier.height(3.dp))
+            Text(
+                text,
+                style = TextStyle(fontFamily = nunito, fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = TriviaPalette.inkSoft)
+            )
         }
     }
 }

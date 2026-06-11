@@ -2,6 +2,7 @@ package com.fabien.trivia.ui.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,10 @@ data class AdminUiState(
     val count: Int = 0,
     /** Incrémenté à chaque export réussi → permet à l'UI de redéclencher la copie presse-papiers. */
     val exportTick: Int = 0,
+    /** Seeding (push du set bundlé vers Firestore) en cours. */
+    val isSeeding: Boolean = false,
+    /** Nombre de questions poussées au dernier seed réussi (null tant qu'aucun seed). */
+    val seededCount: Int? = null,
     val error: String? = null
 )
 
@@ -42,6 +47,26 @@ class AdminViewModel(
                 )
             } catch (e: Exception) {
                 _state.value = AdminUiState(error = e.message ?: "Échec de l'export")
+            }
+        }
+    }
+
+    /**
+     * Pousse (écrase par slug) le set bundlé `QuestionRepository.questions` vers Firestore.
+     * Opération de maintenance ponctuelle (ex. après ajout de questions ou du champ `title`).
+     * ⚠️ Nécessite des règles autorisant l'écriture sur `questions` (temporairement
+     * `allow write: if request.auth != null`), et un compte connecté.
+     */
+    fun seedQuestions() {
+        if (_state.value.isSeeding || _state.value.isBusy) return
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isSeeding = true, seededCount = null, error = null)
+            try {
+                val all = QuestionRepository.questions
+                questions.seed(all)
+                _state.value = _state.value.copy(isSeeding = false, seededCount = all.size)
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(isSeeding = false, error = e.message ?: "Échec du seed")
             }
         }
     }

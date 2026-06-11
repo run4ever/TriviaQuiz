@@ -410,7 +410,7 @@ private fun ColumnScope.SignedInContent(
             Text(error, style = MaterialTheme.typography.bodyMedium, color = TriviaPalette.bad)
         }
 
-        // Outils d'administration (réservé au compte admin) : export Firestore.
+        // Accès à l'écran d'administration (réservé au compte admin).
         if (isAdmin) {
             ChunkyButton(
                 onClick = onOpenAdmin,
@@ -420,7 +420,7 @@ private fun ColumnScope.SignedInContent(
                 depth = 6.dp,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                CenteredButtonLabel(icon = AppIcons.Share, text = "Admin — Exporter les questions", baloo = baloo)
+                CenteredButtonLabel(icon = AppIcons.Gear, text = "Accès fonctions admin", baloo = baloo)
             }
         }
 
