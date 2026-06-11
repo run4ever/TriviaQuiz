@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -179,6 +180,7 @@ private fun ColumnScope.AuthContent(
                 },
                 placeholder = "ton@email.com",
                 keyboardType = KeyboardType.Email,
+                capitalization = KeyboardCapitalization.None,
             )
             if (signUp) {
                 PseudoField(
@@ -458,6 +460,7 @@ private fun AccountField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     keyboardType: KeyboardType = KeyboardType.Text,
+    capitalization: KeyboardCapitalization = KeyboardCapitalization.Unspecified,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     accent: Color = TriviaPalette.brand,
     trailing: (@Composable () -> Unit)? = null,
@@ -481,7 +484,7 @@ private fun AccountField(
             interactionSource = interaction,
             textStyle = TextStyle(fontFamily = nunito, fontWeight = FontWeight.ExtraBold, fontSize = 15.5.sp, color = TriviaPalette.ink),
             cursorBrush = SolidColor(accent),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardOptions = KeyboardOptions(capitalization = capitalization, keyboardType = keyboardType),
             visualTransformation = visualTransformation,
             decorationBox = { inner ->
                 Row(
