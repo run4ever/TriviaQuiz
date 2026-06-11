@@ -2,8 +2,6 @@ package com.fabien.trivia.data
 
 object QuestionRepository {
     val questions = listOf(
-
-        // ===================== GÉOGRAPHIE =====================
         Question(
             id = "geo_australie_capitale",
             title = "Capitale de l'Australie",
@@ -11,7 +9,7 @@ object QuestionRepository {
             options = listOf("Canberra", "Sydney", "Melbourne", "Brisbane"),
             correctIndex = 0,
             rating = 1150,
-            explanation = "La capitale de l'Australie est Canberra, et non Sydney comme beaucoup le croient. Canberra a été construite de toutes pièces comme capitale fédérale, inaugurée en 1913, suite au compromis entre Sydney et Melbourne qui se disputaient ce titre. La ville a été conçue par les architectes américains Walter Burley Griffin et Marion Mahony Griffin, lauréats d'un concours international en 1912.",
+            explanation = "La capitale de l'Australie est Canberra, et non Sydney comme beaucoup le croient. Canberra a été construite de toutes pièces comme capitale fédérale, inaugurée en 1913, suite au compromis entre Sydney et Melbourne qui se disputaient ce titre.",
             category = Category.GEOGRAPHIE
         ),
         Question(
@@ -21,7 +19,7 @@ object QuestionRepository {
             options = listOf("Atlantique", "Indien", "Arctique", "Pacifique"),
             correctIndex = 3,
             rating = 900,
-            explanation = "L'océan Pacifique est le plus grand et le plus profond des océans, couvrant environ 165 millions de km², soit plus que toutes les terres émergées réunies. Son nom lui fut donné par l'explorateur Magellan qui le trouva calme lors de sa traversée en 1520. Il abrite la fosse des Mariannes, le point le plus profond de la Terre à 11 034 m.",
+            explanation = "L'océan Pacifique est le plus grand et le plus profond des océans, couvrant environ 165 millions de km², soit plus que toutes les terres émergées réunies. Son nom lui fut donné par l'explorateur Magellan qui le trouva calme lors de sa traversée en 1520.",
             category = Category.GEOGRAPHIE
         ),
         Question(
@@ -261,7 +259,7 @@ object QuestionRepository {
             options = listOf("Afrique", "Amérique du Nord", "Océanie", "Amérique du Sud"),
             correctIndex = 3,
             rating = 1250,
-            explanation = "Le cap Horn marque l'extrémité méridionale de l'archipel de la Terre de Feu, au sud de l'Amérique du Sud.",
+            explanation = "Le cap Horn marque l'extrémité méridionale de l'archipel de la Terre de Feu, au sud de l'Amérique du Sud. C'est l'un des passages maritimes les plus redoutés au monde.",
             category = Category.GEOGRAPHIE
         ),
         Question(
@@ -465,16 +463,6 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_detroit_malacca",
-            title = "Le détroit de Malacca",
-            text = "Le détroit de Malacca sépare la péninsule Malaise de quelle grande île ?",
-            options = listOf("Bornéo", "Java", "Sumatra", "Sulawesi"),
-            correctIndex = 2,
-            rating = 1650,
-            explanation = "Le détroit de Malacca sépare la péninsule Malaise de l'île indonésienne de Sumatra. C'est l'une des voies maritimes les plus fréquentées du monde.",
-            category = Category.GEOGRAPHIE
-        ),
-        Question(
             id = "geo_athabasca_lac",
             title = "Lac Athabasca",
             text = "Dans quel pays se trouve le lac Athabasca ?",
@@ -504,8 +492,6 @@ object QuestionRepository {
             explanation = "Le K2 se trouve dans le massif du Karakoram, à la frontière entre le Pakistan et la Chine. Il est considéré comme l'un des sommets les plus difficiles au monde.",
             category = Category.GEOGRAPHIE
         ),
-
-        // ===================== HISTOIRE =====================
         Question(
             id = "hist_revolution_francaise",
             title = "Année de la Révolution française",
@@ -707,16 +693,6 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
-            id = "hist_hammurabi_code",
-            title = "Le code d'Hammurabi",
-            text = "Dans quelle civilisation le code d'Hammurabi a-t-il été rédigé ?",
-            options = listOf("Égypte antique", "Babylone", "Empire perse", "Grèce antique"),
-            correctIndex = 1,
-            rating = 1450,
-            explanation = "Le code d'Hammurabi est l'un des plus anciens recueils de lois connus. Il fut rédigé vers 1750 av. J.-C. sous le règne du roi Hammurabi de Babylone, en Mésopotamie.",
-            category = Category.HISTOIRE
-        ),
-        Question(
             id = "hist_constantinople_prise",
             title = "Chute de Constantinople",
             text = "En quelle année Constantinople est-elle tombée aux mains des Ottomans ?",
@@ -777,16 +753,6 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
-            id = "hist_louisiane_vente",
-            title = "Achat de la Louisiane",
-            text = "Quel pays a vendu la Louisiane aux États-Unis en 1803 ?",
-            options = listOf("Espagne", "France", "Royaume-Uni", "Mexique"),
-            correctIndex = 1,
-            rating = 1400,
-            explanation = "Napoléon Bonaparte vendit la Louisiane aux États-Unis en 1803, doublant presque la superficie du jeune pays.",
-            category = Category.HISTOIRE
-        ),
-        Question(
             id = "hist_jeanne_arc_ville",
             title = "Jeanne d'Arc",
             text = "Quelle ville Jeanne d'Arc a-t-elle contribué à libérer en 1429 ?",
@@ -804,16 +770,6 @@ object QuestionRepository {
             correctIndex = 0,
             rating = 1600,
             explanation = "Le canal de Suez fut inauguré en 1869. Il relie la Méditerranée à la mer Rouge et raccourcit considérablement les routes maritimes.",
-            category = Category.HISTOIRE
-        ),
-        Question(
-            id = "hist_spoutnik",
-            title = "Premier satellite artificiel",
-            text = "Quel pays a lancé Spoutnik 1 en 1957 ?",
-            options = listOf("États-Unis", "URSS", "France", "Royaume-Uni"),
-            correctIndex = 1,
-            rating = 1050,
-            explanation = "Spoutnik 1, lancé par l'Union soviétique en 1957, fut le premier satellite artificiel de l'histoire.",
             category = Category.HISTOIRE
         ),
         Question(
@@ -1006,8 +962,6 @@ object QuestionRepository {
             explanation = "Le module lunaire Eagle transporta Neil Armstrong et Buzz Aldrin jusqu'à la surface de la Lune en juillet 1969, tandis que Columbia restait en orbite lunaire.",
             category = Category.HISTOIRE
         ),
-
-        // ===================== SCIENCES & NATURE =====================
         Question(
             id = "sci_hexagone_cotes",
             title = "Côtés d'un hexagone",
@@ -1125,17 +1079,7 @@ object QuestionRepository {
             options = listOf("186", "206", "226", "250"),
             correctIndex = 1,
             rating = 1100,
-            explanation = "Le squelette d'un adulte compte 206 os. À la naissance, un bébé en possède environ 270, mais certains fusionnent au cours de la croissance, notamment au niveau du crâne et de la colonne vertébrale. Le plus long os du corps est le fémur, et le plus petit est l'étrier, situé dans l'oreille moyenne.",
-            category = Category.SCIENCES_ET_NATURE
-        ),
-        Question(
-            id = "sci_metal_liquide_mercure",
-            title = "Métal liquide à température ambiante",
-            text = "Quel métal est liquide à température ambiante ?",
-            options = listOf("Le plomb", "Le mercure", "Le fer", "L'étain"),
-            correctIndex = 1,
-            rating = 950,
-            explanation = "Le mercure est le seul métal qui se présente à l'état liquide à température ambiante, avec un point de fusion de −39°C. Surnommé \"vif-argent\", il était autrefois utilisé dans les thermomètres et baromètres. En raison de sa forte toxicité, son usage est aujourd'hui strictement encadré. Son symbole chimique, Hg, vient du grec \"hydrargyros\".",
+            explanation = "Le squelette d'un adulte compte 206 os. À la naissance, un bébé en possède environ 270, mais certains fusionnent au cours de la croissance, notamment au niveau du crâne et de la colonne vertébrale.",
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
@@ -1185,7 +1129,7 @@ object QuestionRepository {
             options = listOf("L'oxygène", "L'azote", "Le dioxyde de carbone", "L'hydrogène"),
             correctIndex = 1,
             rating = 1050,
-            explanation = "Contrairement à une idée répandue, ce n'est pas l'oxygène mais l'azote qui domine l'atmosphère terrestre, représentant environ 78% de l'air. L'oxygène n'en constitue que 21%, le reste étant composé d'argon, de dioxyde de carbone et de gaz divers. L'azote, peu réactif, joue un rôle stabilisateur essentiel pour la vie.",
+            explanation = "Contrairement à une idée répandue, ce n'est pas l'oxygène mais l'azote qui domine l'atmosphère terrestre, représentant environ 78 % de l'air. L'oxygène n'en constitue que 21%, le reste étant composé d'argon, de dioxyde de carbone et de gaz divers.",
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
@@ -1205,7 +1149,7 @@ object QuestionRepository {
             options = listOf("L'oxygène", "L'hélium", "L'hydrogène", "Le carbone"),
             correctIndex = 2,
             rating = 1050,
-            explanation = "L'hydrogène est l'élément le plus abondant de l'univers, constituant environ 75% de la matière ordinaire. C'est le carburant des étoiles : par fusion nucléaire, elles transforment l'hydrogène en hélium, libérant l'énergie qui les fait briller. Premier élément du tableau périodique, l'hydrogène est aussi le plus simple et le plus léger.",
+            explanation = "L'hydrogène est l'élément le plus abondant de l'univers, constituant environ 75% de la matière ordinaire. C'est le carburant des étoiles : par fusion nucléaire, elles transforment l'hydrogène en hélium, libérant l'énergie qui les fait briller.",
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
@@ -1485,7 +1429,7 @@ object QuestionRepository {
             options = listOf("3 000 °C", "10 000 °C", "30 000 °C", "100 000 °C"),
             correctIndex = 2,
             rating = 1500,
-            explanation = "La température d'un éclair peut atteindre environ 30 000 °C, soit plusieurs fois la température de surface du Soleil.",
+            explanation = "La température d'un éclair peut atteindre environ 30 000 °C.",
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
@@ -1509,7 +1453,6 @@ object QuestionRepository {
             category = Category.SCIENCES_ET_NATURE
         ),
 
-        // ===================== ART & CULTURE =====================
         Question(
             id = "art_joconde_peintre",
             title = "Peintre de la Joconde",
@@ -1691,16 +1634,6 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
-            id = "art_lac_des_cygnes",
-            title = "Ballet du lac et du cygne",
-            text = "Quel ballet de Tchaïkovski met en scène un lac et un cygne ?",
-            options = listOf("Casse-Noisette", "Le Lac des cygnes", "La Belle au bois dormant", "Giselle"),
-            correctIndex = 1,
-            rating = 1000,
-            explanation = "\"Le Lac des cygnes\", composé par Piotr Ilitch Tchaïkovski en 1876, raconte l'histoire de la princesse Odette transformée en cygne par un sortilège. C'est l'un des ballets les plus célèbres et les plus représentés au monde. Boudé lors de sa création, il connut un triomphe posthume grâce à la chorégraphie révisée de Petipa et Ivanov en 1895.",
-            category = Category.ART_ET_CULTURE
-        ),
-        Question(
             id = "art_chapelle_sixtine",
             title = "Peintre de la chapelle Sixtine",
             text = "Quel artiste a peint le plafond de la chapelle Sixtine ?",
@@ -1758,16 +1691,6 @@ object QuestionRepository {
             correctIndex = 0,
             rating = 1000,
             explanation = "Publié en 1949, 1984 de George Orwell décrit une société totalitaire dominée par la surveillance et le contrôle de l'information.",
-            category = Category.ART_ET_CULTURE
-        ),
-        Question(
-            id = "art_bolero_ravel",
-            title = "Compositeur du Boléro",
-            text = "Qui a composé le célèbre « Boléro » ?",
-            options = listOf("Claude Debussy", "Maurice Ravel", "Erik Satie", "Camille Saint-Saëns"),
-            correctIndex = 1,
-            rating = 950,
-            explanation = "Le Boléro de Maurice Ravel, créé en 1928, est fondé sur une mélodie répétée et un long crescendo orchestral.",
             category = Category.ART_ET_CULTURE
         ),
         Question(
@@ -1981,16 +1904,6 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
         Question(
-            id = "art_sagrada_familia_architecte",
-            title = "Architecte de la Sagrada Família",
-            text = "Quel architecte a conçu la basilique de la Sagrada Família à Barcelone ?",
-            options = listOf("Antoni Gaudí", "Santiago Calatrava", "Ricardo Bofill", "Le Corbusier"),
-            correctIndex = 0,
-            rating = 850,
-            explanation = "Antoni Gaudí consacra une grande partie de sa vie à la Sagrada Família, dont la construction a débuté en 1882 et se poursuit encore aujourd'hui.",
-            category = Category.ART_ET_CULTURE
-        ),
-        Question(
             id = "art_baudelaire_recueil",
             title = "Recueil de Baudelaire",
             text = "Quel est le recueil de poésie le plus célèbre de Charles Baudelaire ?",
@@ -2011,7 +1924,6 @@ object QuestionRepository {
             category = Category.ART_ET_CULTURE
         ),
 
-        // ===================== SPORTS =====================
         Question(
             id = "spo_foot_nb_joueurs",
             title = "Joueurs d'une équipe de football",
@@ -2060,16 +1972,6 @@ object QuestionRepository {
             correctIndex = 2,
             rating = 750,
             explanation = "Roland-Garros, l'un des quatre tournois du Grand Chelem, se joue sur terre battue. Cette surface ocre ralentit la balle et favorise les échanges longs depuis le fond du court. Le stade, situé à Paris, porte le nom de l'aviateur Roland Garros, héros de la Première Guerre mondiale. Rafael Nadal y a remporté un record de 14 titres.",
-            category = Category.SPORTS
-        ),
-        Question(
-            id = "spo_hand_nb_joueurs",
-            title = "Joueurs au handball sur le terrain",
-            text = "Combien de joueurs composent une équipe de handball sur le terrain ?",
-            options = listOf("5", "6", "7", "8"),
-            correctIndex = 2,
-            rating = 700,
-            explanation = "Une équipe de handball est composée de 7 joueurs sur le terrain : 1 gardien de but et 6 joueurs de champ. Le handball est né en Europe du Nord à la fin du XIXe siècle et est devenu sport olympique en 1972. La France est l'une des grandes puissances mondiales de ce sport, ayant remporté plusieurs titres olympiques et de nombreux championnats du monde.",
             category = Category.SPORTS
         ),
         Question(
@@ -2223,16 +2125,6 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
         Question(
-            id = "spo_rugby_essai_points",
-            title = "Valeur d'un essai",
-            text = "Combien de points rapporte un essai en rugby à XV ?",
-            options = listOf("3", "4", "5", "6"),
-            correctIndex = 2,
-            rating = 950,
-            explanation = "Depuis 1992, un essai vaut 5 points au rugby à XV. Une transformation réussie permet ensuite d'ajouter 2 points supplémentaires.",
-            category = Category.SPORTS
-        ),
-        Question(
             id = "spo_natation_papillon",
             title = "Nage papillon",
             text = "Quelle nage est généralement considérée comme la plus exigeante physiquement ?",
@@ -2270,16 +2162,6 @@ object QuestionRepository {
             correctIndex = 1,
             rating = 1100,
             explanation = "L'ippon est la meilleure action possible au judo. Il met immédiatement fin au combat et donne la victoire.",
-            category = Category.SPORTS
-        ),
-        Question(
-            id = "spo_marathon_distance",
-            title = "Distance du marathon",
-            text = "Quelle est la distance officielle d'un marathon ?",
-            options = listOf("40,195 km", "41,195 km", "42,195 km", "43,195 km"),
-            correctIndex = 2,
-            rating = 700,
-            explanation = "La distance officielle du marathon est de 42,195 km. Elle fut fixée lors des Jeux olympiques de Londres en 1908.",
             category = Category.SPORTS
         ),
         Question(
@@ -2513,7 +2395,6 @@ object QuestionRepository {
             category = Category.SPORTS
         ),
 
-        // ===================== DIVERTISSEMENT =====================
         Question(
             id = "div_ironman_acteur",
             title = "Acteur d'Iron Man",
@@ -2652,16 +2533,6 @@ object QuestionRepository {
             correctIndex = 1,
             rating = 850,
             explanation = "\"Shape of You\" est un titre du chanteur britannique Ed Sheeran, sorti en 2017 sur l'album ÷ (Divide). Devenu un phénomène mondial, il figure parmi les vidéos les plus visionnées de YouTube et les chansons les plus écoutées sur les plateformes de streaming. Ed Sheeran est connu pour ses ballades pop interprétées souvent en solo à la guitare.",
-            category = Category.DIVERTISSEMENT
-        ),
-        Question(
-            id = "div_bohemian_rhapsody_queen",
-            title = "Groupe de « Bohemian Rhapsody »",
-            text = "Quel groupe britannique a chanté \"Bohemian Rhapsody\" ?",
-            options = listOf("The Beatles", "The Rolling Stones", "Queen", "Led Zeppelin"),
-            correctIndex = 2,
-            rating = 800,
-            explanation = "\"Bohemian Rhapsody\" est une chanson du groupe Queen, sortie en 1975 sur l'album A Night at the Opera. Composée par Freddie Mercury, elle mêle ballade, opéra et hard rock en près de six minutes, une audace inédite à l'époque. Le film biographique du même nom, sorti en 2018, a remporté plusieurs Oscars.",
             category = Category.DIVERTISSEMENT
         ),
         Question(
@@ -2842,16 +2713,6 @@ object QuestionRepository {
             correctIndex = 0,
             rating = 700,
             explanation = "Minecraft repose sur un univers généré procéduralement où presque tout est construit à partir de blocs.",
-            category = Category.DIVERTISSEMENT
-        ),
-        Question(
-            id = "div_avatar_pandora",
-            title = "Monde d'Avatar",
-            text = "Comment s'appelle la lune sur laquelle se déroule l'histoire d'Avatar ?",
-            options = listOf("Pandora", "Titan", "Endor", "Arrakis"),
-            correctIndex = 0,
-            rating = 950,
-            explanation = "L'univers d'Avatar se déroule principalement sur Pandora, une lune luxuriante peuplée des Na'vi.",
             category = Category.DIVERTISSEMENT
         ),
         Question(
@@ -3226,16 +3087,6 @@ object QuestionRepository {
             category = Category.HISTOIRE
         ),
         Question(
-            id = "hist_pompei_volcan",
-            title = "Destruction de Pompéi",
-            text = "Quel volcan est responsable de la destruction de Pompéi en 79 apr. J.-C. ?",
-            options = listOf("Etna", "Stromboli", "Vésuve", "Vulcano"),
-            correctIndex = 2,
-            rating = 850,
-            explanation = "L'éruption du Vésuve en 79 ensevelit Pompéi sous les cendres, permettant une conservation exceptionnelle de la ville antique.",
-            category = Category.HISTOIRE
-        ),
-        Question(
             id = "hist_clovis_bapteme_ville",
             title = "Baptême de Clovis",
             text = "Dans quelle ville Clovis fut-il baptisé selon la tradition ?",
@@ -3573,16 +3424,6 @@ object QuestionRepository {
             correctIndex = 0,
             rating = 1350,
             explanation = "Phobos et Deimos sont les deux petites lunes naturelles de Mars. Phobos se rapproche lentement de la planète et finira probablement par se désintégrer.",
-            category = Category.SCIENCES_ET_NATURE
-        ),
-        Question(
-            id = "sci_azote_atmosphere",
-            title = "Gaz principal de l'atmosphère",
-            text = "Quel gaz est le plus abondant dans l'atmosphère terrestre ?",
-            options = listOf("Oxygène", "Dioxyde de carbone", "Argon", "Azote"),
-            correctIndex = 3,
-            rating = 800,
-            explanation = "L'azote représente environ 78 % de l'atmosphère terrestre, contre environ 21 % pour l'oxygène.",
             category = Category.SCIENCES_ET_NATURE
         ),
         Question(
@@ -3982,7 +3823,7 @@ object QuestionRepository {
             options = listOf("4", "5", "6", "7"),
             correctIndex = 1,
             rating = 1000,
-            explanation = "Le pentathlon moderne comprend cinq disciplines : escrime, natation, équitation (ou son remplaçant moderne selon les évolutions du règlement), tir et course à pied combinés.",
+            explanation = "Le pentathlon moderne comprend cinq disciplines : escrime, natation, équitation, tir et course à pied combinés.",
             category = Category.SPORTS
         ),
         Question(
@@ -4186,16 +4027,6 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
-            id = "div_game_of_thrones_trone",
-            title = "Le Trône de Fer",
-            text = "De quoi est principalement constitué le Trône de Fer dans Game of Thrones ?",
-            options = listOf("Lances", "Boucliers", "Épées fondues", "Haches"),
-            correctIndex = 2,
-            rating = 1100,
-            explanation = "Selon la légende, le Trône de Fer a été forgé à partir des épées des ennemis vaincus par Aegon le Conquérant.",
-            category = Category.DIVERTISSEMENT
-        ),
-        Question(
             id = "div_sims_langue",
             title = "La langue des Sims",
             text = "Comment s'appelle la langue fictive parlée dans les jeux Les Sims ?",
@@ -4215,6 +4046,3670 @@ object QuestionRepository {
             explanation = "La DeLorean DMC-12 est devenue une icône du cinéma grâce à son rôle central dans la trilogie Retour vers le futur.",
             category = Category.DIVERTISSEMENT
         ),
+        Question(
+            id = "geo_limpopo_embouchure",
+            title = "Embouchure du Limpopo",
+            text = "Dans quel océan le fleuve Limpopo se jette-t-il ?",
+            options = listOf("Atlantique", "Indien", "Arctique", "Pacifique"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "Le Limpopo traverse plusieurs pays d'Afrique australe avant de se jeter dans l'océan Indien au Mozambique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_iles_feroe_souverainete",
+            title = "Souveraineté des Féroé",
+            text = "Les îles Féroé appartiennent à quel royaume ?",
+            options = listOf("Norvège", "Royaume-Uni", "Danemark", "Islande"),
+            correctIndex = 2,
+            rating = 1350,
+            explanation = "Les îles Féroé constituent un territoire autonome du royaume du Danemark situé dans l'Atlantique Nord.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_ljubljana_capitale",
+            title = "Capitale de la Slovénie",
+            text = "Quelle est la capitale de la Slovénie ?",
+            options = listOf("Zagreb", "Ljubljana", "Bratislava", "Sarajevo"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Ljubljana est la capitale de la Slovénie depuis son indépendance en 1991. Elle est traversée par la rivière Ljubljanica.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_mer_sargasses",
+            title = "Particularité de la mer des Sargasses",
+            text = "Quelle particularité distingue la mer des Sargasses ?",
+            options = listOf("Elle est entièrement gelée", "Elle n'est bordée par aucune côte", "Elle est la plus profonde du monde", "Elle est artificielle"),
+            correctIndex = 1,
+            rating = 1700,
+            explanation = "La mer des Sargasses est délimitée par des courants océaniques et non par des terres, ce qui en fait un cas unique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_madagascar_canal",
+            title = "Canal du Mozambique",
+            text = "Quel pays est séparé de Madagascar par le canal du Mozambique ?",
+            options = listOf("Kenya", "Afrique du Sud", "Mozambique", "Tanzanie"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Le canal du Mozambique sépare Madagascar du Mozambique sur le continent africain.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_victoria_chutes_pays",
+            title = "Les chutes Victoria",
+            text = "Les chutes Victoria se trouvent à la frontière entre la Zambie et quel autre pays ?",
+            options = listOf("Zimbabwe", "Botswana", "Namibie", "Angola"),
+            correctIndex = 0,
+            rating = 1000,
+            explanation = "Les chutes Victoria, parmi les plus impressionnantes du monde, sont situées sur le fleuve Zambèze entre la Zambie et le Zimbabwe.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_titicaca_altitude",
+            title = "Le lac Titicaca",
+            text = "Le lac Titicaca est partagé entre le Pérou et quel autre pays ?",
+            options = listOf("Équateur", "Bolivie", "Chili", "Paraguay"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Le lac Titicaca est situé sur l'Altiplano andin à la frontière entre le Pérou et la Bolivie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_kerguelen_ocean",
+            title = "Les Kerguelen",
+            text = "Dans quel océan se trouvent les îles Kerguelen ?",
+            options = listOf("Océan Indien", "Atlantique Nord", "Pacifique Nord", "Océan Arctique"),
+            correctIndex = 0,
+            rating = 1600,
+            explanation = "Les îles Kerguelen sont un archipel français isolé situé dans le sud de l'océan Indien.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_volga_mer",
+            title = "Destination de la Volga",
+            text = "Dans quelle mer se jette la Volga ?",
+            options = listOf("Mer Noire", "Mer Baltique", "Mer Caspienne", "Mer d'Azov"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "La Volga est le plus long fleuve d'Europe. Elle traverse la Russie avant de se jeter dans la mer Caspienne.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_alexandrie_fondateur",
+            title = "Fondation d'Alexandrie",
+            text = "Quel conquérant fonda la ville d'Alexandrie en Égypte ?",
+            options = listOf("Jules César", "Alexandre le Grand", "Ptolémée Ier", "Ramsès II"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Alexandre le Grand fonda Alexandrie en 331 av. J.-C. La ville devint rapidement l'un des plus grands centres intellectuels du monde antique.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_hadrien_mur",
+            title = "Le mur d'Hadrien",
+            text = "Dans quelle région actuelle fut construit le mur d'Hadrien par les Romains ?",
+            options = listOf("Écosse", "Irlande", "Angleterre", "Pays de Galles"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Le mur d'Hadrien fut construit au IIe siècle pour protéger la frontière nord de la province romaine de Bretagne.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_gutenberg_ville",
+            title = "La ville de Gutenberg",
+            text = "Dans quelle ville Johannes Gutenberg développa-t-il son imprimerie à caractères mobiles ?",
+            options = listOf("Cologne", "Mayence", "Nuremberg", "Vienne"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Gutenberg travailla à Mayence, en Allemagne. Son invention transforma durablement la diffusion du savoir en Europe.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_armada_invincible",
+            title = "L'Invincible Armada",
+            text = "Quel pays lança l'Invincible Armada contre l'Angleterre en 1588 ?",
+            options = listOf("France", "Espagne", "Portugal", "Pays-Bas"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "L'Invincible Armada était une immense flotte espagnole envoyée par Philippe II contre l'Angleterre d'Élisabeth Ire.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_capitaine_cook_fin",
+            title = "Fin du capitaine Cook",
+            text = "Sur quel archipel le navigateur James Cook trouva-t-il la mort en 1779 ?",
+            options = listOf("Fidji", "Hawaï", "Samoa", "Tonga"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "James Cook fut tué lors d'un affrontement avec des habitants de l'archipel d'Hawaï, qu'il avait contribué à faire connaître aux Européens.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_ruée_or_klondike",
+            title = "Ruée vers l'or du Klondike",
+            text = "Dans quelle région eut lieu la célèbre ruée vers l'or du Klondike à la fin du XIXe siècle ?",
+            options = listOf("Alaska", "Yukon", "Californie", "Sibérie"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "La ruée vers l'or du Klondike débuta en 1896 dans le territoire canadien du Yukon et attira des dizaines de milliers de chercheurs d'or.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_nuremberg_ville",
+            title = "Procès de Nuremberg",
+            text = "Les procès de Nuremberg jugèrent principalement les dirigeants de quel régime ?",
+            options = listOf("Empire austro-hongrois", "Allemagne nazie", "Italie fasciste", "URSS stalinienne"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Les procès de Nuremberg furent organisés après la Seconde Guerre mondiale pour juger les principaux responsables nazis.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_mur_berlin_chute",
+            title = "Chute du mur de Berlin",
+            text = "En quelle année le mur de Berlin est-il tombé ?",
+            options = listOf("1985", "1987", "1989", "1991"),
+            correctIndex = 2,
+            rating = 750,
+            explanation = "La chute du mur de Berlin, le 9 novembre 1989, symbolisa la fin de la division de l'Europe durant la guerre froide.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_union_europeenne_maastricht",
+            title = "Traité de Maastricht",
+            text = "Le traité de Maastricht, signé en 1992, a créé quelle organisation ?",
+            options = listOf("L'OTAN", "L'Union européenne", "L'ONU", "Le Conseil de l'Europe"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Le traité de Maastricht posa les bases de l'Union européenne moderne et introduisit notamment la citoyenneté européenne.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_axolotl_regeneration",
+            title = "Le pouvoir de l'axolotl",
+            text = "Quelle capacité exceptionnelle possède l'axolotl ?",
+            options = listOf("Changer de couleur instantanément", "Régénérer des membres entiers", "Voler sur de courtes distances", "Produire du venin"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "L'axolotl est capable de régénérer des membres, des parties de son cœur, de sa moelle épinière et même certaines régions de son cerveau, ce qui en fait un sujet d'étude majeur en biologie.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_uranus_decouverte",
+            title = "Découverte d'Uranus",
+            text = "Quel astronome découvrit la planète Uranus en 1781 ?",
+            options = listOf("Galilée", "Johannes Kepler", "William Herschel", "Edmond Halley"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "William Herschel découvrit Uranus en 1781. Il s'agissait de la première planète découverte à l'aide d'un télescope.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_lichen_symbiose",
+            title = "Nature d'un lichen",
+            text = "Un lichen est l'association symbiotique entre un champignon et quoi ?",
+            options = listOf("Une bactérie uniquement", "Une algue ou une cyanobactérie", "Une mousse", "Un insecte"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "Les lichens résultent d'une association durable entre un champignon et un organisme photosynthétique, généralement une algue verte ou une cyanobactérie.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_nebuleuse_definition",
+            title = "Une nébuleuse",
+            text = "Qu'est-ce qu'une nébuleuse en astronomie ?",
+            options = listOf("Une petite planète", "Un amas d'astéroïdes", "Un nuage de gaz et de poussières", "Un trou noir"),
+            correctIndex = 2,
+            rating = 950,
+            explanation = "Les nébuleuses sont de vastes nuages de gaz et de poussières où peuvent naître de nouvelles étoiles.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_ginkgo_fossile_vivant",
+            title = "Le ginkgo",
+            text = "Pourquoi le ginkgo biloba est-il souvent qualifié de « fossile vivant » ?",
+            options = listOf("Il pousse uniquement sur des fossiles", "Son espèce a très peu changé depuis des millions d'années", "Il ne vit qu'un an", "Il se nourrit de minéraux fossiles"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "Le ginkgo appartient à une lignée végétale très ancienne dont les caractéristiques ont peu évolué depuis plus de 200 millions d'années.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_arc_en_ciel_primaire",
+            title = "Couleur extérieure de l'arc-en-ciel",
+            text = "Quelle couleur apparaît sur le bord extérieur d'un arc-en-ciel primaire ?",
+            options = listOf("Violet", "Bleu", "Vert", "Rouge"),
+            correctIndex = 3,
+            rating = 1350,
+            explanation = "Dans un arc-en-ciel primaire, le rouge apparaît à l'extérieur tandis que le violet se trouve à l'intérieur en raison de la dispersion de la lumière.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_geyser_definition",
+            title = "Un geyser",
+            text = "Qu'est-ce qu'un geyser ?",
+            options = listOf("Une rivière souterraine", "Une source chaude jaillissant périodiquement", "Un volcan sous-marin", "Une grotte glacée"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Un geyser est une source chaude qui projette régulièrement de l'eau et de la vapeur sous pression vers la surface.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_boussole_magnetique",
+            title = "Fonctionnement de la boussole",
+            text = "Pourquoi une boussole indique-t-elle approximativement le nord ?",
+            options = listOf("À cause de la gravité", "Grâce au champ magnétique terrestre", "Grâce au vent solaire", "À cause de la rotation terrestre"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "L'aiguille aimantée d'une boussole s'aligne sur le champ magnétique terrestre, ce qui permet de repérer les directions.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_manchot_antarctique",
+            title = "Le plus grand manchot",
+            text = "Quelle est la plus grande espèce de manchot vivant actuellement ?",
+            options = listOf("Manchot royal", "Manchot empereur", "Manchot papou", "Manchot Adélie"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Le manchot empereur peut mesurer plus d'un mètre de hauteur. Il vit en Antarctique et est célèbre pour son mode de reproduction en plein hiver.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "art_donatello_sculpteur",
+            title = "Le sculpteur Donatello",
+            text = "Donatello est l'une des grandes figures artistiques de quelle période ?",
+            options = listOf("Le Baroque", "La Renaissance", "Le Romantisme", "L'Art nouveau"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Donatello fut l'un des plus importants sculpteurs de la Renaissance italienne. Ses œuvres influencèrent profondément les artistes des générations suivantes.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_bolchoi_ville",
+            title = "Le théâtre Bolchoï",
+            text = "Dans quelle ville se trouve le célèbre théâtre Bolchoï ?",
+            options = listOf("Saint-Pétersbourg", "Moscou", "Kiev", "Minsk"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Le théâtre Bolchoï de Moscou est l'un des temples mondiaux du ballet et de l'opéra depuis le XVIIIe siècle.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_ulysse_bloom",
+            title = "Leopold Bloom",
+            text = "Le personnage de Leopold Bloom est le héros de quel roman ?",
+            options = listOf("À la recherche du temps perdu", "Ulysse", "Le Procès", "Le Bruit et la Fureur"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "Leopold Bloom est le personnage principal d'Ulysse de James Joyce, considéré comme l'un des romans majeurs du XXe siècle.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_rodin_penseur",
+            title = "Le Penseur",
+            text = "Quelle sculpture célèbre représente un homme assis en pleine réflexion ?",
+            options = listOf("David", "Le Baiser", "Le Penseur", "Moïse"),
+            correctIndex = 2,
+            rating = 700,
+            explanation = "Le Penseur d'Auguste Rodin est devenu un symbole universel de la réflexion intellectuelle et philosophique.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_noh_japon",
+            title = "Le théâtre nô",
+            text = "Le théâtre nô est une forme traditionnelle de spectacle originaire de quel pays ?",
+            options = listOf("Chine", "Japon", "Corée", "Indonésie"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Le théâtre nô est un art scénique japonais apparu au XIVe siècle, caractérisé par ses masques, sa lenteur et son raffinement.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_madone_cri_munch",
+            title = "Peintre de Madone",
+            text = "Quel artiste a également peint l'œuvre intitulée « Madone », en plus du célèbre « Cri » ?",
+            options = listOf("Gustav Klimt", "Edvard Munch", "Egon Schiele", "Paul Gauguin"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "Edvard Munch a réalisé plusieurs versions de Madone, œuvre emblématique de son univers symboliste et expressionniste.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_verdi_prenom",
+            title = "Prénom de Verdi",
+            text = "Quel était le prénom du compositeur Verdi ?",
+            options = listOf("Antonio", "Giuseppe", "Giacomo", "Vincenzo"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Giuseppe Verdi est l'un des plus grands compositeurs d'opéra de l'histoire, auteur notamment de La Traviata et Aïda.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_fauvisme_couleurs",
+            title = "Le fauvisme",
+            text = "Quelle caractéristique est typique du mouvement fauviste ?",
+            options = listOf("Des couleurs vives et non réalistes", "L'absence totale de couleur", "Des œuvres uniquement abstraites", "Des scènes exclusivement religieuses"),
+            correctIndex = 0,
+            rating = 1150,
+            explanation = "Les artistes fauves, comme Matisse, utilisaient des couleurs intenses et expressives sans chercher à reproduire fidèlement la réalité.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_brothers_grimm",
+            title = "Les frères Grimm",
+            text = "Pour quel type d'œuvres les frères Grimm sont-ils principalement connus ?",
+            options = listOf("Les opéras", "Les contes populaires", "Les romans policiers", "Les poèmes épiques"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Jacob et Wilhelm Grimm ont collecté et publié de nombreux contes populaires allemands, dont Blanche-Neige et Hansel et Gretel.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_escher_pays",
+            title = "Origine d'Escher",
+            text = "De quel pays était originaire l'artiste M. C. Escher ?",
+            options = listOf("Belgique", "Allemagne", "Pays-Bas", "Danemark"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "M. C. Escher était un artiste néerlandais célèbre pour ses œuvres jouant avec les perspectives impossibles, les pavages et les illusions d'optique.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "spo_surf_vague_hawaii",
+            title = "Berceau du surf moderne",
+            text = "Quel archipel est considéré comme le berceau du surf moderne ?",
+            options = listOf("Fidji", "Hawaï", "Canaries", "Tahiti"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "Le surf moderne trouve ses racines à Hawaï, où il constituait déjà une pratique culturelle importante bien avant son essor mondial au XXe siècle.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_pingpong_service",
+            title = "Service au tennis de table",
+            text = "Au tennis de table, la balle doit d'abord rebondir où lors d'un service réglementaire ?",
+            options = listOf("Dans le camp adverse uniquement", "Dans le camp du serveur puis dans le camp adverse", "Sur la ligne centrale", "N'importe où sur la table"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Lors d'un service réglementaire, la balle doit rebondir une première fois dans le camp du serveur avant de franchir le filet et rebondir dans le camp adverse.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_rallye_copilote_role",
+            title = "Rôle du copilote",
+            text = "Dans les rallyes automobiles, quel est le rôle principal du copilote ?",
+            options = listOf("Contrôler le moteur", "Lire les notes du parcours", "Changer les pneus", "Chronométrer les concurrents"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Le copilote annonce les virages, dangers et particularités du parcours à l'aide de notes préparées lors des reconnaissances.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_lancer_marteau_poids",
+            title = "Le marteau d'athlétisme",
+            text = "Le marteau utilisé en compétition masculine d'athlétisme pèse environ :",
+            options = listOf("4 kg", "5 kg", "7,26 kg", "10 kg"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Le marteau masculin réglementaire pèse 7,26 kg. L'épreuve consiste à le lancer le plus loin possible après plusieurs rotations.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_canoe_kayak_difference",
+            title = "Canoë ou kayak",
+            text = "Quelle caractéristique distingue principalement le kayak du canoë ?",
+            options = listOf("Le nombre de rameurs", "La présence d'une pagaie double", "La longueur de l'embarcation", "La couleur du bateau"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Le kayak utilise généralement une pagaie double tandis que le canoë emploie une pagaie simple.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_snooker_score_maximum",
+            title = "Break maximal au snooker",
+            text = "Quel est le score maximal théorique d'un break au snooker ?",
+            options = listOf("147", "155", "167", "180"),
+            correctIndex = 0,
+            rating = 1700,
+            explanation = "Le célèbre break maximum de 147 points est obtenu en empochant toutes les rouges avec les noires puis toutes les couleurs dans l'ordre.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_equitation_dressage",
+            title = "Le dressage",
+            text = "Le dressage est une discipline de quel sport olympique ?",
+            options = listOf("Pentathlon moderne", "Équitation", "Gymnastique", "Polo"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "Le dressage est l'une des trois disciplines olympiques de l'équitation avec le saut d'obstacles et le concours complet.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_cricket_over",
+            title = "L'over au cricket",
+            text = "Combien de lancers compose généralement un over au cricket moderne ?",
+            options = listOf("4", "5", "6", "8"),
+            correctIndex = 2,
+            rating = 1650,
+            explanation = "Dans la majorité des compétitions actuelles, un over est composé de six lancers valides effectués par le même lanceur.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_alpin_super_g",
+            title = "Le Super-G",
+            text = "Le Super-G est une discipline de quel sport ?",
+            options = listOf("Snowboard", "Biathlon", "Ski alpin", "Ski de fond"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "Le Super-G est une épreuve de vitesse du ski alpin, située entre la descente et le slalom géant en termes de caractéristiques.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_waterpolo_duree_match",
+            title = "Durée d'un match de water-polo",
+            text = "Un match international de water-polo est généralement composé de combien de périodes ?",
+            options = listOf("2", "3", "4", "6"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "Les rencontres internationales de water-polo se disputent en quatre périodes de jeu séparées par de courtes pauses.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "div_sonic_rings",
+            title = "Les anneaux de Sonic",
+            text = "Dans les jeux Sonic, que perd généralement le hérisson lorsqu'il est touché par un ennemi ?",
+            options = listOf("Ses vies", "Ses chaussures", "Ses anneaux", "Sa vitesse"),
+            correctIndex = 2,
+            rating = 700,
+            explanation = "Lorsque Sonic est touché, il perd ses anneaux. Tant qu'il en possède au moins un, il peut survivre à l'impact.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_kaamelott_createur",
+            title = "Créateur de Kaamelott",
+            text = "Qui est le créateur de la série Kaamelott ?",
+            options = listOf("Franck Pitiot", "Alexandre Astier", "Jean-Christophe Hembert", "Bruno Salomone"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Alexandre Astier est le créateur, scénariste, réalisateur et interprète principal de Kaamelott, où il joue le roi Arthur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_seigneur_anneaux_moria",
+            title = "Les mines de la Moria",
+            text = "Quel peuple a construit les mines de la Moria dans l'univers du Seigneur des Anneaux ?",
+            options = listOf("Les Elfes", "Les Hommes", "Les Nains", "Les Hobbits"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "La Moria, également appelée Khazad-dûm, était l'un des plus grands royaumes nains de la Terre du Milieu.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_interstellar_robot",
+            title = "Le robot TARS",
+            text = "Dans quel film de science-fiction apparaît le robot nommé TARS ?",
+            options = listOf("Seul sur Mars", "Interstellar", "Gravity", "Premier Contact"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "TARS est l'un des robots les plus appréciés du film Interstellar de Christopher Nolan, sorti en 2014.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_minecraft_creeper",
+            title = "Le Creeper",
+            text = "Quelle est la particularité principale d'un Creeper dans Minecraft ?",
+            options = listOf("Il vole", "Il se téléporte", "Il explose près du joueur", "Il lance des flèches"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "Le Creeper est l'un des monstres les plus emblématiques de Minecraft. Il explose lorsqu'il s'approche suffisamment du joueur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_doctor_who_tardis",
+            title = "Le TARDIS",
+            text = "Que signifie l'acronyme TARDIS dans Doctor Who ?",
+            options = listOf(
+                "Time And Relative Dimension In Space",
+                "Temporal And Remote Device In Space",
+                "Time And Reality Device In System",
+                "Temporal Relative Dimension Interface System"
+            ),
+            correctIndex = 0,
+            rating = 1700,
+            explanation = "TARDIS signifie « Time And Relative Dimension In Space ». Ce vaisseau temporel est bien plus grand à l'intérieur qu'à l'extérieur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "geo_iles_aland_souverainete",
+            title = "Les îles Åland",
+            text = "Les îles Åland constituent un territoire autonome rattaché à quel pays ?",
+            options = listOf("Suède", "Finlande", "Norvège", "Danemark"),
+            correctIndex = 1,
+            rating = 1650,
+            explanation = "Les îles Åland sont un archipel autonome de langue suédoise appartenant à la Finlande. Elles bénéficient d'un statut démilitarisé unique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_zambeze_ocean",
+            title = "Destination du Zambèze",
+            text = "Dans quel océan se jette le fleuve Zambèze ?",
+            options = listOf("Atlantique", "Indien", "Pacifique", "Arctique"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Après avoir traversé plusieurs pays d'Afrique australe et les chutes Victoria, le Zambèze se jette dans l'océan Indien au Mozambique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_mont_elbrouz_pays",
+            title = "Le mont Elbrouz",
+            text = "Dans quel pays se situe le mont Elbrouz, point culminant de l'Europe selon la définition la plus répandue ?",
+            options = listOf("Géorgie", "Russie", "Turquie", "Arménie"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "Le mont Elbrouz culmine à 5 642 mètres dans le Caucase russe. Il est généralement considéré comme le plus haut sommet d'Europe.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_detroit_malacca",
+            title = "Le détroit de Malacca",
+            text = "Quel pays ne borde PAS le détroit de Malacca ?",
+            options = listOf("Malaisie", "Indonésie", "Thaïlande", "Philippines"),
+            correctIndex = 3,
+            rating = 1800,
+            explanation = "Le détroit de Malacca est situé entre la péninsule Malaise et l'île indonésienne de Sumatra. Les Philippines n'en sont pas riveraines.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_fjord_plus_long",
+            title = "Le plus long fjord",
+            text = "Dans quel pays se trouve le Sognefjord, le plus long fjord d'Europe ?",
+            options = listOf("Islande", "Canada", "Norvège", "Suède"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Le Sognefjord, en Norvège, s'étend sur plus de 200 kilomètres à l'intérieur des terres.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_mekong_pays",
+            title = "Pays traversés par le Mékong",
+            text = "Le Mékong traverse combien de pays au total ?",
+            options = listOf("4", "5", "6", "7"),
+            correctIndex = 2,
+            rating = 1750,
+            explanation = "Le Mékong traverse ou borde six pays : Chine, Myanmar, Laos, Thaïlande, Cambodge et Vietnam.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_suriname_langue",
+            title = "Langue officielle du Suriname",
+            text = "Quelle est la langue officielle du Suriname ?",
+            options = listOf("Anglais", "Espagnol", "Néerlandais", "Français"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "Le Suriname est le seul État indépendant d'Amérique du Sud dont la langue officielle est le néerlandais, héritage de son passé colonial.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_bayeux_tapisserie",
+            title = "La tapisserie de Bayeux",
+            text = "Quel événement historique est représenté sur la célèbre tapisserie de Bayeux ?",
+            options = listOf("La guerre de Cent Ans", "La conquête normande de l'Angleterre", "Les croisades", "La bataille d'Azincourt"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "La tapisserie de Bayeux raconte la conquête de l'Angleterre par Guillaume le Conquérant en 1066, notamment la bataille d'Hastings.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_versailles_galerie_glaces",
+            title = "La galerie des Glaces",
+            text = "Sous quel roi fut construite la galerie des Glaces du château de Versailles ?",
+            options = listOf("Louis XIII", "Louis XIV", "Louis XV", "Louis XVI"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "La galerie des Glaces fut aménagée sous Louis XIV et symbolise la puissance de la monarchie française.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_bataille_lepante",
+            title = "La bataille de Lépante",
+            text = "La bataille navale de Lépante en 1571 opposa notamment les Ottomans à quelle coalition chrétienne ?",
+            options = listOf("La Sainte Ligue", "La Ligue hanséatique", "L'Ordre teutonique", "La Triple Alliance"),
+            correctIndex = 0,
+            rating = 1700,
+            explanation = "La Sainte Ligue remporta une victoire majeure contre l'Empire ottoman lors de la bataille de Lépante.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_transsibérien",
+            title = "Le Transsibérien",
+            text = "Dans quel pays fut construit le chemin de fer Transsibérien ?",
+            options = listOf("Canada", "Russie", "Chine", "Kazakhstan"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Le Transsibérien relie Moscou à Vladivostok sur plus de 9 000 kilomètres.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_suez_nationalisation",
+            title = "Nationalisation du canal",
+            text = "Quel dirigeant nationalisa le canal de Suez en 1956 ?",
+            options = listOf("Sadate", "Nasser", "Farouk", "Moubarak"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "Gamal Abdel Nasser nationalisa le canal de Suez, provoquant une crise internationale majeure.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_timbuktu_empire",
+            title = "Tombouctou médiévale",
+            text = "Tombouctou fut un centre intellectuel majeur de quel empire africain ?",
+            options = listOf("Empire du Mali", "Empire zoulou", "Empire du Congo", "Empire aksoumite"),
+            correctIndex = 0,
+            rating = 1550,
+            explanation = "Tombouctou connut son âge d'or sous l'Empire du Mali puis l'Empire songhaï, devenant un grand centre du savoir.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_tchernobyl_annee",
+            title = "Catastrophe de Tchernobyl",
+            text = "En quelle année survint la catastrophe nucléaire de Tchernobyl ?",
+            options = listOf("1984", "1986", "1988", "1991"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "L'accident de Tchernobyl eut lieu le 26 avril 1986 en Ukraine alors membre de l'URSS.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_komodo_venin",
+            title = "Le dragon de Komodo",
+            text = "Dans quel pays vit naturellement le dragon de Komodo ?",
+            options = listOf("Philippines", "Indonésie", "Malaisie", "Papouasie-Nouvelle-Guinée"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Le dragon de Komodo vit sur quelques îles indonésiennes. C'est le plus grand lézard actuel, pouvant dépasser 3 mètres de longueur.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_supernova_definition",
+            title = "Une supernova",
+            text = "Que désigne une supernova ?",
+            options = listOf("Une planète géante", "L'explosion d'une étoile", "Une galaxie naissante", "Un trou noir miniature"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "Une supernova est une explosion stellaire extrêmement énergétique pouvant brièvement surpasser l'éclat d'une galaxie entière.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_ornithorynque_ponte",
+            title = "L'ornithorynque",
+            text = "Quelle particularité rare possède l'ornithorynque parmi les mammifères ?",
+            options = listOf("Il pond des œufs", "Il respire sous l'eau", "Il possède trois cœurs", "Il change de couleur"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "L'ornithorynque fait partie des monotrèmes, un groupe très rare de mammifères qui pondent des œufs.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_seisme_epicentre",
+            title = "L'épicentre",
+            text = "Qu'appelle-t-on l'épicentre d'un séisme ?",
+            options = listOf("Le point de départ du séisme en profondeur", "Le point situé à la surface au-dessus du foyer", "La zone où les vagues s'arrêtent", "Le centre géographique du pays touché"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "L'épicentre est le point de la surface terrestre situé à la verticale du foyer du séisme, là où les secousses sont souvent les plus fortes.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_narval_defense",
+            title = "La défense du narval",
+            text = "La longue défense du narval est en réalité :",
+            options = listOf("Une corne", "Une dent", "Une nageoire modifiée", "Un os du crâne"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "La célèbre défense du narval est une canine hypertrophiée qui peut atteindre plus de 2 mètres de longueur.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_vitesse_orbite_terre",
+            title = "La Terre autour du Soleil",
+            text = "Environ à quelle vitesse la Terre orbite-t-elle autour du Soleil ?",
+            options = listOf("3 km/h", "300 km/h", "3 000 km/h", "107 000 km/h"),
+            correctIndex = 3,
+            rating = 1750,
+            explanation = "La Terre se déplace autour du Soleil à une vitesse moyenne d'environ 107 000 km/h, soit près de 30 km/s.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_diatomees_algues",
+            title = "Les diatomées",
+            text = "Les diatomées sont principalement :",
+            options = listOf("Des poissons microscopiques", "Des algues microscopiques", "Des bactéries pathogènes", "Des champignons marins"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "Les diatomées sont des algues unicellulaires très abondantes dans les océans et jouent un rôle majeur dans la production d'oxygène.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_ambre_origine",
+            title = "Origine de l'ambre",
+            text = "L'ambre est principalement formé à partir de quoi ?",
+            options = listOf("Lave refroidie", "Résine fossilisée", "Corail pétrifié", "Sable compressé"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "L'ambre provient de résines végétales anciennes qui se sont fossilisées pendant des millions d'années.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_octet_bits",
+            title = "Composition d'un octet",
+            text = "Combien de bits composent un octet ?",
+            options = listOf("4", "8", "16", "32"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Un octet contient 8 bits. Cette unité est utilisée pour mesurer la taille des données informatiques.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "art_citizen_kane_realisateur",
+            title = "Réalisateur de Citizen Kane",
+            text = "Qui a réalisé le film considéré comme un classique du cinéma « Citizen Kane » ?",
+            options = listOf("Alfred Hitchcock", "Orson Welles", "Billy Wilder", "John Ford"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Sorti en 1941, Citizen Kane est réalisé et interprété par Orson Welles. Il est souvent cité parmi les plus grands films de l'histoire du cinéma.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_goya_peintre_espagnol",
+            title = "Francisco de Goya",
+            text = "De quel pays était originaire le peintre Francisco de Goya ?",
+            options = listOf("Italie", "Portugal", "Espagne", "Mexique"),
+            correctIndex = 2,
+            rating = 900,
+            explanation = "Francisco de Goya est l'un des plus grands peintres espagnols. Son œuvre couvre aussi bien les portraits de cour que des scènes sombres et visionnaires.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_peter_pan_auteur",
+            title = "Auteur de Peter Pan",
+            text = "Qui a créé le personnage de Peter Pan ?",
+            options = listOf("Lewis Carroll", "J. M. Barrie", "Rudyard Kipling", "Kenneth Grahame"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "L'écrivain écossais J. M. Barrie créa Peter Pan au début du XXe siècle. Le personnage est devenu une figure majeure de la littérature jeunesse.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_lascaux_decouverte",
+            title = "La grotte de Lascaux",
+            text = "Dans quel pays se trouve la célèbre grotte de Lascaux ?",
+            options = listOf("Espagne", "France", "Italie", "Belgique"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "La grotte de Lascaux est située en Dordogne. Ses peintures préhistoriques figurent parmi les plus remarquables du monde.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_ravel_bolero",
+            title = "Le Boléro",
+            text = "Quel compositeur a écrit le célèbre Boléro ?",
+            options = listOf("Claude Debussy", "Maurice Ravel", "Gabriel Fauré", "Erik Satie"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Le Boléro de Maurice Ravel est construit sur une mélodie répétée accompagnée d'une orchestration qui s'enrichit progressivement.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_metropolitan_ville",
+            title = "Le Metropolitan Museum",
+            text = "Dans quelle ville se trouve le Metropolitan Museum of Art ?",
+            options = listOf("Chicago", "Washington", "New York", "Boston"),
+            correctIndex = 2,
+            rating = 1100,
+            explanation = "Le Metropolitan Museum of Art, souvent appelé le Met, est l'un des plus grands musées d'art au monde.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_wagner_tetralogie",
+            title = "L'Anneau du Nibelung",
+            text = "Quel compositeur a créé la tétralogie opératique « L'Anneau du Nibelung » ?",
+            options = listOf("Verdi", "Wagner", "Mahler", "Brahms"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "Richard Wagner composa cette monumentale série de quatre opéras inspirée des mythologies germaniques et nordiques.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_calligraphie_arabe",
+            title = "La calligraphie arabe",
+            text = "Dans de nombreuses traditions islamiques, la calligraphie a particulièrement prospéré pour quelle raison ?",
+            options = listOf("L'absence de papier", "Le faible coût des encres", "L'importance accordée au texte sacré", "L'interdiction de la sculpture"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "La calligraphie occupe une place centrale dans l'art islamique, notamment en raison de l'importance religieuse accordée à la transmission du texte coranique.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_casablanca_replique",
+            title = "Film Casablanca",
+            text = "Quel acteur interprète Rick Blaine dans le film Casablanca ?",
+            options = listOf("Clark Gable", "Humphrey Bogart", "Cary Grant", "James Stewart"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Humphrey Bogart joue Rick Blaine dans Casablanca (1942), l'un des films les plus célèbres de l'âge d'or hollywoodien.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_baroque_periode",
+            title = "Le Baroque",
+            text = "Le style baroque s'est principalement développé en Europe durant quels siècles ?",
+            options = listOf("Xe-XIIe siècles", "XIIIe-XIVe siècles", "XVIIe-XVIIIe siècles", "XIXe-XXe siècles"),
+            correctIndex = 2,
+            rating = 1450,
+            explanation = "Le baroque s'épanouit principalement aux XVIIe et XVIIIe siècles, caractérisé par le mouvement, le contraste et l'exubérance décorative.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "spo_javelot_materiau",
+            title = "Le javelot moderne",
+            text = "Dans quelle discipline sportive utilise-t-on un javelot ?",
+            options = listOf("Pentathlon moderne", "Athlétisme", "Biathlon", "Décathlon aquatique"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "Le lancer du javelot est l'une des disciplines traditionnelles de l'athlétisme. Les athlètes cherchent à lancer leur engin le plus loin possible.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_scrum_rugby_joueurs",
+            title = "La mêlée au rugby",
+            text = "Combien de joueurs de chaque équipe participent à une mêlée en rugby à XV ?",
+            options = listOf("6", "7", "8", "9"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Une mêlée de rugby à XV rassemble huit avants de chaque équipe. Elle permet de remettre le ballon en jeu dans certaines situations.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_escrime_sabre_cible",
+            title = "Zone valable au sabre",
+            text = "En escrime, quelle partie du corps constitue la surface valable au sabre ?",
+            options = listOf("Le tronc uniquement", "Tout le corps", "La partie située au-dessus de la taille", "Les bras uniquement"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "Au sabre, les touches sont valables sur toute la partie du corps située au-dessus de la taille, bras et tête inclus.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_basket_lancer_franc",
+            title = "Distance du lancer franc",
+            text = "Au basket-ball, à quelle distance approximative du panier se situe la ligne des lancers francs ?",
+            options = listOf("2,5 m", "4,6 m", "6,75 m", "9 m"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "La ligne de lancer franc est située à environ 4,6 mètres du panneau dans les règles internationales.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_ultra_trail_definition",
+            title = "L'ultra-trail",
+            text = "Dans le monde de la course à pied, qu'appelle-t-on généralement un ultra-trail ?",
+            options = listOf("Une course de moins de 10 km", "Une course en stade", "Une course nature dépassant la distance du marathon", "Une course réservée aux professionnels"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "On parle généralement d'ultra-trail pour une course nature dont la distance dépasse celle du marathon, souvent avec un important dénivelé.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_badminton_vitesse_volant",
+            title = "Vitesse du volant",
+            text = "Le volant de badminton peut dépasser quelle vitesse lors des frappes les plus puissantes ?",
+            options = listOf("150 km/h", "250 km/h", "400 km/h", "600 km/h"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "Les records modernes dépassent les 400 km/h, faisant du badminton l'un des sports de raquette les plus rapides au monde.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_ligue_champions_trophee",
+            title = "La Coupe aux grandes oreilles",
+            text = "Quel trophée est surnommé « la Coupe aux grandes oreilles » ?",
+            options = listOf("La Coupe du monde", "La Ligue Europa", "La Ligue des champions", "La Copa Libertadores"),
+            correctIndex = 2,
+            rating = 750,
+            explanation = "Le trophée de la Ligue des champions de l'UEFA est surnommé ainsi en raison de la forme caractéristique de ses anses.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_curling_maison",
+            title = "La maison au curling",
+            text = "Comment appelle-t-on la cible circulaire dessinée sur la glace au curling ?",
+            options = listOf("L'anneau", "La maison", "Le cercle central", "Le nid"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "La cible du curling est appelée la maison. Les équipes cherchent à placer leurs pierres le plus près possible de son centre.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_voile_babord",
+            title = "Babord et tribord",
+            text = "Sur un voilier, de quel côté se situe bâbord lorsqu'on regarde vers l'avant du bateau ?",
+            options = listOf("À droite", "À gauche", "À l'arrière", "Au centre"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Bâbord désigne le côté gauche d'un navire lorsque l'on regarde vers l'avant, tandis que tribord désigne le côté droit.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "div_futurama_planete_express",
+            title = "Planet Express",
+            text = "Dans la série Futurama, quel est le nom de l'entreprise où travaille Fry ?",
+            options = listOf("Galaxy Delivery", "Planet Express", "Space Cargo", "Interstellar Mail"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Planet Express est la société de livraison interplanétaire dirigée par le professeur Farnsworth dans Futurama.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_harry_potter_animagus",
+            title = "Animagus de Sirius",
+            text = "En quel animal Sirius Black peut-il se transformer ?",
+            options = listOf("Loup", "Cerf", "Chien noir", "Corbeau"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Sirius Black est un Animagus non déclaré capable de se transformer en grand chien noir, ce qui lui vaut le surnom de Patmol.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_portal_arme",
+            title = "Le Portal Gun",
+            text = "Dans le jeu Portal, quel objet permet de créer des portails ?",
+            options = listOf("Gravity Gun", "Portal Gun", "Teleporter", "Phase Device"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Le Portal Gun permet de créer deux portails reliés entre eux, au cœur des mécaniques de jeu de Portal.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_starwars_kessel",
+            title = "Le raid de Kessel",
+            text = "Quel personnage se vante d'avoir réalisé le raid de Kessel en moins de douze parsecs ?",
+            options = listOf("Luke Skywalker", "Lando Calrissian", "Han Solo", "Poe Dameron"),
+            correctIndex = 2,
+            rating = 1450,
+            explanation = "Han Solo affirme avoir accompli le raid de Kessel en moins de douze parsecs à bord du Faucon Millenium.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_dragonball_nuage",
+            title = "Le nuage magique",
+            text = "Comment s'appelle le nuage sur lequel voyage souvent Son Goku ?",
+            options = listOf("Kinto-un", "Nimbus", "Shenron", "Kaio"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "Le Kinto-un, souvent traduit par Nuage Magique, ne peut être utilisé que par les personnes au cœur pur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_fallout_abris",
+            title = "Les Vaults",
+            text = "Dans la série Fallout, comment s'appellent les abris souterrains construits avant la guerre nucléaire ?",
+            options = listOf("Shelters", "Bunkers", "Vaults", "Refuges"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Les Vaults sont des abris souterrains construits par Vault-Tec. Beaucoup servaient aussi à mener des expériences sociales secrètes.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_chaplin_personnage",
+            title = "Le Vagabond",
+            text = "Quel personnage emblématique est associé à Charlie Chaplin ?",
+            options = listOf("Le Vagabond", "Le Dictateur", "Charlot Junior", "Monsieur Verdoux"),
+            correctIndex = 0,
+            rating = 900,
+            explanation = "Le Vagabond, appelé Charlot en français, est le personnage le plus célèbre incarné par Charlie Chaplin.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_blade_runner_replicants",
+            title = "Les Réplicants",
+            text = "Dans Blade Runner, comment appelle-t-on les êtres artificiels presque indiscernables des humains ?",
+            options = listOf("Synthétiques", "Androïdes", "Réplicants", "Clones"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Les Réplicants sont des êtres biologiques artificiels créés par la Tyrell Corporation dans l'univers de Blade Runner.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_witcher_sorceleur_nom",
+            title = "Le Sorceleur",
+            text = "Quel est le nom du héros principal de la saga The Witcher ?",
+            options = listOf("Jaskier", "Vesemir", "Geralt de Riv", "Emhyr"),
+            correctIndex = 2,
+            rating = 1000,
+            explanation = "Geralt de Riv est un sorceleur, un chasseur de monstres génétiquement modifié, héros des romans d'Andrzej Sapkowski et de leurs adaptations.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "geo_bhoutan_capitale",
+            title = "Capitale du Bhoutan",
+            text = "Quelle est la capitale du Bhoutan ?",
+            options = listOf("Katmandou", "Thimphou", "Paro", "Dacca"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Thimphou est la capitale du Bhoutan, petit royaume himalayen réputé pour son indice de bonheur national brut.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_mer_andaman",
+            title = "La mer d'Andaman",
+            text = "La mer d'Andaman est située à l'est de quel pays ?",
+            options = listOf("Inde", "Sri Lanka", "Pakistan", "Maldives"),
+            correctIndex = 0,
+            rating = 1450,
+            explanation = "La mer d'Andaman se situe à l'est de l'Inde et à l'ouest de la Thaïlande et du Myanmar.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_borneo_partage",
+            title = "L'île de Bornéo",
+            text = "Combien de pays se partagent l'île de Bornéo ?",
+            options = listOf("2", "3", "4", "5"),
+            correctIndex = 1,
+            rating = 1750,
+            explanation = "Bornéo est partagée entre l'Indonésie, la Malaisie et le Brunei, soit trois pays au total.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_cotonou_capitale",
+            title = "Capitale officielle du Bénin",
+            text = "Quelle est la capitale officielle du Bénin ?",
+            options = listOf("Porto-Novo", "Cotonou", "Parakou", "Abomey"),
+            correctIndex = 0,
+            rating = 1400,
+            explanation = "Porto-Novo est la capitale officielle du Bénin, même si Cotonou abrite la plupart des institutions gouvernementales.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_carpates_pays",
+            title = "Les Carpates",
+            text = "Quel pays abrite la plus grande partie de la chaîne des Carpates ?",
+            options = listOf("Roumanie", "Slovaquie", "Pologne", "Ukraine"),
+            correctIndex = 0,
+            rating = 1550,
+            explanation = "Les Carpates traversent plusieurs pays d'Europe centrale et orientale, mais leur plus grande portion se situe en Roumanie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_poutine_origine",
+            title = "Origine de la poutine",
+            text = "La poutine est un plat originaire de quelle région du monde ?",
+            options = listOf("Louisiane", "Québec", "Belgique", "Bretagne"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "La poutine est un plat emblématique du Québec composé de frites, de fromage en grains et de sauce brune. Selon tes règles, l'origine géographique d'un plat relève de la géographie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_solon_athenes",
+            title = "Le réformateur Solon",
+            text = "Dans quelle cité grecque Solon mena-t-il ses célèbres réformes politiques au VIe siècle av. J.-C. ?",
+            options = listOf("Sparte", "Corinthe", "Athènes", "Thèbes"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "Solon fut un législateur athénien dont les réformes contribuèrent à poser les bases de la future démocratie athénienne.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_harald_angleterre",
+            title = "Dernier roi saxon",
+            text = "Quel roi d'Angleterre fut vaincu par Guillaume le Conquérant à la bataille d'Hastings en 1066 ?",
+            options = listOf("Harold Godwinson", "Richard Cœur de Lion", "Étienne de Blois", "Henri Ier"),
+            correctIndex = 0,
+            rating = 1450,
+            explanation = "Harold Godwinson fut le dernier roi anglo-saxon d'Angleterre. Sa défaite à Hastings ouvrit la voie à la conquête normande.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_marco_polo_venise",
+            title = "Origine de Marco Polo",
+            text = "De quelle cité-État italienne Marco Polo était-il originaire ?",
+            options = listOf("Florence", "Gênes", "Venise", "Pise"),
+            correctIndex = 2,
+            rating = 1000,
+            explanation = "Marco Polo était un marchand vénitien dont les récits de voyage contribuèrent à faire connaître l'Asie aux Européens.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_louisiane_vente",
+            title = "Vente de la Louisiane",
+            text = "Quel dirigeant français vendit la Louisiane aux États-Unis en 1803 ?",
+            options = listOf("Louis XVI", "Napoléon Bonaparte", "Louis XVIII", "Napoléon III"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Napoléon Bonaparte vendit l'immense territoire de la Louisiane aux États-Unis, doublant presque la superficie du pays.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_nightingale_infirmiere",
+            title = "Florence Nightingale",
+            text = "Florence Nightingale est principalement connue pour avoir contribué au développement de quelle profession ?",
+            options = listOf("Médecin", "Pharmacien", "Infirmière", "Sage-femme"),
+            correctIndex = 2,
+            rating = 1100,
+            explanation = "Florence Nightingale est considérée comme la fondatrice des soins infirmiers modernes grâce à son action durant la guerre de Crimée.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_panama_canal_ouverture",
+            title = "Ouverture du canal",
+            text = "En quelle année le canal de Panama fut-il officiellement ouvert à la navigation ?",
+            options = listOf("1905", "1914", "1923", "1931"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "Le canal de Panama fut inauguré en 1914 et permit de relier l'océan Atlantique à l'océan Pacifique sans contourner l'Amérique du Sud.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_enigma_machine",
+            title = "La machine Enigma",
+            text = "La machine Enigma était utilisée par quel pays durant la Seconde Guerre mondiale ?",
+            options = listOf("Japon", "Italie", "Allemagne", "URSS"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Enigma était un système de chiffrement allemand. Son décryptage par les Alliés joua un rôle majeur dans le conflit.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_gandhi_independance",
+            title = "Lutte de Gandhi",
+            text = "Mahatma Gandhi mena principalement son action politique pour l'indépendance de quel pays ?",
+            options = listOf("Pakistan", "Inde", "Sri Lanka", "Bangladesh"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "Gandhi fut l'une des figures majeures du mouvement pour l'indépendance de l'Inde, notamment grâce à sa stratégie de résistance non violente.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_spoutnik_premier",
+            title = "Premier satellite artificiel",
+            text = "Quel pays lança Spoutnik 1, le premier satellite artificiel de l'histoire ?",
+            options = listOf("États-Unis", "France", "URSS", "Royaume-Uni"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "L'URSS lança Spoutnik 1 en octobre 1957, marquant le début de l'ère spatiale.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_velours_revolution",
+            title = "Révolution de Velours",
+            text = "Dans quel pays eut lieu la Révolution de Velours en 1989 ?",
+            options = listOf("Pologne", "Hongrie", "Tchécoslovaquie", "Roumanie"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "La Révolution de Velours entraîna la fin pacifique du régime communiste en Tchécoslovaquie et l'arrivée au pouvoir de Václav Havel.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_tardigrade_survie",
+            title = "Le tardigrade",
+            text = "Pour quelle capacité les tardigrades sont-ils particulièrement connus ?",
+            options = listOf("Produire de l'électricité", "Changer de forme", "Survivre à des conditions extrêmes", "Vivre uniquement sous terre"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "Les tardigrades peuvent survivre à des températures extrêmes, au vide spatial, à de fortes radiations et à une déshydratation prolongée.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_heliocentrisme_copernic",
+            title = "L'héliocentrisme",
+            text = "Quel astronome est principalement associé à la théorie héliocentrique moderne ?",
+            options = listOf("Tycho Brahe", "Nicolas Copernic", "Ptolémée", "Edwin Hubble"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Nicolas Copernic proposa que la Terre et les autres planètes tournent autour du Soleil, bouleversant la vision du monde de son époque.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_kiwi_oiseau",
+            title = "Le kiwi",
+            text = "Quelle particularité caractérise le kiwi, oiseau emblématique de Nouvelle-Zélande ?",
+            options = listOf("Il nage sous l'eau", "Il est incapable de voler", "Il vit uniquement dans les arbres", "Il est venimeux"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Le kiwi possède des ailes très réduites et ne peut pas voler. Il est devenu un symbole national de la Nouvelle-Zélande.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_adn_support",
+            title = "Support de l'hérédité",
+            text = "Quelle molécule porte l'information génétique chez la plupart des êtres vivants ?",
+            options = listOf("ATP", "ADN", "Protéine", "Glucose"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "L'ADN contient les instructions génétiques nécessaires au développement et au fonctionnement des organismes vivants.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_mycorhize_definition",
+            title = "Une mycorhize",
+            text = "Une mycorhize est une association entre les racines d'une plante et quel autre organisme ?",
+            options = listOf("Une bactérie", "Un insecte", "Un champignon", "Une algue"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "Les mycorhizes sont des associations bénéfiques entre les racines des plantes et certains champignons qui facilitent l'absorption des nutriments.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_venus_retrograde",
+            title = "Rotation particulière",
+            text = "Quelle planète tourne sur elle-même dans le sens opposé à celui de la plupart des autres planètes du Système solaire ?",
+            options = listOf("Mars", "Jupiter", "Vénus", "Neptune"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Vénus possède une rotation rétrograde : le Soleil semble s'y lever à l'ouest et se coucher à l'est.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_levure_pain",
+            title = "La levure du pain",
+            text = "Quel organisme est principalement responsable de la fermentation utilisée pour faire lever la pâte à pain ?",
+            options = listOf("Une algue", "Une levure", "Une mousse", "Un virus"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "Les levures transforment les sucres en dioxyde de carbone, ce qui fait gonfler la pâte. Selon tes règles, l'aspect scientifique de la cuisine relève de Sciences & Nature.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_mercure_temperature",
+            title = "Planète aux extrêmes",
+            text = "Pourquoi Mercure connaît-elle de très fortes variations de température entre le jour et la nuit ?",
+            options = listOf("Elle tourne trop vite", "Elle ne possède presque pas d'atmosphère", "Elle est couverte d'océans", "Elle reçoit peu de lumière"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "Mercure ne possède pratiquement pas d'atmosphère pour retenir la chaleur, ce qui provoque d'énormes écarts de température.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_calorie_definition",
+            title = "Une calorie",
+            text = "En nutrition, que mesure une calorie ?",
+            options = listOf("Une masse", "Une température", "Une énergie", "Une concentration"),
+            correctIndex = 2,
+            rating = 950,
+            explanation = "La calorie est une unité d'énergie. Les aliments sont généralement exprimés en kilocalories (kcal).",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_migration_monarque",
+            title = "Le papillon monarque",
+            text = "Pour quel phénomène le papillon monarque est-il célèbre ?",
+            options = listOf("Sa bioluminescence", "Sa migration sur de très longues distances", "Son venin", "Sa vie sous l'eau"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Les papillons monarques réalisent chaque année l'une des plus impressionnantes migrations du règne animal, parcourant plusieurs milliers de kilomètres.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "art_chopin_nationalite",
+            title = "Nationalité de Chopin",
+            text = "De quelle nationalité était le compositeur Frédéric Chopin ?",
+            options = listOf("Autrichienne", "Allemande", "Polonaise", "Hongroise"),
+            correctIndex = 2,
+            rating = 900,
+            explanation = "Frédéric Chopin était un compositeur et pianiste polonais du XIXe siècle. Ses mazurkas et ses polonaises s'inspirent fortement de la musique traditionnelle de son pays.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_taj_mahal_fonction",
+            title = "Le Taj Mahal",
+            text = "À l'origine, le Taj Mahal a été construit pour servir de :",
+            options = listOf("Palais royal", "Temple hindou", "Observatoire", "Mausolée"),
+            correctIndex = 3,
+            rating = 950,
+            explanation = "Le Taj Mahal fut construit au XVIIe siècle par l'empereur moghol Shah Jahan comme mausolée pour son épouse Mumtaz Mahal.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_muraille_unesco",
+            title = "Patrimoine monumental",
+            text = "Dans quel pays se trouve la Grande Muraille ?",
+            options = listOf("Mongolie", "Corée du Nord", "Japon", "Chine"),
+            correctIndex = 3,
+            rating = 700,
+            explanation = "La Grande Muraille de Chine est l'un des plus vastes ensembles architecturaux jamais construits et figure au patrimoine mondial de l'UNESCO.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_mozart_requiem",
+            title = "Le Requiem",
+            text = "Quel compositeur a laissé son célèbre Requiem inachevé à sa mort ?",
+            options = listOf("Beethoven", "Mozart", "Haydn", "Schubert"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Mozart mourut en 1791 avant d'achever son Requiem, qui fut complété par certains de ses élèves.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_couscous_ingredient",
+            title = "Base du couscous",
+            text = "Le couscous traditionnel est préparé à partir de quelle céréale ?",
+            options = listOf("Riz", "Orge", "Maïs", "Blé dur"),
+            correctIndex = 3,
+            rating = 850,
+            explanation = "Le couscous est fabriqué à partir de semoule de blé dur. Selon tes règles, la gastronomie au sens culturel relève de la catégorie Art & Culture.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_gaudi_sagrada",
+            title = "La Sagrada Família",
+            text = "Quel architecte a conçu la basilique de la Sagrada Família à Barcelone ?",
+            options = listOf("Antoni Gaudí", "Santiago Calatrava", "Le Corbusier", "Rafael Moneo"),
+            correctIndex = 0,
+            rating = 1000,
+            explanation = "Antoni Gaudí consacra une grande partie de sa vie à la Sagrada Família, devenue l'un des monuments les plus célèbres d'Espagne.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_iliade_theme",
+            title = "Sujet de l'Iliade",
+            text = "Quel conflit constitue le cadre principal de l'Iliade ?",
+            options = listOf("Les guerres médiques", "La guerre de Troie", "Les guerres puniques", "La conquête d'Alexandre"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "L'Iliade attribuée à Homère raconte un épisode de la guerre de Troie centré sur la colère d'Achille.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_sushi_origine_culturelle",
+            title = "Spécialité japonaise",
+            text = "Avec quel pays les sushis sont-ils principalement associés ?",
+            options = listOf("Corée du Sud", "Chine", "Japon", "Vietnam"),
+            correctIndex = 2,
+            rating = 650,
+            explanation = "Les sushis sont devenus l'une des spécialités culinaires les plus connues du Japon. Selon tes règles, l'aspect culturel de la gastronomie relève d'Art & Culture.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_impression_soleil_levant",
+            title = "Naissance de l'impressionnisme",
+            text = "Quel peintre a réalisé « Impression, soleil levant », œuvre qui a donné son nom à l'impressionnisme ?",
+            options = listOf("Pierre-Auguste Renoir", "Claude Monet", "Camille Pissarro", "Edgar Degas"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Présentée en 1874, l'œuvre de Claude Monet inspira le terme « impressionniste », d'abord utilisé de façon moqueuse par un critique.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "spo_handball_zone",
+            title = "La zone au handball",
+            text = "À quelle distance du but se situe la ligne de zone au handball ?",
+            options = listOf("4 mètres", "6 mètres", "7 mètres", "9 mètres"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "La zone du gardien est délimitée par une ligne située à 6 mètres du but. Les joueurs de champ ne peuvent pas y pénétrer.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_open_ere_tennis",
+            title = "L'ère Open",
+            text = "En tennis, que marque le début de l'ère Open en 1968 ?",
+            options = listOf("L'apparition du tie-break", "L'autorisation des joueurs professionnels dans les grands tournois", "L'utilisation des raquettes métalliques", "La création du classement ATP"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "À partir de 1968, amateurs et professionnels peuvent participer aux mêmes tournois majeurs, ouvrant une nouvelle ère du tennis.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_biathlon_penalite",
+            title = "Erreur au tir",
+            text = "En biathlon, que se passe-t-il généralement lorsqu'un athlète manque une cible ?",
+            options = listOf("Il est éliminé", "Il reçoit une pénalité", "Son temps est remis à zéro", "Il change de carabine"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Selon le format de course, une cible manquée entraîne généralement un tour de pénalité ou du temps ajouté au chrono.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_golf_albatros",
+            title = "L'albatros au golf",
+            text = "Au golf, qu'appelle-t-on un albatros ?",
+            options = listOf("Un trou en un", "Trois coups sous le par", "Deux coups sous le par", "Quatre coups sous le par"),
+            correctIndex = 1,
+            rating = 1750,
+            explanation = "Un albatros, aussi appelé double eagle, correspond à un score de trois coups sous le par sur un trou.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_judo_waza_ari",
+            title = "Le waza-ari",
+            text = "En judo, que vaut un waza-ari ?",
+            options = listOf(
+                "Une pénalité",
+                "Un demi-point",
+                "Une victoire immédiate",
+                "Un avertissement"
+            ),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Le waza-ari récompense une technique presque parfaite. Depuis l'évolution des règles internationales, deux waza-ari obtenus par le même judoka équivalent à un ippon et donnent la victoire.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_tour_france_maillot_pois",
+            title = "Maillot à pois",
+            text = "Dans le Tour de France, que récompense le maillot à pois rouges ?",
+            options = listOf("Le meilleur jeune", "Le meilleur grimpeur", "Le leader du classement général", "Le meilleur sprinteur"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "Le maillot à pois distingue le meilleur grimpeur du Tour de France selon un système de points attribués dans les ascensions.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_hockey_glace_prolongation",
+            title = "Après un match nul",
+            text = "Dans de nombreuses compétitions de hockey sur glace, que se passe-t-il lorsqu'un match est à égalité à la fin du temps réglementaire ?",
+            options = listOf("Le match est rejoué", "Une prolongation est disputée", "Les deux équipes sont déclarées vainqueures", "Le score est annulé"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Selon la compétition, une prolongation puis éventuellement une séance de tirs au but permettent de départager les équipes.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_basket_triple_double",
+            title = "Le triple-double",
+            text = "Au basket-ball, qu'appelle-t-on un triple-double ?",
+            options = listOf("Trois paniers à trois points consécutifs", "Dix points inscrits dans trois matchs de suite", "Au moins dix unités dans trois catégories statistiques", "Trois joueurs à plus de dix points"),
+            correctIndex = 2,
+            rating = 1450,
+            explanation = "Un triple-double est réalisé lorsqu'un joueur atteint au moins dix unités dans trois catégories statistiques différentes, par exemple points, rebonds et passes décisives.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "div_stranger_things_ville",
+            title = "La ville de Stranger Things",
+            text = "Dans quelle ville fictive se déroule principalement la série Stranger Things ?",
+            options = listOf("Riverdale", "Hawkins", "Sunnydale", "Twin Peaks"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "La série Stranger Things se déroule principalement à Hawkins, une petite ville fictive de l'Indiana où surviennent des phénomènes surnaturels.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_queen_chanteur",
+            title = "Voix de Queen",
+            text = "Quel chanteur était le leader du groupe Queen ?",
+            options = listOf("David Bowie", "Roger Taylor", "Freddie Mercury", "Elton John"),
+            correctIndex = 2,
+            rating = 700,
+            explanation = "Freddie Mercury était le chanteur emblématique de Queen. Sa voix exceptionnelle a contribué au succès mondial du groupe.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_mario_kart_carapace_bleue",
+            title = "La carapace bleue",
+            text = "Dans Mario Kart, quel est l'effet principal de la carapace bleue ?",
+            options = listOf("Accélérer le joueur", "Voler des objets", "Viser le concurrent en tête", "Bloquer tous les adversaires"),
+            correctIndex = 2,
+            rating = 950,
+            explanation = "La carapace bleue cible généralement le joueur en première position, ce qui en fait l'un des objets les plus redoutés de la série.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_beatles_liverpool",
+            title = "Origine des Beatles",
+            text = "Dans quelle ville les Beatles ont-ils été formés ?",
+            options = listOf("Manchester", "Birmingham", "Liverpool", "Londres"),
+            correctIndex = 2,
+            rating = 800,
+            explanation = "Les Beatles ont été formés à Liverpool au début des années 1960 avant de devenir l'un des groupes les plus influents de l'histoire de la musique.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_madonna_prenom",
+            title = "Madonna",
+            text = "Quel est le prénom complet sous lequel est connue la chanteuse Madonna ?",
+            options = listOf("Madonna Louise Ciccone", "Madonna Maria Ciccone", "Madonna Grace Ciccone", "Madonna Anna Ciccone"),
+            correctIndex = 0,
+            rating = 1650,
+            explanation = "Madonna Louise Ciccone est née dans le Michigan en 1958. Elle est devenue l'une des artistes les plus influentes de la musique pop.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_pacman_fantome_rouge",
+            title = "Le fantôme rouge",
+            text = "Comment s'appelle le fantôme rouge dans le jeu Pac-Man ?",
+            options = listOf("Pinky", "Blinky", "Inky", "Clyde"),
+            correctIndex = 1,
+            rating = 1700,
+            explanation = "Blinky est le fantôme rouge de Pac-Man. Chaque fantôme possède un comportement spécifique pour traquer le joueur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_black_mirror_anthologie",
+            title = "Black Mirror",
+            text = "Quel type de série est Black Mirror ?",
+            options = listOf("Sitcom", "Anthologie", "Soap opera", "Téléréalité"),
+            correctIndex = 1,
+            rating = 1050,
+            explanation = "Black Mirror est une série d'anthologie : chaque épisode raconte une histoire différente, généralement liée aux dérives technologiques.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_zelda_epee_legendaire",
+            title = "L'épée légendaire",
+            text = "Comment s'appelle l'épée légendaire que Link manie dans de nombreux jeux The Legend of Zelda ?",
+            options = listOf("Excalibur", "Master Sword", "Buster Sword", "Sky Blade"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "La Master Sword, souvent appelée Épée de légende en français, est l'arme emblématique de Link dans la série The Legend of Zelda.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "geo_lac_baikal_profondeur",
+            title = "Le lac le plus profond",
+            text = "Quel lac est le plus profond du monde ?",
+            options = listOf("Tanganyika", "Supérieur", "Baïkal", "Victoria"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Le lac Baïkal, situé en Sibérie, atteint une profondeur maximale de 1 642 mètres. Il contient environ 20 % des réserves mondiales d'eau douce liquide de surface.",
+            category = Category.GEOGRAPHIE
+        ),
+
+        Question(
+            id = "geo_capitale_botswana",
+            title = "Capitale du Botswana",
+            text = "Quelle est la capitale du Botswana ?",
+            options = listOf("Lusaka", "Gaborone", "Windhoek", "Harare"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "Gaborone est la capitale du Botswana depuis l'indépendance du pays en 1966.",
+            category = Category.GEOGRAPHIE
+        ),
+
+        Question(
+            id = "geo_capitale_kirghizistan",
+            title = "Capitale du Kirghizistan",
+            text = "Quelle est la capitale du Kirghizistan ?",
+            options = listOf("Bichkek", "Achgabat", "Douchanbé", "Almaty"),
+            correctIndex = 0,
+            rating = 1750,
+            explanation = "Bichkek est la capitale du Kirghizistan, pays montagneux d'Asie centrale.",
+            category = Category.GEOGRAPHIE
+        ),
+
+        Question(
+            id = "geo_archipel_azores",
+            title = "Les Açores",
+            text = "Les Açores appartiennent à quel pays ?",
+            options = listOf("Espagne", "Portugal", "France", "Italie"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Les Açores constituent une région autonome du Portugal située dans l'océan Atlantique.",
+            category = Category.GEOGRAPHIE
+        ),
+
+        Question(
+            id = "hist_bataille_actium",
+            title = "La bataille d'Actium",
+            text = "La bataille navale d'Actium opposa Octave à quel dirigeant romain ?",
+            options = listOf("Jules César", "Marc Antoine", "Néron", "Trajan"),
+            correctIndex = 1,
+            rating = 1650,
+            explanation = "En 31 av. J.-C., Octave vainquit Marc Antoine et Cléopâtre à Actium, ouvrant la voie à l'Empire romain.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_suffrage_suisse_femmes",
+            title = "Vote des femmes en Suisse",
+            text = "En quelle année les femmes ont-elles obtenu le droit de vote au niveau fédéral en Suisse ?",
+            options = listOf("1945", "1958", "1971", "1984"),
+            correctIndex = 2,
+            rating = 1800,
+            explanation = "La Suisse a accordé le droit de vote aux femmes au niveau fédéral en 1971, relativement tardivement par rapport à d'autres démocraties.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_bataille_midway",
+            title = "La bataille de Midway",
+            text = "La bataille de Midway de 1942 opposa principalement les États-Unis à quel pays ?",
+            options = listOf("Allemagne", "Italie", "Japon", "URSS"),
+            correctIndex = 2,
+            rating = 1450,
+            explanation = "La victoire américaine à Midway est considérée comme un tournant majeur de la guerre du Pacifique.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_nelson_mandela_prison",
+            title = "Prison de Mandela",
+            text = "Sur quelle île Nelson Mandela passa-t-il une grande partie de sa détention ?",
+            options = listOf("Zanzibar", "Madère", "Robben Island", "Sainte-Hélène"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Nelson Mandela fut emprisonné pendant 18 ans sur Robben Island, près du Cap.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "spo_escalade_jo",
+            title = "L'escalade olympique",
+            text = "Lors de quels Jeux olympiques l'escalade sportive a-t-elle fait son apparition officielle ?",
+            options = listOf("Rio 2016", "Tokyo 2020", "Londres 2012", "Paris 2024"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "L'escalade sportive a intégré le programme olympique lors des Jeux de Tokyo 2020.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "spo_voile_catamaran",
+            title = "Le catamaran",
+            text = "Combien de coques possède un catamaran ?",
+            options = listOf("Une", "Deux", "Trois", "Quatre"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Un catamaran possède deux coques parallèles, ce qui lui confère une excellente stabilité.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "spo_snooker_bille_noire",
+            title = "Valeur de la bille noire",
+            text = "Au snooker, combien de points rapporte la bille noire ?",
+            options = listOf("5", "6", "7", "8"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "La bille noire vaut 7 points, soit le score le plus élevé parmi les billes de couleur.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "div_gta_ville_vice_city",
+            title = "Vice City",
+            text = "La ville fictive de Vice City est inspirée de quelle ville réelle ?",
+            options = listOf("Los Angeles", "Miami", "Chicago", "Las Vegas"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Vice City est largement inspirée de Miami et de son ambiance des années 1980.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_abba_pays",
+            title = "Origine d'ABBA",
+            text = "Le groupe ABBA est originaire de quel pays ?",
+            options = listOf("Norvège", "Danemark", "Suède", "Finlande"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "ABBA est un groupe suédois formé à Stockholm et devenu mondialement célèbre après sa victoire à l'Eurovision 1974.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_xfiles_agents",
+            title = "Agents de X-Files",
+            text = "Quels sont les deux agents principaux de la série X-Files ?",
+            options = listOf("Mulder et Scully", "Benson et Stabler", "Crockett et Tubbs", "Castle et Beckett"),
+            correctIndex = 0,
+            rating = 1000,
+            explanation = "Fox Mulder et Dana Scully sont les deux agents du FBI au cœur de X-Files, série culte mêlant enquêtes paranormales, science-fiction et complots gouvernementaux.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "geo_capitale_mongolie",
+            title = "Capitale de la Mongolie",
+            text = "Quelle est la capitale de la Mongolie ?",
+            options = listOf("Astana", "Oulan-Bator", "Tachkent", "Bichkek"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Oulan-Bator est la capitale de la Mongolie. Elle concentre une grande partie de la population du pays.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_fleuve_tamise",
+            title = "Fleuve de Londres",
+            text = "Quel fleuve traverse Londres ?",
+            options = listOf("La Tamise", "La Severn", "Le Rhin", "La Clyde"),
+            correctIndex = 0,
+            rating = 750,
+            explanation = "La Tamise traverse Londres d'ouest en est avant de se jeter dans la mer du Nord.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_uruguay",
+            title = "Capitale de l'Uruguay",
+            text = "Quelle est la capitale de l'Uruguay ?",
+            options = listOf("Asuncion", "Montevideo", "La Paz", "Quito"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Montevideo est la capitale de l'Uruguay, située sur la rive nord du Río de la Plata.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_origine_paella",
+            title = "Origine de la paella",
+            text = "De quel pays la paella est-elle originaire ?",
+            options = listOf("Italie", "Espagne", "Portugal", "Grèce"),
+            correctIndex = 1,
+            rating = 800,
+            explanation = "La paella est un plat emblématique espagnol, particulièrement associé à la région de Valence.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_iles_shetland_pays",
+            title = "Les îles Shetland",
+            text = "Les îles Shetland appartiennent à quel pays ?",
+            options = listOf("Norvège", "Royaume-Uni", "Islande", "Danemark"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "Les Shetland sont un archipel écossais situé au nord du Royaume-Uni.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_liban",
+            title = "Capitale du Liban",
+            text = "Quelle est la capitale du Liban ?",
+            options = listOf("Damas", "Beyrouth", "Amman", "Nicosie"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Beyrouth est la capitale du Liban, située sur la côte méditerranéenne.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_fleuve_tibre",
+            title = "Fleuve de Rome",
+            text = "Quel fleuve traverse Rome ?",
+            options = listOf("Le Pô", "L'Arno", "Le Tibre", "Le Tage"),
+            correctIndex = 2,
+            rating = 1000,
+            explanation = "Le Tibre traverse Rome avant de se jeter dans la mer Tyrrhénienne.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_georgie",
+            title = "Capitale de la Géorgie",
+            text = "Quelle est la capitale de la Géorgie ?",
+            options = listOf("Tbilissi", "Erevan", "Bakou", "Batoumi"),
+            correctIndex = 0,
+            rating = 1450,
+            explanation = "Tbilissi est la capitale de la Géorgie, située dans le Caucase.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_altiplano_continent",
+            title = "L'Altiplano",
+            text = "Sur quel continent se trouve l'Altiplano andin ?",
+            options = listOf("Afrique", "Asie", "Amérique du Sud", "Europe"),
+            correctIndex = 2,
+            rating = 1350,
+            explanation = "L'Altiplano est un haut plateau situé dans les Andes, en Amérique du Sud.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_cambodge",
+            title = "Capitale du Cambodge",
+            text = "Quelle est la capitale du Cambodge ?",
+            options = listOf("Vientiane", "Phnom Penh", "Hanoï", "Bangkok"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Phnom Penh est la capitale du Cambodge, située au confluent du Mékong et du Tonlé Sap.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_origine_tacos",
+            title = "Origine des tacos",
+            text = "De quel pays les tacos sont-ils originaires ?",
+            options = listOf("Mexique", "Espagne", "Colombie", "Pérou"),
+            correctIndex = 0,
+            rating = 750,
+            explanation = "Les tacos sont un plat traditionnel mexicain. L'origine géographique d'un plat relève ici de la catégorie Géographie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_traites_verdun",
+            title = "Partage de l'empire carolingien",
+            text = "Quel traité a partagé l'empire de Charlemagne entre ses petits-fils ?",
+            options = listOf("Traité de Verdun", "Traité de Westphalie", "Traité de Tordesillas", "Traité d'Utrecht"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "Le traité de Verdun de 843 partagea l'empire carolingien entre les trois petits-fils de Charlemagne.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_hammurabi_roi",
+            title = "Le code d'Hammurabi",
+            text = "Le roi Hammurabi a régné sur quelle civilisation antique ?",
+            options = listOf("Babylone", "Égypte", "Perse", "Phénicie"),
+            correctIndex = 0,
+            rating = 1200,
+            explanation = "Hammurabi fut un roi de Babylone célèbre pour le code juridique portant son nom.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_constantinople_nom",
+            title = "Nom actuel de Constantinople",
+            text = "Quelle grande ville porte aujourd'hui le nom de l'ancienne Constantinople ?",
+            options = listOf("Athènes", "Izmir", "Istanbul", "Ankara"),
+            correctIndex = 2,
+            rating = 800,
+            explanation = "Constantinople est devenue Istanbul, aujourd'hui la plus grande ville de Turquie.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_carthage_fondation",
+            title = "Fondatrice légendaire de Carthage",
+            text = "Selon la tradition, qui aurait fondé la ville de Carthage ?",
+            options = listOf("Didon", "Cléopâtre", "Sémiramis", "Bérénice"),
+            correctIndex = 0,
+            rating = 1700,
+            explanation = "Didon, également appelée Élyssa, est la fondatrice légendaire de Carthage selon les récits antiques.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_bismarck_pays",
+            title = "Otto von Bismarck",
+            text = "Otto von Bismarck est principalement associé à l'unification de quel pays ?",
+            options = listOf("Italie", "Autriche", "Allemagne", "Pologne"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "Bismarck joua un rôle majeur dans l'unification allemande au XIXe siècle.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_route_soie",
+            title = "La route de la soie",
+            text = "La route de la soie reliait principalement la Chine à quel continent ?",
+            options = listOf("Afrique", "Europe", "Océanie", "Amérique"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "La route de la soie était un vaste réseau commercial reliant l'Asie orientale à l'Europe.",
+            category = Category.HISTOIRE
+        ),
+
+        Question(
+            id = "hist_akhenaton_religion",
+            title = "La réforme d'Akhenaton",
+            text = "Quel pharaon égyptien tenta d'imposer le culte exclusif d'Aton ?",
+            options = listOf("Ramsès II", "Toutânkhamon", "Akhenaton", "Khéops"),
+            correctIndex = 2,
+            rating = 1650,
+            explanation = "Akhenaton mena une importante réforme religieuse centrée sur le dieu Aton.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_cellule_mitochondrie",
+            title = "Rôle des mitochondries",
+            text = "Quel est le rôle principal des mitochondries dans les cellules ?",
+            options = listOf("Produire de l'énergie", "Stocker l'ADN", "Fabriquer les protéines", "Éliminer les déchets"),
+            correctIndex = 0,
+            rating = 850,
+            explanation = "Les mitochondries produisent l'essentiel de l'énergie utilisée par les cellules sous forme d'ATP.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        Question(
+            id = "sci_roche_metamorphique",
+            title = "Une roche métamorphique",
+            text = "Laquelle de ces roches est une roche métamorphique ?",
+            options = listOf("Granite", "Basalte", "Marbre", "Obsidienne"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Le marbre provient de la transformation du calcaire sous l'effet de la pression et de la température.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        Question(
+            id = "sci_vitamine_soleil",
+            title = "Vitamine du soleil",
+            text = "Quelle vitamine est principalement produite par la peau sous l'action du soleil ?",
+            options = listOf("Vitamine A", "Vitamine C", "Vitamine D", "Vitamine K"),
+            correctIndex = 2,
+            rating = 800,
+            explanation = "L'exposition de la peau aux rayons UVB permet la synthèse de vitamine D.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        Question(
+            id = "sci_mars_olympus_mons",
+            title = "Olympus Mons",
+            text = "Olympus Mons est situé sur quelle planète ?",
+            options = listOf("Vénus", "Mars", "Mercure", "Jupiter"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Olympus Mons est un immense volcan situé sur Mars.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        Question(
+            id = "sci_atome_hydrogene",
+            title = "L'hydrogène",
+            text = "Combien de proton possède l'atome d'hydrogène le plus courant ?",
+            options = listOf("1", "2", "6", "8"),
+            correctIndex = 0,
+            rating = 1100,
+            explanation = "L'hydrogène est l'élément chimique le plus simple : son noyau contient un seul proton.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        Question(
+            id = "sci_groupe_sanguin_receveur",
+            title = "Receveur universel",
+            text = "Quel groupe sanguin est généralement considéré comme receveur universel pour les globules rouges ?",
+            options = listOf("O-", "AB+", "A+", "B-"),
+            correctIndex = 1,
+            rating = 1700,
+            explanation = "Les personnes de groupe AB+ peuvent recevoir des globules rouges de tous les groupes sanguins ABO et Rhésus.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "art_machu_picchu_civilisation",
+            title = "Le Machu Picchu",
+            text = "Le Machu Picchu est associé à quelle civilisation ?",
+            options = listOf("Aztèque", "Maya", "Inca", "Olmèque"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "Le Machu Picchu est une cité construite par les Incas dans les Andes péruviennes.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_gatsby_auteur",
+            title = "Auteur de Gatsby",
+            text = "Qui a écrit le roman « Gatsby le Magnifique » ?",
+            options = listOf("Ernest Hemingway", "John Steinbeck", "Francis Scott Fitzgerald", "William Faulkner"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "Publié en 1925, Gatsby le Magnifique est l'œuvre la plus célèbre de F. Scott Fitzgerald.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_tour_pise_ville",
+            title = "La tour penchée",
+            text = "Dans quelle ville italienne se trouve la célèbre tour penchée ?",
+            options = listOf("Florence", "Pise", "Sienne", "Gênes"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "La tour penchée est le campanile de la cathédrale de Pise, en Toscane.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_risotto_origine",
+            title = "Origine du risotto",
+            text = "Le risotto est une spécialité culinaire traditionnellement associée à quel pays ?",
+            options = listOf("France", "Espagne", "Italie", "Grèce"),
+            correctIndex = 2,
+            rating = 800,
+            explanation = "Le risotto est un plat emblématique de la cuisine italienne, particulièrement du nord du pays.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_branly_quai_nom",
+            title = "Musée du quai Branly",
+            text = "Dans quelle ville se trouve le musée du quai Branly - Jacques Chirac ?",
+            options = listOf("Lyon", "Marseille", "Paris", "Toulouse"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "Le musée du quai Branly est situé à Paris et est consacré aux arts et civilisations d'Afrique, d'Asie, d'Océanie et des Amériques.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_quatre_saisons_compositeur",
+            title = "Les Quatre Saisons",
+            text = "Quel compositeur a écrit le cycle de concertos « Les Quatre Saisons » ?",
+            options = listOf("Jean-Sébastien Bach", "Antonio Vivaldi", "Georg Friedrich Haendel", "Joseph Haydn"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Antonio Vivaldi composa Les Quatre Saisons au XVIIIe siècle. Cette œuvre reste l'une des plus populaires du répertoire classique.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_calligraphie_japonaise",
+            title = "Art de l'écriture",
+            text = "Comment appelle-t-on traditionnellement l'art japonais de la calligraphie ?",
+            options = listOf("Ikebana", "Origami", "Shodō", "Nō"),
+            correctIndex = 2,
+            rating = 1650,
+            explanation = "Le Shodō est l'art japonais de la calligraphie, pratiqué avec pinceau et encre.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        Question(
+            id = "art_mascarpone_tiramisu",
+            title = "Ingrédient du tiramisu",
+            text = "Quel fromage est traditionnellement utilisé dans le tiramisu ?",
+            options = listOf("Ricotta", "Mozzarella", "Mascarpone", "Gorgonzola"),
+            correctIndex = 2,
+            rating = 1050,
+            explanation = "Le mascarpone est l'ingrédient emblématique du tiramisu, dessert italien mondialement connu.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "spo_volleyball_joueurs_terrain",
+            title = "Joueurs au volley-ball",
+            text = "Combien de joueurs d'une même équipe sont présents sur le terrain en volley-ball ?",
+            options = listOf("5", "6", "7", "8"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "Au volley-ball, chaque équipe aligne six joueurs sur le terrain : trois à l'avant et trois à l'arrière.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "spo_aviron_bord",
+            title = "Discipline nautique",
+            text = "Dans quel sport utilise-t-on des avirons pour propulser une embarcation ?",
+            options = listOf("Canoë-kayak", "Voile", "Aviron", "Surf"),
+            correctIndex = 2,
+            rating = 650,
+            explanation = "L'aviron est un sport où les athlètes propulsent leur embarcation à l'aide d'avirons.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_waterpolo_but",
+            title = "Marquer au water-polo",
+            text = "Quel est l'objectif principal au water-polo ?",
+            options = listOf("Faire couler le ballon", "Marquer des buts", "Traverser la piscine", "Garder le ballon sous l'eau"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "Comme dans de nombreux sports collectifs, l'objectif est de marquer plus de buts que l'équipe adverse.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_fleuret_surface_valable",
+            title = "Surface valable au fleuret",
+            text = "En escrime, quelle zone constitue la surface valable au fleuret ?",
+            options = listOf("Tout le corps", "Le tronc uniquement", "Les bras uniquement", "La tête uniquement"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "Au fleuret, seules les touches portées sur le tronc sont considérées comme valables.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "spo_gymnastique_agres",
+            title = "Agrès de gymnastique",
+            text = "Le cheval d'arçons est utilisé dans quelle discipline ?",
+            options = listOf("Athlétisme", "Gymnastique artistique", "Patinage artistique", "Trampoline"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "Le cheval d'arçons est l'un des agrès emblématiques de la gymnastique artistique masculine.",
+            category = Category.SPORTS
+        ),
+
+        Question(
+            id = "spo_rugby_drop",
+            title = "Le drop",
+            text = "Dans quel sport réalise-t-on un drop pour marquer des points ?",
+            options = listOf("Football américain uniquement", "Rugby", "Handball", "Hockey sur gazon"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Au rugby, un drop consiste à frapper le ballon du pied après un rebond au sol afin de marquer des points.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "div_sherlock_adresse",
+            title = "Adresse de Sherlock Holmes",
+            text = "À quelle adresse fictive habite Sherlock Holmes dans les récits les plus célèbres ?",
+            options = listOf("221B Baker Street", "10 Downing Street", "12 Grimmauld Place", "742 Evergreen Terrace"),
+            correctIndex = 0,
+            rating = 950,
+            explanation = "Sherlock Holmes habite au 221B Baker Street à Londres, adresse devenue mondialement célèbre grâce aux romans d'Arthur Conan Doyle.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_queen_bohemian_rhapsody",
+            title = "Bohemian Rhapsody",
+            text = "Quel groupe a interprété la chanson « Bohemian Rhapsody » ?",
+            options = listOf("The Rolling Stones", "Queen", "Pink Floyd", "The Who"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "Bohemian Rhapsody est l'un des plus grands succès du groupe britannique Queen.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_jurassic_park_createur",
+            title = "Créateur de Jurassic Park",
+            text = "Qui a réalisé le film Jurassic Park sorti en 1993 ?",
+            options = listOf("James Cameron", "Steven Spielberg", "George Lucas", "Ridley Scott"),
+            correctIndex = 1,
+            rating = 900,
+            explanation = "Steven Spielberg a réalisé Jurassic Park, film qui a marqué l'histoire des effets spéciaux.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_game_thrones_trone",
+            title = "Le Trône de Fer",
+            text = "Dans Game of Thrones, de quoi est principalement composé le Trône de Fer ?",
+            options = listOf("Boucliers", "Lances", "Épées", "Haches"),
+            correctIndex = 2,
+            rating = 1000,
+            explanation = "Selon la légende de la saga, le Trône de Fer a été forgé à partir des épées des ennemis vaincus.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_u2_origine",
+            title = "Origine de U2",
+            text = "De quel pays est originaire le groupe U2 ?",
+            options = listOf("Royaume-Uni", "Irlande", "Australie", "Canada"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "U2 est un groupe de rock irlandais formé à Dublin à la fin des années 1970.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_toy_story_cowboy",
+            title = "Le cowboy de Toy Story",
+            text = "Comment s'appelle le personnage cowboy principal de Toy Story ?",
+            options = listOf("Buzz", "Jessie", "Woody", "Rex"),
+            correctIndex = 2,
+            rating = 700,
+            explanation = "Woody est le cowboy et chef naturel du groupe de jouets dans la saga Toy Story.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_friends_soeur_ross",
+            title = "La sœur de Ross",
+            text = "Dans la série Friends, comment s'appelle la sœur de Ross Geller ?",
+            options = listOf("Phoebe", "Rachel", "Monica", "Janice"),
+            correctIndex = 2,
+            rating = 850,
+            explanation = "Monica Geller est la sœur de Ross. Les deux personnages font partie du groupe central de Friends.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        Question(
+            id = "div_nirvana_chanteur",
+            title = "Chanteur de Nirvana",
+            text = "Qui était le chanteur et guitariste du groupe Nirvana ?",
+            options = listOf("Dave Grohl", "Kurt Cobain", "Eddie Vedder", "Chris Cornell"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Kurt Cobain était le chanteur et guitariste de Nirvana, groupe phare du grunge ; Dave Grohl en était le batteur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_daft_punk_pays",
+            title = "Origine de Daft Punk",
+            text = "De quel pays est originaire le duo électronique Daft Punk ?",
+            options = listOf("Royaume-Uni", "France", "États-Unis", "Allemagne"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "Daft Punk, formé par Thomas Bangalter et Guy-Manuel de Homem-Christo, est un duo français.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_rolling_stones_logo",
+            title = "Le logo à la langue",
+            text = "Quel groupe de rock a pour emblème une bouche ouverte avec une langue tirée ?",
+            options = listOf("The Beatles", "Queen", "The Rolling Stones", "The Who"),
+            correctIndex = 2,
+            rating = 950,
+            explanation = "Le logo de la bouche et de la langue tirée est l'emblème des Rolling Stones, apparu en 1971.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_acdc_pays",
+            title = "Origine d'AC/DC",
+            text = "De quel pays est originaire le groupe de hard rock AC/DC ?",
+            options = listOf("Royaume-Uni", "États-Unis", "Australie", "Allemagne"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "AC/DC a été fondé à Sydney, en Australie, en 1973 par les frères Young.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_indiana_jones_acteur",
+            title = "L'acteur d'Indiana Jones",
+            text = "Quel acteur incarne Indiana Jones dans la saga de films d'aventure ?",
+            options = listOf("Tom Hanks", "Harrison Ford", "Mel Gibson", "Bruce Willis"),
+            correctIndex = 1,
+            rating = 850,
+            explanation = "Harrison Ford interprète l'archéologue Indiana Jones depuis « Les Aventuriers de l'arche perdue » (1981).",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "spo_carton_rouge",
+            title = "Le carton rouge",
+            text = "Au football, que signifie un carton rouge brandi par l'arbitre ?",
+            options = listOf("Un simple avertissement", "L'exclusion du joueur", "Un penalty accordé", "Un changement obligatoire"),
+            correctIndex = 1,
+            rating = 700,
+            explanation = "Le carton rouge entraîne l'exclusion immédiate du joueur, qui ne peut pas être remplacé : son équipe joue en infériorité numérique.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_bassin_olympique_longueur",
+            title = "Longueur d'un bassin olympique",
+            text = "Quelle est la longueur d'un bassin de natation olympique ?",
+            options = listOf("25 mètres", "50 mètres", "100 mètres", "33 mètres"),
+            correctIndex = 1,
+            rating = 1000,
+            explanation = "Un bassin olympique mesure 50 mètres de long ; les bassins de 25 mètres sont dits semi-olympiques.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_boxe_round_duree",
+            title = "Durée d'un round de boxe",
+            text = "Combien de temps dure un round en boxe anglaise professionnelle ?",
+            options = listOf("1 minute", "2 minutes", "3 minutes", "5 minutes"),
+            correctIndex = 2,
+            rating = 1100,
+            explanation = "Un round dure 3 minutes, suivi d'une minute de repos avant la reprise suivante.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_escrime_armes",
+            title = "Les armes de l'escrime",
+            text = "Combien d'armes différentes sont utilisées en escrime olympique ?",
+            options = listOf("2", "3", "4", "5"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "L'escrime olympique se pratique avec trois armes : le fleuret, l'épée et le sabre.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "art_van_gogh_oreille",
+            title = "Le peintre à l'oreille coupée",
+            text = "Quel peintre s'est mutilé une partie de l'oreille en 1888 ?",
+            options = listOf("Claude Monet", "Paul Gauguin", "Vincent van Gogh", "Paul Cézanne"),
+            correctIndex = 2,
+            rating = 1050,
+            explanation = "Vincent van Gogh se trancha une partie de l'oreille gauche lors d'une crise à Arles, en décembre 1888.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_jazz_origine",
+            title = "Berceau du jazz",
+            text = "Dans quelle ville américaine le jazz est-il né au début du XXe siècle ?",
+            options = listOf("Chicago", "La Nouvelle-Orléans", "New York", "Détroit"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Le jazz est né à La Nouvelle-Orléans, creuset des cultures africaines, créoles et européennes.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_lac_cygnes_compositeur",
+            title = "Compositeur du Lac des cygnes",
+            text = "Qui a composé le ballet « Le Lac des cygnes » ?",
+            options = listOf("Piotr Tchaïkovski", "Igor Stravinsky", "Sergueï Prokofiev", "Claude Debussy"),
+            correctIndex = 0,
+            rating = 1300,
+            explanation = "Le Lac des cygnes a été composé par Piotr Ilitch Tchaïkovski et créé en 1877.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "sci_diamant_carbone",
+            title = "Composition du diamant",
+            text = "Le diamant est une forme cristalline de quel élément chimique ?",
+            options = listOf("Le silicium", "Le carbone", "Le calcium", "Le soufre"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Le diamant est composé uniquement de carbone, dont les atomes forment une structure cristalline extrêmement dure.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_femur_os_long",
+            title = "L'os le plus long",
+            text = "Quel est l'os le plus long du corps humain ?",
+            options = listOf("Le tibia", "L'humérus", "Le fémur", "Le radius"),
+            correctIndex = 2,
+            rating = 900,
+            explanation = "Le fémur, l'os de la cuisse, est le plus long et l'un des plus solides du squelette humain.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_globules_rouges_role",
+            title = "Rôle des globules rouges",
+            text = "Quel est le rôle principal des globules rouges dans le sang ?",
+            options = listOf("Combattre les infections", "Transporter l'oxygène", "Coaguler le sang", "Produire des hormones"),
+            correctIndex = 1,
+            rating = 950,
+            explanation = "Les globules rouges transportent l'oxygène des poumons vers les organes grâce à l'hémoglobine.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "hist_revolution_russe_1917",
+            title = "La révolution d'Octobre",
+            text = "En quelle année a eu lieu la révolution russe d'Octobre menée par les bolcheviks ?",
+            options = listOf("1905", "1917", "1922", "1929"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "La révolution d'Octobre 1917 porta les bolcheviks de Lénine au pouvoir et conduisit à la création de l'URSS en 1922.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_plus_petit_os",
+            title = "Le plus petit os",
+            text = "Quel est le plus petit os du corps humain ?",
+            options = listOf("L'étrier", "La clavicule", "La rotule", "Le radius"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "L'étrier, situé dans l'oreille moyenne, est le plus petit os du corps humain : il mesure environ 3 millimètres et participe à la transmission du son.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        // ── Géographie : montée à 120 (moyennes + 1 difficile) ──
+        Question(
+            id = "geo_capitale_maroc",
+            title = "Capitale du Maroc",
+            text = "Quelle est la capitale du Maroc ?",
+            options = listOf("Casablanca", "Marrakech", "Rabat", "Fès"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "La capitale du Maroc est Rabat ; Casablanca, plus peuplée, en est la capitale économique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_turquie",
+            title = "Capitale de la Turquie",
+            text = "Quelle est la capitale de la Turquie ?",
+            options = listOf("Ankara", "Istanbul", "Izmir", "Antalya"),
+            correctIndex = 0,
+            rating = 1100,
+            explanation = "Depuis 1923, la capitale de la Turquie est Ankara, et non Istanbul qui demeure la plus grande ville du pays.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_bresil",
+            title = "Capitale du Brésil",
+            text = "Quelle est la capitale du Brésil ?",
+            options = listOf("Rio de Janeiro", "Brasília", "São Paulo", "Salvador"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Brasília, ville construite de toutes pièces et inaugurée en 1960, est la capitale du Brésil.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_grande_ile",
+            title = "La plus grande île du monde",
+            text = "Quelle est la plus grande île du monde ?",
+            options = listOf("L'Australie", "Madagascar", "Le Groenland", "Bornéo"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Le Groenland est la plus grande île du monde ; l'Australie, plus vaste encore, est considérée comme un continent.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_grand_desert",
+            title = "Le plus grand désert du monde",
+            text = "Quel est le plus grand désert du monde ?",
+            options = listOf("L'Antarctique", "Le Sahara", "Le désert de Gobi", "Le désert d'Arabie"),
+            correctIndex = 0,
+            rating = 1400,
+            explanation = "Le plus grand désert du monde est l'Antarctique, un désert froid défini par ses très faibles précipitations. Le Sahara n'est que le plus grand désert chaud.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_mer_morte_pays",
+            title = "Les rives de la mer Morte",
+            text = "Quels pays bordent la mer Morte ?",
+            options = listOf("Israël et l'Égypte", "La Jordanie et la Syrie", "Israël et la Jordanie", "Le Liban et Israël"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "La mer Morte est bordée par Israël et la Jordanie ; sa surface est le point émergé le plus bas de la Terre.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_grand_pays_afrique",
+            title = "Le plus grand pays d'Afrique",
+            text = "Quel est le plus grand pays d'Afrique par sa superficie ?",
+            options = listOf("L'Algérie", "Le Soudan", "La République démocratique du Congo", "Le Tchad"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "Depuis la partition du Soudan en 2011, l'Algérie est le plus grand pays d'Afrique par sa superficie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_grand_lac_afrique",
+            title = "Le plus grand lac d'Afrique",
+            text = "Quel est le plus grand lac d'Afrique par sa superficie ?",
+            options = listOf("Le lac Tanganyika", "Le lac Malawi", "Le lac Victoria", "Le lac Tchad"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "Le lac Victoria est le plus grand lac d'Afrique par sa superficie ; le lac Tanganyika est, lui, le plus profond du continent.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_grand_archipel",
+            title = "Le plus grand archipel du monde",
+            text = "Quel pays forme le plus grand archipel du monde ?",
+            options = listOf("Les Philippines", "Le Japon", "L'Indonésie", "La Grèce"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "L'Indonésie est le plus grand archipel du monde, avec plus de 17 000 îles.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_andes_chaine",
+            title = "La plus longue chaîne de montagnes",
+            text = "Quelle est la plus longue chaîne de montagnes émergée du monde ?",
+            options = listOf("L'Himalaya", "La cordillère des Andes", "Les Rocheuses", "L'Oural"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "La cordillère des Andes longe l'ouest de l'Amérique du Sud sur environ 7 000 km : c'est la plus longue chaîne de montagnes émergée.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_plus_long_fleuve_asie",
+            title = "Le plus long fleuve d'Asie",
+            text = "Quel est le plus long fleuve d'Asie ?",
+            options = listOf("Le Gange", "Le Mékong", "Le Yangtsé", "L'Indus"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "Le Yangtsé (Chang Jiang), long d'environ 6 300 km, est le plus long fleuve d'Asie et le troisième du monde.",
+            category = Category.GEOGRAPHIE
+        ),
+
+        // ── Histoire : montée à 120 (moyennes + 2 difficiles) ──
+        Question(
+            id = "hist_revolution_industrielle",
+            title = "Berceau de la révolution industrielle",
+            text = "Dans quel pays la révolution industrielle a-t-elle débuté à la fin du XVIIIe siècle ?",
+            options = listOf("La France", "Le Royaume-Uni", "L'Allemagne", "Les États-Unis"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "La révolution industrielle débuta au Royaume-Uni à la fin du XVIIIe siècle, portée par la machine à vapeur et l'industrie textile.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_premiere_guerre_fin",
+            title = "Fin de la Première Guerre mondiale",
+            text = "En quelle année s'est terminée la Première Guerre mondiale ?",
+            options = listOf("1916", "1918", "1920", "1922"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "La Première Guerre mondiale s'acheva le 11 novembre 1918 avec la signature de l'armistice à Rethondes.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_premier_empereur_romain",
+            title = "Le premier empereur romain",
+            text = "Qui fut le premier empereur romain ?",
+            options = listOf("Jules César", "Auguste", "Néron", "Constantin"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Auguste (Octave), petit-neveu de Jules César, devint le premier empereur romain en 27 av. J.-C. César, lui, ne porta jamais ce titre.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_crise_cuba",
+            title = "La crise de 1962",
+            text = "En 1962, quelle crise faillit déclencher une guerre nucléaire entre les États-Unis et l'URSS ?",
+            options = listOf("La crise de Suez", "La crise des missiles de Cuba", "La crise de Berlin", "La guerre de Corée"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "La crise des missiles de Cuba, en octobre 1962, opposa les États-Unis et l'URSS au sujet de missiles soviétiques déployés à Cuba.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_independance_usa",
+            title = "Indépendance des États-Unis",
+            text = "En quelle année les États-Unis ont-ils déclaré leur indépendance ?",
+            options = listOf("1776", "1783", "1789", "1791"),
+            correctIndex = 0,
+            rating = 1150,
+            explanation = "La Déclaration d'indépendance des États-Unis fut adoptée le 4 juillet 1776.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_guerre_secession",
+            title = "La guerre de Sécession",
+            text = "La guerre de Sécession (1861-1865) a opposé quelles régions des États-Unis ?",
+            options = listOf("L'Est et l'Ouest", "Le Nord et le Sud", "Les villes et les campagnes", "Le Texas et la Californie"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "La guerre de Sécession opposa les États du Nord (l'Union) aux États esclavagistes du Sud (la Confédération).",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_mur_berlin_construction",
+            title = "Construction du mur de Berlin",
+            text = "En quelle année le mur de Berlin a-t-il été construit ?",
+            options = listOf("1949", "1953", "1961", "1968"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "Le mur de Berlin fut érigé en 1961 par la RDA pour empêcher les départs vers l'Ouest ; il tomba en 1989.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_ecriture_cuneiforme",
+            title = "Inventeurs de l'écriture cunéiforme",
+            text = "Quelle civilisation est créditée de l'invention de l'écriture cunéiforme ?",
+            options = listOf("Les Égyptiens", "Les Sumériens", "Les Phéniciens", "Les Grecs"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "Les Sumériens, en Mésopotamie, inventèrent l'écriture cunéiforme vers 3300 av. J.-C., l'une des plus anciennes écritures connues.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_toutankhamon_carter",
+            title = "Découvreur de Toutânkhamon",
+            text = "Qui a découvert le tombeau de Toutânkhamon en 1922 ?",
+            options = listOf("Jean-François Champollion", "Howard Carter", "Heinrich Schliemann", "Auguste Mariette"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "L'archéologue britannique Howard Carter découvrit le tombeau quasi intact de Toutânkhamon dans la Vallée des Rois en 1922.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_chute_rome_occident",
+            title = "Chute de l'Empire romain d'Occident",
+            text = "En quelle année l'Empire romain d'Occident s'est-il effondré ?",
+            options = listOf("410", "476", "527", "622"),
+            correctIndex = 1,
+            rating = 1750,
+            explanation = "L'Empire romain d'Occident prit fin en 476, lorsque le chef Odoacre déposa le dernier empereur, Romulus Augustule.",
+            category = Category.HISTOIRE
+        ),
+
+        // ── Sciences & Nature : montée à 120 (priorité aux difficiles) ──
+        Question(
+            id = "sci_donneur_universel",
+            title = "Le donneur universel",
+            text = "Quel groupe sanguin est considéré comme « donneur universel » ?",
+            options = listOf("Le groupe AB+", "Le groupe O-", "Le groupe A+", "Le groupe B-"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Le groupe O négatif est le donneur universel : ses globules rouges peuvent être transfusés à presque tous les receveurs.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_plus_petite_planete",
+            title = "La plus petite planète",
+            text = "Quelle est la plus petite planète du système solaire ?",
+            options = listOf("Mars", "Mercure", "Vénus", "Neptune"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Mercure est la plus petite planète du système solaire ; Pluton, plus petite encore, est classée planète naine depuis 2006.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_insecte_pattes",
+            title = "Les pattes des insectes",
+            text = "Combien de pattes possède un insecte ?",
+            options = listOf("4", "6", "8", "10"),
+            correctIndex = 1,
+            rating = 1050,
+            explanation = "Les insectes possèdent six pattes ; les animaux à huit pattes, comme les araignées, sont des arachnides.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_fission_nucleaire",
+            title = "Casser un noyau atomique",
+            text = "Quel phénomène libère de l'énergie en cassant le noyau d'un atome lourd ?",
+            options = listOf("La fusion nucléaire", "La fission nucléaire", "La combustion", "L'électrolyse"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "La fission nucléaire libère de l'énergie en cassant le noyau d'un atome lourd comme l'uranium : c'est le principe des centrales nucléaires actuelles.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_adn_bases",
+            title = "Les bases de l'ADN",
+            text = "Sur combien de bases azotées différentes repose le code de l'ADN ?",
+            options = listOf("2", "3", "4", "5"),
+            correctIndex = 2,
+            rating = 1650,
+            explanation = "L'ADN repose sur quatre bases azotées : adénine (A), thymine (T), guanine (G) et cytosine (C).",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_mendeleiev",
+            title = "Le tableau périodique",
+            text = "Quel chimiste a conçu le tableau périodique des éléments ?",
+            options = listOf("Antoine Lavoisier", "Dmitri Mendeleïev", "Niels Bohr", "Marie Curie"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "Le chimiste russe Dmitri Mendeleïev publia en 1869 la première version du tableau périodique des éléments.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_zero_absolu",
+            title = "Le zéro absolu",
+            text = "À quelle température correspond approximativement le zéro absolu ?",
+            options = listOf("0 °C", "-100 °C", "-273 °C", "-460 °C"),
+            correctIndex = 2,
+            rating = 1700,
+            explanation = "Le zéro absolu, température la plus basse théoriquement possible, vaut environ -273,15 °C, soit 0 kelvin.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_plaques_tectoniques",
+            title = "Les plaques de la croûte terrestre",
+            text = "Comment appelle-t-on les vastes fragments mobiles de la croûte terrestre ?",
+            options = listOf("Les plaques tectoniques", "Les strates", "Les failles", "Les massifs"),
+            correctIndex = 0,
+            rating = 1500,
+            explanation = "La croûte terrestre est découpée en plaques tectoniques, dont les mouvements provoquent séismes et formation des montagnes.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_relativite_einstein",
+            title = "La théorie de la relativité",
+            text = "Quel scientifique a formulé la théorie de la relativité ?",
+            options = listOf("Isaac Newton", "Albert Einstein", "Niels Bohr", "Galilée"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "Albert Einstein formula la relativité restreinte en 1905, puis la relativité générale en 1915.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+
+        // ── Art & Culture : montée à 120 (priorité aux difficiles) ──
+        Question(
+            id = "art_dumas_mousquetaires",
+            title = "Auteur des Trois Mousquetaires",
+            text = "Qui a écrit « Les Trois Mousquetaires » ?",
+            options = listOf("Victor Hugo", "Alexandre Dumas", "Jules Verne", "Émile Zola"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "« Les Trois Mousquetaires » (1844) est un roman d'Alexandre Dumas, également auteur du « Comte de Monte-Cristo ».",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_proust_recherche",
+            title = "À la recherche du temps perdu",
+            text = "Qui a écrit « À la recherche du temps perdu » ?",
+            options = listOf("André Gide", "Marcel Proust", "Albert Camus", "Stendhal"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "« À la recherche du temps perdu », vaste cycle romanesque en sept tomes, est l'œuvre de Marcel Proust.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_botticelli_venus",
+            title = "La Naissance de Vénus",
+            text = "Quel peintre a réalisé « La Naissance de Vénus » ?",
+            options = listOf("Sandro Botticelli", "Raphaël", "Titien", "Le Caravage"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "« La Naissance de Vénus », peinte vers 1485, est une œuvre de Sandro Botticelli conservée à Florence.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_warhol_campbell",
+            title = "Les boîtes de soupe Campbell",
+            text = "Quel artiste est célèbre pour ses sérigraphies de boîtes de soupe Campbell ?",
+            options = listOf("Jackson Pollock", "Andy Warhol", "Salvador Dalí", "Keith Haring"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Andy Warhol, figure majeure du pop art, est célèbre pour ses sérigraphies de boîtes de soupe Campbell et de Marilyn Monroe.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_dante_divine_comedie",
+            title = "Auteur de la Divine Comédie",
+            text = "Qui a écrit « La Divine Comédie » ?",
+            options = listOf("Pétrarque", "Dante Alighieri", "Boccace", "Virgile"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "« La Divine Comédie », écrite au début du XIVe siècle, est l'œuvre majeure de Dante Alighieri.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_kafka_metamorphose",
+            title = "Auteur de La Métamorphose",
+            text = "Qui a écrit la nouvelle « La Métamorphose » ?",
+            options = listOf("Thomas Mann", "Franz Kafka", "Hermann Hesse", "Stefan Zweig"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "« La Métamorphose » (1915), où un homme se réveille changé en insecte, est une nouvelle de Franz Kafka.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_klimt_baiser",
+            title = "Le peintre du Baiser",
+            text = "Quel peintre autrichien a réalisé « Le Baiser », tableau recouvert de feuilles d'or ?",
+            options = listOf("Egon Schiele", "Gustav Klimt", "Edvard Munch", "Paul Klee"),
+            correctIndex = 1,
+            rating = 1650,
+            explanation = "« Le Baiser » est l'œuvre la plus célèbre du peintre autrichien Gustav Klimt, réalisée durant sa « période dorée ».",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_rossini_barbier",
+            title = "Compositeur du Barbier de Séville",
+            text = "Qui a composé l'opéra « Le Barbier de Séville » ?",
+            options = listOf("Giuseppe Verdi", "Gioachino Rossini", "Giacomo Puccini", "Gaetano Donizetti"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "« Le Barbier de Séville » (1816) est un opéra-bouffe de Gioachino Rossini.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_beethoven_symphonies",
+            title = "Les symphonies de Beethoven",
+            text = "Combien de symphonies Ludwig van Beethoven a-t-il composées ?",
+            options = listOf("5", "7", "9", "12"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Beethoven a composé neuf symphonies ; la Neuvième contient le célèbre « Hymne à la joie ».",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_bartholdi_liberte",
+            title = "Sculpteur de la statue de la Liberté",
+            text = "Quel sculpteur français a conçu la statue de la Liberté ?",
+            options = listOf("Gustave Eiffel", "Auguste Bartholdi", "Auguste Rodin", "Camille Claudel"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "La statue de la Liberté fut conçue par le sculpteur Auguste Bartholdi ; sa structure interne fut réalisée par Gustave Eiffel.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_surrealisme_breton",
+            title = "Le mouvement d'André Breton",
+            text = "Quel mouvement artistique André Breton a-t-il théorisé en 1924 ?",
+            options = listOf("Le surréalisme", "Le cubisme", "Le dadaïsme", "L'expressionnisme"),
+            correctIndex = 0,
+            rating = 1500,
+            explanation = "André Breton publia le « Manifeste du surréalisme » en 1924, fondant officiellement le mouvement.",
+            category = Category.ART_ET_CULTURE
+        ),
+
+        // ── Sports : montée à 120 (priorité aux moyennes) ──
+        Question(
+            id = "spo_jo_anneaux",
+            title = "Les anneaux olympiques",
+            text = "Combien d'anneaux compte le drapeau olympique ?",
+            options = listOf("4", "5", "6", "7"),
+            correctIndex = 1,
+            rating = 1050,
+            explanation = "Le drapeau olympique compte cinq anneaux entrelacés, symbolisant l'union des cinq continents.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_rugby_xv_joueurs",
+            title = "Joueurs au rugby à XV",
+            text = "Combien de joueurs compte une équipe de rugby à XV sur le terrain ?",
+            options = listOf("11", "13", "15", "18"),
+            correctIndex = 2,
+            rating = 1100,
+            explanation = "Le rugby à XV aligne quinze joueurs par équipe ; le rugby à XIII en aligne treize.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_football_duree_match",
+            title = "Durée d'un match de football",
+            text = "Quelle est la durée réglementaire d'un match de football ?",
+            options = listOf("60 minutes", "80 minutes", "90 minutes", "120 minutes"),
+            correctIndex = 2,
+            rating = 1150,
+            explanation = "Un match de football dure 90 minutes, réparties en deux mi-temps de 45 minutes.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_tennis_score_apres_30",
+            title = "Le décompte au tennis",
+            text = "Au tennis, quel score suit le « 30 » dans un jeu ?",
+            options = listOf("35", "40", "45", "50"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "Dans un jeu de tennis, la séquence de points est 15, 30, 40, puis jeu gagné.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_giro_italie",
+            title = "Le grand tour d'Italie",
+            text = "Comment s'appelle le grand tour cycliste d'Italie ?",
+            options = listOf("La Vuelta", "Le Giro", "Paris-Roubaix", "Le Tour des Flandres"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Le grand tour cycliste d'Italie est le Giro (Giro d'Italia), l'un des trois grands tours avec le Tour de France et la Vuelta.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_tour_arrivee_champs",
+            title = "Arrivée du Tour de France",
+            text = "Sur quelle avenue le Tour de France s'achève-t-il traditionnellement ?",
+            options = listOf("Les Champs-Élysées", "La Canebière", "La Promenade des Anglais", "Les Grands Boulevards"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "Le Tour de France s'achève traditionnellement par une arrivée sur les Champs-Élysées, à Paris.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_echecs_pieces",
+            title = "Les pièces aux échecs",
+            text = "Avec combien de pièces chaque joueur commence-t-il une partie d'échecs ?",
+            options = listOf("8", "12", "16", "20"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Chaque joueur débute avec seize pièces : un roi, une dame, deux tours, deux fous, deux cavaliers et huit pions.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_basket_quart_temps",
+            title = "Les quart-temps au basket",
+            text = "En combien de quart-temps se joue un match de basket NBA ?",
+            options = listOf("2", "3", "4", "5"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Un match de basket NBA se joue en quatre quart-temps de douze minutes.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_boxe_ring_forme",
+            title = "La forme d'un ring",
+            text = "Quelle est la forme d'un ring de boxe ?",
+            options = listOf("Rond", "Carré", "Hexagonal", "Ovale"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Malgré son nom anglais signifiant « anneau », le ring de boxe est de forme carrée.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_devise_olympique",
+            title = "La devise olympique",
+            text = "Quelle est la devise olympique d'origine, en latin ?",
+            options = listOf("Citius, Altius, Fortius", "Veni, Vidi, Vici", "Mens sana in corpore sano", "Per aspera ad astra"),
+            correctIndex = 0,
+            rating = 1500,
+            explanation = "La devise olympique « Citius, Altius, Fortius » signifie « Plus vite, plus haut, plus fort ».",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_vuelta_espagne",
+            title = "Le grand tour d'Espagne",
+            text = "Comment s'appelle le grand tour cycliste d'Espagne ?",
+            options = listOf("Le Giro", "La Vuelta", "Le Tour de Romandie", "La Flèche wallonne"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "Le grand tour cycliste d'Espagne est la Vuelta (Vuelta a España).",
+            category = Category.SPORTS
+        ),
+
+        // ── Divertissement : montée à 120 (priorité moyennes/difficiles) ──
+        Question(
+            id = "div_elvis_king",
+            title = "Le King du rock'n'roll",
+            text = "Quel chanteur est surnommé « The King », le roi du rock'n'roll ?",
+            options = listOf("Chuck Berry", "Elvis Presley", "Buddy Holly", "Little Richard"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Elvis Presley est surnommé « The King », le roi du rock'n'roll.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_marley_reggae",
+            title = "Le genre de Bob Marley",
+            text = "Quel genre musical Bob Marley a-t-il popularisé dans le monde ?",
+            options = listOf("Le ska", "Le reggae", "Le blues", "Le funk"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Bob Marley a fait connaître le reggae dans le monde entier depuis la Jamaïque.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_titanic_realisateur",
+            title = "Réalisateur de Titanic",
+            text = "Qui a réalisé le film « Titanic » (1997) ?",
+            options = listOf("Steven Spielberg", "James Cameron", "Ridley Scott", "Martin Scorsese"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Le film « Titanic » (1997) a été réalisé par James Cameron, également réalisateur d'« Avatar ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_cannes_palme",
+            title = "La récompense de Cannes",
+            text = "Quelle récompense suprême est décernée au Festival de Cannes ?",
+            options = listOf("L'Ours d'or", "La Palme d'or", "Le Lion d'or", "Le César"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "La Palme d'or est la plus haute récompense du Festival de Cannes.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_simpsons_createur",
+            title = "Créateur des Simpson",
+            text = "Qui a créé la série « Les Simpson » ?",
+            options = listOf("Seth MacFarlane", "Matt Groening", "Trey Parker", "Mike Judge"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Matt Groening est le créateur des « Simpson » (depuis 1989) ainsi que de « Futurama ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_spielberg_dents_mer",
+            title = "Réalisateur des Dents de la mer",
+            text = "Qui a réalisé le film « Les Dents de la mer » ?",
+            options = listOf("George Lucas", "Steven Spielberg", "James Cameron", "Ridley Scott"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "« Les Dents de la mer » (1975), souvent cité comme le premier blockbuster, a été réalisé par Steven Spielberg.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_pink_floyd_dark_side",
+            title = "L'album The Dark Side of the Moon",
+            text = "Quel groupe a sorti l'album « The Dark Side of the Moon » ?",
+            options = listOf("Led Zeppelin", "Pink Floyd", "The Doors", "Genesis"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "« The Dark Side of the Moon » (1973), l'un des albums les plus vendus de l'histoire, est signé Pink Floyd.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_parrain_coppola",
+            title = "Réalisateur du Parrain",
+            text = "Qui a réalisé le film « Le Parrain » ?",
+            options = listOf("Martin Scorsese", "Francis Ford Coppola", "Brian De Palma", "Sergio Leone"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "« Le Parrain » (1972) a été réalisé par Francis Ford Coppola, d'après le roman de Mario Puzo.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_disney_blanche_neige",
+            title = "Premier long-métrage Disney",
+            text = "Quel fut le premier long-métrage d'animation des studios Disney ?",
+            options = listOf("Pinocchio", "Blanche-Neige et les Sept Nains", "Fantasia", "Bambi"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "« Blanche-Neige et les Sept Nains » (1937) est le premier long-métrage d'animation de Disney.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_kubrick_2001",
+            title = "Réalisateur de 2001",
+            text = "Qui a réalisé « 2001, l'Odyssée de l'espace » ?",
+            options = listOf("Ridley Scott", "Stanley Kubrick", "George Lucas", "Andreï Tarkovski"),
+            correctIndex = 1,
+            rating = 1650,
+            explanation = "« 2001, l'Odyssée de l'espace » (1968) est un film de science-fiction réalisé par Stanley Kubrick.",
+            category = Category.DIVERTISSEMENT
+        ),
+
+        // ── Complément final pour atteindre 120/catégorie ──
+        Question(
+            id = "geo_capitale_perou",
+            title = "Capitale du Pérou",
+            text = "Quelle est la capitale du Pérou ?",
+            options = listOf("Bogotá", "Lima", "Quito", "Santiago"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Lima, fondée par les Espagnols en 1535, est la capitale du Pérou, sur la côte pacifique.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_fosse_mariannes",
+            title = "Le point le plus profond des océans",
+            text = "Quel est le point le plus profond des océans ?",
+            options = listOf("La fosse des Mariannes", "La fosse du Japon", "La fosse de Porto Rico", "La fosse des Tonga"),
+            correctIndex = 0,
+            rating = 1650,
+            explanation = "La fosse des Mariannes, dans l'océan Pacifique, atteint près de 11 000 mètres de profondeur : c'est le point le plus profond connu des océans.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_seconde_guerre_debut",
+            title = "Début de la Seconde Guerre mondiale",
+            text = "En quelle année a débuté la Seconde Guerre mondiale ?",
+            options = listOf("1936", "1939", "1941", "1945"),
+            correctIndex = 1,
+            rating = 1100,
+            explanation = "La Seconde Guerre mondiale débuta en 1939 avec l'invasion de la Pologne par l'Allemagne nazie.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_napoleon_sacre",
+            title = "Sacre de Napoléon",
+            text = "En quelle année Napoléon Bonaparte s'est-il fait sacrer empereur des Français ?",
+            options = listOf("1799", "1804", "1812", "1815"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Napoléon Bonaparte se sacra empereur des Français en 1804, lors d'une cérémonie à Notre-Dame de Paris.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_edit_nantes",
+            title = "L'édit de Nantes",
+            text = "Quel édit accorda en 1598 la liberté de culte aux protestants français ?",
+            options = listOf("L'édit de Nantes", "L'édit de Milan", "L'édit de Fontainebleau", "L'édit de Villers-Cotterêts"),
+            correctIndex = 0,
+            rating = 1650,
+            explanation = "L'édit de Nantes, signé par Henri IV en 1598, accorda des droits aux protestants ; il fut révoqué par Louis XIV en 1685.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_pression_pascal",
+            title = "L'unité de pression",
+            text = "Quelle est l'unité de mesure de la pression dans le Système international ?",
+            options = listOf("Le watt", "Le pascal", "Le joule", "Le newton"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "La pression se mesure en pascals (Pa) ; un pascal correspond à un newton par mètre carré.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "div_pong_arcade",
+            title = "Un des premiers jeux d'arcade",
+            text = "Quel jeu de 1972 est l'un des tout premiers jeux vidéo d'arcade à succès ?",
+            options = listOf("Pong", "Space Invaders", "Pac-Man", "Donkey Kong"),
+            correctIndex = 0,
+            rating = 1600,
+            explanation = "« Pong », un jeu de tennis virtuel sorti par Atari en 1972, est l'un des premiers jeux d'arcade à connaître un grand succès.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "geo_mer_est_italie",
+            title = "Mer à l'est de l'Italie",
+            text = "Quelle mer borde la côte est de l'Italie ?",
+            options = listOf("La mer Tyrrhénienne", "La mer Égée", "La mer Adriatique", "La mer Ionienne"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "La mer Adriatique sépare la péninsule italienne des Balkans. La mer Tyrrhénienne, elle, borde au contraire la côte ouest de l'Italie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_quito_pays",
+            title = "Pays de Quito",
+            text = "De quel pays Quito est-elle la capitale ?",
+            options = listOf("L'Équateur", "Le Pérou", "La Colombie", "La Bolivie"),
+            correctIndex = 0,
+            rating = 1550,
+            explanation = "Quito, perchée à près de 2 850 m d'altitude dans les Andes, est la capitale de l'Équateur, l'une des plus hautes capitales du monde.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_aconcagua",
+            title = "Plus haut sommet d'Amérique",
+            text = "Quel est le plus haut sommet du continent américain ?",
+            options = listOf("Le Chimborazo", "Le mont Denali", "L'Aconcagua", "Le mont Logan"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "L'Aconcagua, dans les Andes argentines, culmine à 6 961 m : c'est le plus haut sommet des Amériques et de tout l'hémisphère sud.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_detroit_ormuz",
+            title = "Détroit du golfe Persique",
+            text = "Quel détroit stratégique relie le golfe Persique au golfe d'Oman ?",
+            options = listOf("Le détroit de Malacca", "Le détroit d'Ormuz", "Le Bosphore", "Le détroit de Gibraltar"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "Le détroit d'Ormuz est un passage majeur du commerce pétrolier mondial : une grande partie du pétrole exporté depuis le golfe Persique y transite.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_desert_atacama",
+            title = "Le désert le plus aride",
+            text = "Quel désert est considéré comme le plus aride du monde ?",
+            options = listOf("Le désert d'Atacama", "Le Sahara", "Le désert de Gobi", "Le Kalahari"),
+            correctIndex = 0,
+            rating = 1550,
+            explanation = "Le désert d'Atacama, au Chili, est l'endroit le plus sec de la planète : certaines de ses zones n'ont pas connu de précipitations significatives pendant des décennies.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_etna_ile",
+            title = "Île de l'Etna",
+            text = "Sur quelle île italienne se trouve le volcan Etna ?",
+            options = listOf("La Sardaigne", "La Corse", "Malte", "La Sicile"),
+            correctIndex = 3,
+            rating = 1200,
+            explanation = "L'Etna, en Sicile, est le plus haut volcan actif d'Europe et l'un des plus actifs au monde.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_hongrie",
+            title = "Capitale de la Hongrie",
+            text = "Quelle est la capitale de la Hongrie ?",
+            options = listOf("Budapest", "Vienne", "Prague", "Bucarest"),
+            correctIndex = 0,
+            rating = 1300,
+            explanation = "Budapest, traversée par le Danube, est née de la réunion des villes de Buda et de Pest ; c'est la capitale de la Hongrie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_grande_barriere_corail",
+            title = "Pays de la Grande Barrière",
+            text = "Au large de quel pays se trouve la Grande Barrière de corail ?",
+            options = listOf("L'Indonésie", "Les Philippines", "L'Australie", "Le Mexique"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "La Grande Barrière de corail s'étend sur plus de 2 000 km le long de la côte nord-est de l'Australie ; c'est la plus vaste structure vivante de la planète.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_chutes_niagara",
+            title = "Frontière des chutes du Niagara",
+            text = "Les chutes du Niagara se situent à la frontière entre les États-Unis et quel pays ?",
+            options = listOf("Le Mexique", "Le Groenland", "Cuba", "Le Canada"),
+            correctIndex = 3,
+            rating = 1200,
+            explanation = "Les chutes du Niagara se trouvent à la frontière entre l'État de New York (États-Unis) et la province de l'Ontario (Canada).",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_capitale_coree_sud",
+            title = "Capitale de la Corée du Sud",
+            text = "Quelle est la capitale de la Corée du Sud ?",
+            options = listOf("Séoul", "Pyongyang", "Tokyo", "Bangkok"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "Séoul est la capitale de la Corée du Sud et l'une des plus grandes agglomérations d'Asie. Pyongyang, elle, est la capitale de la Corée du Nord.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "hist_premier_empereur_chine",
+            title = "Premier empereur de Chine",
+            text = "Qui fut le premier empereur de la Chine unifiée ?",
+            options = listOf("Confucius", "Sun Tzu", "Qin Shi Huang", "Kubilai Khan"),
+            correctIndex = 2,
+            rating = 1650,
+            explanation = "Qin Shi Huang unifia la Chine en 221 av. J.-C. et fonda la dynastie Qin ; on lui doit la célèbre armée de terre cuite découverte près de son mausolée.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_serment_jeu_paume",
+            title = "Serment du Jeu de paume",
+            text = "En quelle année fut prêté le serment du Jeu de paume ?",
+            options = listOf("1789", "1792", "1799", "1804"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "Le 20 juin 1789, les députés du tiers état réunis dans la salle du Jeu de paume jurèrent de ne pas se séparer avant d'avoir donné une constitution à la France, épisode fondateur de la Révolution.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_attentat_sarajevo",
+            title = "Attentat de Sarajevo",
+            text = "Dans quelle ville l'archiduc François-Ferdinand fut-il assassiné en 1914, déclenchant la Première Guerre mondiale ?",
+            options = listOf("Vienne", "Sarajevo", "Belgrade", "Berlin"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "L'assassinat de l'archiduc François-Ferdinand d'Autriche à Sarajevo, le 28 juin 1914, déclencha l'enchaînement diplomatique qui mena à la Première Guerre mondiale.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_bataille_stalingrad",
+            title = "Tournant du front de l'Est",
+            text = "Quelle bataille (1942-1943) marqua un tournant majeur sur le front de l'Est pendant la Seconde Guerre mondiale ?",
+            options = listOf("La bataille de Verdun", "La bataille de Stalingrad", "Le débarquement de Normandie", "La bataille d'Angleterre"),
+            correctIndex = 1,
+            rating = 1500,
+            explanation = "La bataille de Stalingrad s'acheva en 1943 par la capitulation de la 6e armée allemande ; ce fut un tournant décisif de la guerre sur le front de l'Est.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_kheops_pyramide",
+            title = "Pharaon de la grande pyramide",
+            text = "Pour quel pharaon la grande pyramide de Gizeh fut-elle édifiée ?",
+            options = listOf("Khéops", "Toutânkhamon", "Ramsès II", "Akhenaton"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "La grande pyramide de Gizeh fut construite vers 2560 av. J.-C. comme tombeau du pharaon Khéops ; c'est la seule des sept merveilles du monde antique encore debout.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_traite_rome_cee",
+            title = "Traité fondateur de la CEE",
+            text = "Quel traité signé en 1957 a institué la Communauté économique européenne ?",
+            options = listOf("Le traité de Maastricht", "Le traité de Lisbonne", "Le traité de Versailles", "Le traité de Rome"),
+            correctIndex = 3,
+            rating = 1400,
+            explanation = "Le traité de Rome, signé en 1957 par six pays, a créé la Communauté économique européenne (CEE), ancêtre de l'actuelle Union européenne.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_marignan_1515",
+            title = "Année de Marignan",
+            text = "En quelle année eut lieu la bataille de Marignan, remportée par François Ier ?",
+            options = listOf("1453", "1515", "1610", "1492"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "La bataille de Marignan, en 1515, fut une victoire de François Ier sur les Suisses au début de son règne, une date restée célèbre dans l'enseignement de l'histoire.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_tordesillas",
+            title = "Le traité de Tordesillas",
+            text = "Le traité de Tordesillas (1494) partagea le Nouveau Monde entre quels deux pays ?",
+            options = listOf("La France et l'Angleterre", "L'Espagne et la France", "L'Espagne et le Portugal", "Le Portugal et les Pays-Bas"),
+            correctIndex = 2,
+            rating = 1600,
+            explanation = "Par le traité de Tordesillas, l'Espagne et le Portugal se partagèrent les terres nouvellement découvertes le long d'une ligne tracée dans l'Atlantique, sous l'arbitrage du pape.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_cesar_ides",
+            title = "Les ides de mars",
+            text = "Quel homme d'État romain fut assassiné lors des ides de mars, en 44 av. J.-C. ?",
+            options = listOf("Auguste", "Néron", "Marc Aurèle", "Jules César"),
+            correctIndex = 3,
+            rating = 1300,
+            explanation = "Jules César fut poignardé au Sénat le 15 mars (les ides de mars) 44 av. J.-C. par un groupe de sénateurs conduit par Brutus et Cassius.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_premiere_croisade",
+            title = "Fin de la première croisade",
+            text = "Quelle ville les croisés prirent-ils au terme de la première croisade, en 1099 ?",
+            options = listOf("Constantinople", "Jérusalem", "Antioche", "Le Caire"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "La première croisade s'acheva par la prise de Jérusalem en 1099 et la fondation d'États latins en Orient.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "sci_eclipse_solaire",
+            title = "Astre d'une éclipse solaire",
+            text = "Lors d'une éclipse solaire, quel astre passe entre la Terre et le Soleil ?",
+            options = listOf("La Lune", "Mars", "Vénus", "Jupiter"),
+            correctIndex = 0,
+            rating = 1300,
+            explanation = "Une éclipse solaire se produit lorsque la Lune s'interpose entre la Terre et le Soleil, projetant son ombre sur une partie de la Terre.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_animal_plus_grand",
+            title = "Le plus grand animal",
+            text = "Quel est le plus grand animal connu ayant jamais existé ?",
+            options = listOf("La baleine bleue", "Le diplodocus", "L'éléphant de mer", "Le cachalot"),
+            correctIndex = 0,
+            rating = 1200,
+            explanation = "La baleine bleue peut dépasser 30 m de long et 150 tonnes : c'est le plus grand animal connu de toute l'histoire de la vie, plus massif encore que les plus grands dinosaures.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_organe_insuline",
+            title = "Organe producteur d'insuline",
+            text = "Quel organe produit l'insuline ?",
+            options = listOf("Le foie", "Les reins", "La rate", "Le pancréas"),
+            correctIndex = 3,
+            rating = 1300,
+            explanation = "L'insuline, l'hormone qui régule le taux de sucre dans le sang, est sécrétée par le pancréas. Un défaut de cette production est à l'origine du diabète.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_etoile_proche",
+            title = "L'étoile la plus proche",
+            text = "Quelle est l'étoile la plus proche du Soleil ?",
+            options = listOf("Sirius", "Proxima du Centaure", "Bételgeuse", "L'étoile Polaire"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "Proxima du Centaure, située à environ 4,24 années-lumière, est l'étoile la plus proche de notre Soleil.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_atome_noyau",
+            title = "Composition du noyau atomique",
+            text = "Quelles particules composent le noyau d'un atome ?",
+            options = listOf("Les protons et les neutrons", "Les protons et les électrons", "Les neutrons et les électrons", "Uniquement des électrons"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "Le noyau atomique est constitué de protons (chargés positivement) et de neutrons (neutres) ; les électrons, eux, gravitent autour du noyau.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_decibel_son",
+            title = "Unité du niveau sonore",
+            text = "Quelle unité mesure le niveau sonore ?",
+            options = listOf("Le hertz", "Le watt", "Le newton", "Le décibel"),
+            correctIndex = 3,
+            rating = 1250,
+            explanation = "Le décibel (dB) mesure l'intensité sonore. Le hertz, lui, mesure la fréquence (la hauteur) d'un son, pas son intensité.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_organe_filtre_sang",
+            title = "Organes filtrant le sang",
+            text = "Quels organes filtrent le sang pour produire l'urine ?",
+            options = listOf("Le foie", "Les reins", "Les poumons", "La rate"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Les reins filtrent le sang en continu, éliminant les déchets et l'excès d'eau sous forme d'urine.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_son_vide",
+            title = "Le son dans le vide",
+            text = "Pourquoi le son ne peut-il pas se propager dans le vide ?",
+            options = listOf("Il est trop rapide", "Il est arrêté par le vide lui-même", "Il a besoin d'un milieu matériel pour se propager", "Il se transforme en lumière"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "Le son est une onde mécanique : il a besoin d'un support matériel (air, eau, solide) pour se propager. Dans le vide spatial, faute de matière, aucun son ne peut voyager.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_echelle_richter",
+            title = "Mesure des séismes",
+            text = "Quelle échelle a été historiquement utilisée pour mesurer la magnitude des séismes ?",
+            options = listOf("L'échelle de Beaufort", "L'échelle de Mohs", "L'échelle de Kelvin", "L'échelle de Richter"),
+            correctIndex = 3,
+            rating = 1500,
+            explanation = "L'échelle de Richter mesure la magnitude d'un tremblement de terre. L'échelle de Beaufort concerne la force du vent, et celle de Mohs la dureté des minéraux.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_globules_blancs",
+            title = "Rôle des globules blancs",
+            text = "Quel est le rôle principal des globules blancs ?",
+            options = listOf("Transporter l'oxygène", "Défendre l'organisme contre les infections", "Permettre la coagulation du sang", "Réguler la température"),
+            correctIndex = 1,
+            rating = 1250,
+            explanation = "Les globules blancs (leucocytes) sont les cellules du système immunitaire : ils défendent l'organisme contre les microbes. Le transport de l'oxygène est, lui, assuré par les globules rouges.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "art_jazz_satchmo",
+            title = "Le trompettiste « Satchmo »",
+            text = "Quel trompettiste de jazz était surnommé « Satchmo » ?",
+            options = listOf("Miles Davis", "Dizzy Gillespie", "Louis Armstrong", "Duke Ellington"),
+            correctIndex = 2,
+            rating = 1550,
+            explanation = "Louis Armstrong, surnommé « Satchmo », est l'un des musiciens les plus influents de l'histoire du jazz, connu pour sa trompette et sa voix rauque.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_pyramide_louvre",
+            title = "Architecte de la pyramide du Louvre",
+            text = "Quel architecte a conçu la pyramide de verre du Louvre ?",
+            options = listOf("Ieoh Ming Pei", "Le Corbusier", "Jean Nouvel", "Frank Gehry"),
+            correctIndex = 0,
+            rating = 1600,
+            explanation = "La pyramide du Louvre, inaugurée en 1989, est l'œuvre de l'architecte américain d'origine chinoise Ieoh Ming Pei (I. M. Pei).",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_meninas_velasquez",
+            title = "Peintre des Ménines",
+            text = "Quel peintre espagnol a réalisé le célèbre tableau « Les Ménines » ?",
+            options = listOf("Francisco de Goya", "Diego Vélasquez", "Le Greco", "Joan Miró"),
+            correctIndex = 1,
+            rating = 1600,
+            explanation = "« Les Ménines » (1656), tableau à la composition virtuose et énigmatique, est l'œuvre majeure du peintre espagnol Diego Vélasquez.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_pollock_dripping",
+            title = "Le peintre du « dripping »",
+            text = "Quel peintre américain est célèbre pour sa technique du « dripping » (projection de peinture sur la toile) ?",
+            options = listOf("Andy Warhol", "Mark Rothko", "Jackson Pollock", "Roy Lichtenstein"),
+            correctIndex = 2,
+            rating = 1550,
+            explanation = "Jackson Pollock, figure de l'expressionnisme abstrait, peignait en projetant et faisant couler la peinture sur des toiles posées au sol, technique dite du « dripping ».",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_la_cene",
+            title = "Peintre de La Cène",
+            text = "Qui a peint la célèbre fresque « La Cène » à Milan ?",
+            options = listOf("Léonard de Vinci", "Michel-Ange", "Raphaël", "Le Caravage"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "« La Cène », peinte par Léonard de Vinci à la fin du XVe siècle sur un mur du couvent Santa Maria delle Grazie à Milan, représente le dernier repas du Christ avec ses apôtres.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_stradivarius_violon",
+            title = "Le luthier des violons",
+            text = "Quel célèbre luthier italien a fabriqué des violons réputés parmi les meilleurs au monde ?",
+            options = listOf("Antonio Stradivari", "Antonio Vivaldi", "Bartolomeo Cristofori", "Niccolò Paganini"),
+            correctIndex = 0,
+            rating = 1450,
+            explanation = "Antonio Stradivari, actif à Crémone vers 1700, a fabriqué les « stradivarius », violons toujours considérés parmi les plus précieux et recherchés.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_clair_lune_debussy",
+            title = "Compositeur de Clair de lune",
+            text = "Quel compositeur français a écrit « Clair de lune », extrait de la « Suite bergamasque » ?",
+            options = listOf("Maurice Ravel", "Claude Debussy", "Gabriel Fauré", "Erik Satie"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "« Clair de lune », l'une des pièces pour piano les plus connues du répertoire, est de Claude Debussy. À ne pas confondre avec la « Sonate au clair de lune » de Beethoven.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_germinal_zola",
+            title = "Auteur de Germinal",
+            text = "Quel écrivain français est l'auteur du roman « Germinal » ?",
+            options = listOf("Victor Hugo", "Honoré de Balzac", "Émile Zola", "Gustave Flaubert"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "« Germinal » (1885), qui décrit la condition des mineurs et une grande grève, fait partie de la série des « Rougon-Macquart » d'Émile Zola.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_sacre_printemps",
+            title = "Compositeur du Sacre du printemps",
+            text = "Quel compositeur est l'auteur du ballet « Le Sacre du printemps » ?",
+            options = listOf("Piotr Tchaïkovski", "Sergueï Prokofiev", "Claude Debussy", "Igor Stravinsky"),
+            correctIndex = 3,
+            rating = 1650,
+            explanation = "« Le Sacre du printemps » d'Igor Stravinsky provoqua un scandale lors de sa création à Paris en 1913, par sa musique et sa chorégraphie révolutionnaires.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_messie_haendel",
+            title = "Compositeur du Messie",
+            text = "Quel compositeur baroque est l'auteur de l'oratorio « Le Messie » et de son célèbre « Alléluia » ?",
+            options = listOf("Jean-Sébastien Bach", "Georg Friedrich Haendel", "Antonio Vivaldi", "Henry Purcell"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "« Le Messie » (1741), dont est tiré le fameux chœur de l'« Alléluia », est l'œuvre la plus célèbre du compositeur baroque Georg Friedrich Haendel.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "spo_natation_rapide",
+            title = "La nage la plus rapide",
+            text = "Quelle est la nage la plus rapide en compétition ?",
+            options = listOf("La brasse", "Le dos", "Le crawl", "Le papillon"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Le crawl (ou nage libre) est la technique la plus rapide ; c'est pourquoi les nageurs le choisissent presque toujours dans les épreuves de « nage libre ».",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_jo_1896_ville",
+            title = "Premiers JO modernes",
+            text = "Dans quelle ville se tinrent les premiers Jeux olympiques de l'ère moderne, en 1896 ?",
+            options = listOf("Athènes", "Paris", "Londres", "Rome"),
+            correctIndex = 0,
+            rating = 1500,
+            explanation = "Les premiers Jeux olympiques modernes se déroulèrent à Athènes en 1896, en hommage à l'Antiquité grecque, sous l'impulsion de Pierre de Coubertin.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_marathon_bataille",
+            title = "Origine du mot marathon",
+            text = "De quelle bataille de la Grèce antique le mot « marathon » tire-t-il son origine ?",
+            options = listOf("La bataille de Salamine", "La bataille des Thermopyles", "La bataille de Platées", "La bataille de Marathon"),
+            correctIndex = 3,
+            rating = 1550,
+            explanation = "Le mot « marathon » vient de la bataille de Marathon (490 av. J.-C.) : selon la légende, un messager aurait couru jusqu'à Athènes, soit environ 40 km, pour annoncer la victoire.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_basket_inventeur",
+            title = "Inventeur du basket-ball",
+            text = "Qui a inventé le basket-ball, en 1891 ?",
+            options = listOf("Pierre de Coubertin", "James Naismith", "Walter Camp", "Abner Doubleday"),
+            correctIndex = 1,
+            rating = 1650,
+            explanation = "Le basket-ball fut inventé en 1891 par James Naismith, professeur d'éducation physique au Massachusetts, qui accrocha des paniers de pêches comme premières cibles.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_haka_nz",
+            title = "Le pays du haka",
+            text = "L'équipe nationale de rugby de quel pays exécute le « haka » avant ses matchs ?",
+            options = listOf("La Nouvelle-Zélande", "L'Australie", "L'Afrique du Sud", "Les Fidji"),
+            correctIndex = 0,
+            rating = 1300,
+            explanation = "Le haka, danse traditionnelle maorie, est exécuté avant chaque match par les All Blacks, l'équipe de Nouvelle-Zélande.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_golf_birdie",
+            title = "Un coup sous le par",
+            text = "Au golf, comment appelle-t-on un trou réalisé en un coup de moins que le par ?",
+            options = listOf("Un bogey", "Un eagle", "Un par", "Un birdie"),
+            correctIndex = 3,
+            rating = 1500,
+            explanation = "Un « birdie » correspond à un coup de moins que le par. Un coup de plus est un « bogey », et deux coups de moins un « eagle ».",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_f1_maranello",
+            title = "L'écurie de Maranello",
+            text = "Quelle écurie de Formule 1, basée à Maranello, est la plus ancienne de la discipline ?",
+            options = listOf("McLaren", "Ferrari", "Williams", "Renault"),
+            correctIndex = 1,
+            rating = 1200,
+            explanation = "Ferrari, dont l'usine historique se trouve à Maranello en Italie, est la plus ancienne et la plus titrée des écuries de Formule 1.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_super_bowl_sport",
+            title = "Le sport du Super Bowl",
+            text = "Le Super Bowl est la finale de quel sport ?",
+            options = listOf("Le baseball", "Le basket-ball", "Le football américain", "Le hockey sur glace"),
+            correctIndex = 2,
+            rating = 1200,
+            explanation = "Le Super Bowl est la grande finale annuelle de la NFL, la ligue professionnelle de football américain ; c'est l'un des événements sportifs les plus suivis au monde.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_jo_2024_paris",
+            title = "Ville hôte des JO 2024",
+            text = "Quelle ville a accueilli les Jeux olympiques d'été de 2024 ?",
+            options = listOf("Londres", "Paris", "Los Angeles", "Tokyo"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Paris a accueilli les Jeux olympiques d'été de 2024, cent ans après les avoir organisés en 1924.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_paris_roubaix",
+            title = "L'Enfer du Nord",
+            text = "Quelle course cycliste, célèbre pour ses pavés, est surnommée « l'Enfer du Nord » ?",
+            options = listOf("Paris-Nice", "Paris-Roubaix", "Le Tour des Flandres", "Milan-San Remo"),
+            correctIndex = 1,
+            rating = 1550,
+            explanation = "Paris-Roubaix, surnommée « l'Enfer du Nord », est réputée pour ses secteurs pavés qui rendent la course particulièrement éprouvante.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "div_got_stark_embleme",
+            title = "Emblème des Stark",
+            text = "Quel animal figure sur le blason de la maison Stark dans « Game of Thrones » ?",
+            options = listOf("Le lion", "Le dragon", "Le loup", "Le cerf"),
+            correctIndex = 2,
+            rating = 1300,
+            explanation = "L'emblème de la maison Stark est le loup géant (« direwolf »), accompagné de la devise « Winter is coming ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_intouchables_acteur",
+            title = "L'acteur d'Intouchables",
+            text = "Quel acteur partage l'affiche du film « Intouchables » avec François Cluzet ?",
+            options = listOf("Jamel Debbouze", "Omar Sy", "Dany Boon", "Gad Elmaleh"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Omar Sy interprète Driss aux côtés de François Cluzet dans « Intouchables » (2011), rôle pour lequel il a reçu le César du meilleur acteur.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_gta_studio",
+            title = "Studio de Grand Theft Auto",
+            text = "Quel studio développe la série de jeux vidéo « Grand Theft Auto » ?",
+            options = listOf("Ubisoft", "Electronic Arts", "Activision", "Rockstar Games"),
+            correctIndex = 3,
+            rating = 1400,
+            explanation = "La série « Grand Theft Auto » (GTA) est développée par Rockstar Games ; c'est l'une des franchises de jeux vidéo les plus vendues de l'histoire.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_amelie_poulain_real",
+            title = "Réalisateur d'Amélie Poulain",
+            text = "Qui a réalisé le film « Le Fabuleux Destin d'Amélie Poulain » ?",
+            options = listOf("Luc Besson", "Michel Gondry", "Jean-Pierre Jeunet", "Cédric Klapisch"),
+            correctIndex = 2,
+            rating = 1400,
+            explanation = "« Le Fabuleux Destin d'Amélie Poulain » (2001), avec Audrey Tautou, a été réalisé par Jean-Pierre Jeunet et a connu un immense succès international.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_halo_console",
+            title = "La console de Halo",
+            text = "Sur quelle marque de consoles la série de jeux « Halo » est-elle d'abord sortie ?",
+            options = listOf("Xbox", "PlayStation", "Nintendo", "Sega"),
+            correctIndex = 0,
+            rating = 1350,
+            explanation = "« Halo » est une franchise phare de la Xbox de Microsoft, lancée avec « Halo: Combat Evolved » en 2001.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_dragon_ball_auteur",
+            title = "Créateur de Dragon Ball",
+            text = "Quel mangaka a créé la série « Dragon Ball » ?",
+            options = listOf("Eiichirō Oda", "Masashi Kishimoto", "Osamu Tezuka", "Akira Toriyama"),
+            correctIndex = 3,
+            rating = 1600,
+            explanation = "« Dragon Ball » a été créé par le mangaka japonais Akira Toriyama au milieu des années 1980 ; c'est l'un des mangas les plus influents au monde.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_terminator_acteur",
+            title = "L'acteur de Terminator",
+            text = "Quel acteur incarne le cyborg dans la saga « Terminator » ?",
+            options = listOf("Sylvester Stallone", "Arnold Schwarzenegger", "Bruce Willis", "Jean-Claude Van Damme"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Arnold Schwarzenegger interprète le Terminator, rôle qui a lancé sa carrière au cinéma et popularisé la réplique « I'll be back ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_hitchcock_psychose",
+            title = "Réalisateur de Psychose",
+            text = "Quel réalisateur, maître du suspense, a tourné « Psychose » (1960) ?",
+            options = listOf("Stanley Kubrick", "Orson Welles", "Alfred Hitchcock", "Billy Wilder"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "« Psychose » et sa célèbre scène de la douche sont l'œuvre d'Alfred Hitchcock, surnommé « le maître du suspense ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_metallica_genre",
+            title = "Le genre de Metallica",
+            text = "À quel genre musical appartient le groupe Metallica ?",
+            options = listOf("Le reggae", "La country", "Le jazz", "Le heavy metal"),
+            correctIndex = 3,
+            rating = 1300,
+            explanation = "Metallica est l'un des groupes les plus emblématiques du heavy metal (et plus précisément du thrash metal), formé en Californie en 1981.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_god_of_war_heros",
+            title = "Le héros de God of War",
+            text = "Quel est le nom du héros de la série de jeux vidéo « God of War » ?",
+            options = listOf("Master Chief", "Kratos", "Aloy", "Geralt"),
+            correctIndex = 1,
+            rating = 1400,
+            explanation = "Kratos, guerrier spartiate inspiré de la mythologie grecque puis nordique, est le protagoniste de la série « God of War ».",
+            category = Category.DIVERTISSEMENT
+        ),
+
     )
 
     fun getByCategory(category: Category): List<Question> =
