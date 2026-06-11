@@ -26,6 +26,12 @@ data class Question(
      * si l'énoncé ou l'image changent. Convention : `<prefixe_categorie>_<descripteur>`.
      */
     val id: String,
+    /**
+     * Titre court (2-5 mots) résumant le sujet de la question SANS dévoiler la réponse. Sert de
+     * libellé scannable (historique des questions, point 17) et d'index compact pour l'enrichissement.
+     * Ex. « Capitale de l'Australie ». Ne jamais y mettre la bonne réponse.
+     */
+    val title: String,
     val text: String,
     val options: List<String>,
     val correctIndex: Int,

@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
  */
 @Serializable
 private data class QuestionDto(
+    val title: String = "",
     val text: String = "",
     val options: List<String> = emptyList(),
     val correctIndex: Int = 0,
@@ -23,6 +24,7 @@ private data class QuestionDto(
 )
 
 private fun Question.toDto() = QuestionDto(
+    title = title,
     text = text,
     options = options,
     correctIndex = correctIndex,
@@ -40,6 +42,7 @@ private fun Question.toDto() = QuestionDto(
 private data class QuestionExportDto(
     val id: String,
     val category: String,
+    val title: String,
     val text: String,
     val options: List<String>,
     val correctIndex: Int,
@@ -76,6 +79,7 @@ class RemoteQuestionRepository(private val firestore: FirebaseFirestore = Fireba
             QuestionExportDto(
                 id = q.id,
                 category = q.category.name,
+                title = q.title,
                 text = q.text,
                 options = q.options,
                 correctIndex = q.correctIndex,
@@ -96,6 +100,7 @@ class RemoteQuestionRepository(private val firestore: FirebaseFirestore = Fireba
                 ?: return@mapNotNull null
             Question(
                 id = doc.id,
+                title = dto.title,
                 text = dto.text,
                 options = dto.options,
                 correctIndex = dto.correctIndex,
