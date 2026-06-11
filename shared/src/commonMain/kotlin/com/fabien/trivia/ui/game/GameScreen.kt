@@ -39,7 +39,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.fabien.trivia.data.displayName
 import com.fabien.trivia.ui.components.ChunkyButton
 import com.fabien.trivia.ui.components.Confetti
 import com.fabien.trivia.ui.theme.AppIcons
@@ -47,7 +46,6 @@ import com.fabien.trivia.ui.theme.CatColors
 import com.fabien.trivia.ui.theme.TriviaPalette
 import com.fabien.trivia.ui.theme.catColors
 import com.fabien.trivia.ui.theme.categoryIcon
-import com.fabien.trivia.ui.theme.levelName
 
 private val ConfettiPalette = listOf(
     TriviaPalette.good, TriviaPalette.gold, TriviaPalette.brand,
@@ -74,7 +72,6 @@ fun GameScreen(
     ) {
         GameHeader(
             cat = cat,
-            categoryName = question.category.displayName,
             categoryIcon = categoryIcon(question.category),
             correctStreak = state.correctStreak,
             rating = state.displayedRating,
@@ -142,49 +139,48 @@ fun GameScreen(
 @Composable
 private fun GameHeader(
     cat: CatColors,
-    categoryName: String,
     categoryIcon: ImageVector,
     correctStreak: Int,
     rating: Int,
     onClose: () -> Unit
 ) {
-    Column(
+    // Tout sur une seule ligne : flamme (série, toujours visible, 0 après une erreur) / niveau (couronne
+    // + valeur, sans libellé de rang) / catégorie (icône seule) / fermer (poussé à droite).
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(cat.main)
-            .padding(start = 18.dp, end = 18.dp, top = 6.dp, bottom = 26.dp)
+            .padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 22.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(9.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .size(38.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.18f))
-                    .clickable(onClick = onClose),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(AppIcons.Close, contentDescription = "Fermer", tint = Color.White, modifier = Modifier.size(20.dp))
-            }
-            HeaderPill(modifier = Modifier.align(Alignment.Center)) {
-                Icon(categoryIcon, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                Text(categoryName, style = MaterialTheme.typography.titleSmall, color = Color.White)
-            }
+        HeaderPill {
+            Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+            Text("$correctStreak", style = MaterialTheme.typography.titleMedium, color = Color.White)
         }
-
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(9.dp)) {
-            if (correctStreak > 0) {
-                HeaderPill {
-                    Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                    Text("$correctStreak", style = MaterialTheme.typography.titleSmall, color = Color.White)
-                }
-            }
-            HeaderPill {
-                Icon(AppIcons.Crown, contentDescription = null, tint = Color.White, modifier = Modifier.size(15.dp))
-                Text("$rating", style = MaterialTheme.typography.titleSmall, color = Color.White)
-                Text(rating.levelName(), style = MaterialTheme.typography.titleSmall, color = Color.White)
-            }
+        HeaderPill {
+            Icon(AppIcons.Crown, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            Text("$rating", style = MaterialTheme.typography.titleSmall, color = Color.White)
+        }
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White.copy(alpha = 0.18f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(categoryIcon, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+        }
+        Spacer(Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White.copy(alpha = 0.18f))
+                .clickable(onClick = onClose),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(AppIcons.Close, contentDescription = "Fermer", tint = Color.White, modifier = Modifier.size(20.dp))
         }
     }
 }

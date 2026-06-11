@@ -221,7 +221,7 @@ private fun GlobalLevelCard(playerRating: Int, globalBest: Int, globalBestDate: 
             Box(Modifier.fillMaxWidth().height(1.dp).background(Color.White.copy(alpha = 0.13f)))
             Spacer(Modifier.height(10.dp))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(15.dp))
+                Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
                 Text("$globalBest", style = MaterialTheme.typography.titleSmall, color = Color.White)
                 Text(
                     text = if (globalBestDate != null) "Meilleure série le ${formatStreakDate(globalBestDate)}" else "Meilleure série",
@@ -294,7 +294,7 @@ private fun CategoryStatTile(
                 Text("Meilleure série :", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.8f))
                 Spacer(Modifier.height(2.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(13.dp))
+                    Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(19.dp))
                     Text(
                         text = if (bestDate != null) "$best, le ${formatStreakDate(bestDate)}" else "$best",
                         style = MaterialTheme.typography.bodyMedium,

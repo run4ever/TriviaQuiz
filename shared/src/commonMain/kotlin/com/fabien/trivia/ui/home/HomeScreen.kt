@@ -21,6 +21,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.ui.components.ChunkyButton
@@ -94,6 +100,13 @@ private fun greetingWord(): String {
 @Composable
 private fun PlayerHeader(streak: Int, pseudo: String) {
     val hasPseudo = pseudo.isNotBlank()
+    // Valeur initiale recalculée à chaque (ré)entrée en composition (couvre les changements d'onglet),
+    // puis rafraîchie sur ON_RESUME → au retour de l'arrière-plan (ex. ouverture le matin) le mot est
+    // à jour sans recomposition forcée ni polling.
+    var greeting by remember { mutableStateOf(greetingWord()) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        greeting = greetingWord()
+    }
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
@@ -114,7 +127,7 @@ private fun PlayerHeader(streak: Int, pseudo: String) {
         }
         Spacer(Modifier.width(12.dp))
         Text(
-            text = if (hasPseudo) "${greetingWord()} $pseudo" else greetingWord(),
+            text = if (hasPseudo) "$greeting $pseudo" else greeting,
             style = MaterialTheme.typography.headlineSmall,
             color = TriviaPalette.ink,
             modifier = Modifier.weight(1f)
