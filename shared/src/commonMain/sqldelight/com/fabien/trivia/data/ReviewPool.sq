@@ -9,6 +9,10 @@ CREATE TABLE review_pool (
 selectAll:
 SELECT question_id FROM review_pool ORDER BY added_at ASC;
 
+-- Snapshot complet (id + horodatage) pour la synchro par compte (fusion avec le cloud).
+selectAllWithTime:
+SELECT question_id, added_at FROM review_pool ORDER BY added_at ASC;
+
 countAll:
 SELECT COUNT(*) FROM review_pool;
 
@@ -19,3 +23,10 @@ INSERT OR IGNORE INTO review_pool(question_id, added_at) VALUES (?, ?);
 
 remove:
 DELETE FROM review_pool WHERE question_id = ?;
+
+-- Réécriture en bloc du pool (après fusion locale ↔ cloud) : on écrit l'added_at fourni.
+upsert:
+INSERT OR REPLACE INTO review_pool(question_id, added_at) VALUES (?, ?);
+
+deleteAll:
+DELETE FROM review_pool;

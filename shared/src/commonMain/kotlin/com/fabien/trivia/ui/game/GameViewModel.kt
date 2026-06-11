@@ -12,6 +12,8 @@ import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
 import com.fabien.trivia.data.ReviewPoolRepository
+import com.fabien.trivia.data.ReviewPoolSync
+import com.fabien.trivia.data.mergeReviewPool
 import com.fabien.trivia.data.StreakRepository
 import com.fabien.trivia.data.StreakSync
 import com.fabien.trivia.data.TriviaDatabase
@@ -68,6 +70,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val reviewPoolRepository = ReviewPoolRepository(database)
     private val ratingSync = PlayerRatingSync()
     private val streakSync = StreakSync()
+    private val reviewPoolSync = ReviewPoolSync()
     private val remoteQuestions = RemoteQuestionRepository()
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
@@ -140,6 +143,36 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 syncStreaks(uid)
             } catch (_: Exception) {
                 // Idem : les séries restent locales, la synchro reprendra à la prochaine connexion.
+            }
+            try {
+                syncReviewPool(uid)
+            } catch (_: Exception) {
+                // Idem : le pool de révision reste local, la synchro reprendra à la prochaine connexion.
+            }
+        }
+    }
+
+    /**
+     * Fusionne le pool de révision local ↔ cloud à la connexion (union par id, cf. [mergeReviewPool]) :
+     * on écrit le résultat en local ET on le repousse, puis on rafraîchit le compteur affiché.
+     */
+    private suspend fun syncReviewPool(uid: String) {
+        val local = reviewPoolRepository.snapshot()
+        val cloud = reviewPoolSync.fetch(uid)
+        val merged = if (cloud == null) local else mergeReviewPool(local, cloud)
+        reviewPoolRepository.write(merged)
+        reviewPoolSync.push(uid, merged)
+        _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
+    }
+
+    /** Pousse le pool de révision local vers Firestore (fire-and-forget) si connecté. */
+    private fun pushReviewPool() {
+        val uid = currentUid ?: return
+        viewModelScope.launch {
+            try {
+                reviewPoolSync.push(uid, reviewPoolRepository.snapshot())
+            } catch (_: Exception) {
+                // Firestore rejoue l'écriture à la reconnexion.
             }
         }
     }
@@ -260,6 +293,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
      */
     fun recordReviewAnswer(questionId: String, correct: Boolean) {
         reviewPoolRepository.record(questionId, correct)
+        pushReviewPool()
         _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
     }
 
@@ -282,6 +316,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         // pool — bonne réponse → question retirée, mauvaise → conservée — et on affiche le feedback.
         if (current.isReview) {
             reviewPoolRepository.record(question.id, isCorrect)
+            pushReviewPool()
             _state.value = current.copy(
                 selectedAnswerIndex = index,
                 answerConfirmed = true,
@@ -293,6 +328,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
 
         // Pool de révision (solo) : bonne réponse → question retirée, mauvaise → ajoutée.
         reviewPoolRepository.record(question.id, isCorrect)
+        pushReviewPool()
         val reviewCount = reviewPoolRepository.count()
 
         // État persisté de la question : rating dynamique (graine du code si jamais jouée) + historique anti-grind.
