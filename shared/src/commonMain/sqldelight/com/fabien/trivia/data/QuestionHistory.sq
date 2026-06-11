@@ -1,0 +1,29 @@
+-- Historique des passages de questions : UNE ligne par réponse (solo ou multijoueur), avec sa date
+-- et sa justesse. Permet l'écran « historique par catégorie » (dates + ✓/✗). La catégorie n'est PAS
+-- stockée ici : elle est résolue côté app via la banque (question_id → Question.category).
+-- Démarre à vide : les parties jouées avant cette table n'ont pas d'historique daté.
+CREATE TABLE question_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id TEXT NOT NULL,
+    answered_at INTEGER NOT NULL,  -- epoch millis
+    correct INTEGER NOT NULL       -- 0 / 1
+);
+
+CREATE INDEX question_history_qid ON question_history(question_id);
+
+insert:
+INSERT INTO question_history(question_id, answered_at, correct) VALUES (?, ?, ?);
+
+-- Tous les passages des questions fournies (celles d'une catégorie), du plus récent au plus ancien.
+selectForQuestions:
+SELECT question_id, answered_at, correct
+FROM question_history
+WHERE question_id IN ?
+ORDER BY answered_at DESC;
+
+-- Compteurs agrégés par question (posées + bonnes réponses), pour les stats du Profil. Borné au
+-- nombre de questions distinctes, indépendant de la taille de l'historique.
+selectCountsByQuestion:
+SELECT question_id, COUNT(*) AS asked, SUM(correct) AS correct
+FROM question_history
+GROUP BY question_id;

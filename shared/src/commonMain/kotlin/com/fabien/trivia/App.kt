@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.ui.account.AccountScreen
@@ -29,6 +30,7 @@ import com.fabien.trivia.ui.game.GameViewModel
 import com.fabien.trivia.ui.home.HomeScreen
 import com.fabien.trivia.ui.multiplayer.MultiplayerScreen
 import com.fabien.trivia.ui.multiplayer.MultiplayerViewModel
+import com.fabien.trivia.ui.profile.CategoryHistoryScreen
 import com.fabien.trivia.ui.profile.ProfileScreen
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.CultureGeneraleTheme
@@ -43,6 +45,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
     var currentTab by remember { mutableStateOf(AppTab.GAME) }
     var showAccount by remember { mutableStateOf(false) }
     var showAdmin by remember { mutableStateOf(false) }
+    var historyCategory by remember { mutableStateOf<Category?>(null) }
 
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
@@ -79,7 +82,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
         // seul détenteur de la base locale) : mauvaise réponse → ajoutée, bonne → retirée.
         LaunchedEffect(Unit) {
             multiplayerViewModel.onAnswerGraded = { questionId, correct ->
-                viewModel.recordReviewAnswer(questionId, correct)
+                viewModel.recordMultiplayerAnswer(questionId, correct)
             }
         }
 
@@ -156,6 +159,14 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         isAdmin = authState.isAdmin,
                         onOpenAdmin = { showAdmin = true },
                     )
+                } else if (historyCategory != null) {
+                    val category = historyCategory!!
+                    val history = remember(category, state.profileStats) { viewModel.loadCategoryHistory(category) }
+                    CategoryHistoryScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        history = history,
+                        onBack = { historyCategory = null }
+                    )
                 } else {
                     ProfileScreen(
                         modifier = Modifier.padding(innerPadding),
@@ -165,7 +176,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         pseudo = authState.pseudo,
                         isSignedIn = authState.isEmailUser,
                         stats = state.profileStats,
-                        onOpenAccount = { showAccount = true }
+                        onOpenAccount = { showAccount = true },
+                        onSelectCategory = { historyCategory = it }
                     )
                 }
 

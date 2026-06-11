@@ -51,6 +51,10 @@ private val MONTHS_FR = listOf(
 private fun formatStreakDate(d: LocalDate): String =
     "${d.dayOfMonth} ${MONTHS_FR[d.monthNumber - 1]} ${d.year}"
 
+/** Taux de réussite en % entier (bonnes réponses / questions posées). 0 si aucune question posée. */
+private fun successRate(asked: Int, correct: Int): Int =
+    if (asked > 0) (correct * 100) / asked else 0
+
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
@@ -60,7 +64,8 @@ fun ProfileScreen(
     pseudo: String,
     isSignedIn: Boolean,
     stats: ProfileStats,
-    onOpenAccount: () -> Unit
+    onOpenAccount: () -> Unit,
+    onSelectCategory: (Category) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -78,7 +83,13 @@ fun ProfileScreen(
         )
 
         AccountCard(isSignedIn, pseudo, accountStatus, onOpenAccount)
-        GlobalLevelCard(playerRating, stats.globalBest, stats.globalBestDate)
+        GlobalLevelCard(
+            playerRating = playerRating,
+            globalBest = stats.globalBest,
+            globalBestDate = stats.globalBestDate,
+            asked = stats.globalAsked,
+            correct = stats.globalCorrect
+        )
 
         Text(
             text = "Par catégorie",
@@ -96,6 +107,9 @@ fun ProfileScreen(
                         rating = rating,
                         best = stats.categoryBest[category] ?: 0,
                         bestDate = stats.categoryBestDate[category],
+                        asked = stats.categoryAsked[category] ?: 0,
+                        correct = stats.categoryCorrect[category] ?: 0,
+                        onClick = { onSelectCategory(category) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -172,7 +186,7 @@ private fun ConnectedBadge() {
 }
 
 @Composable
-private fun GlobalLevelCard(playerRating: Int, globalBest: Int, globalBestDate: LocalDate?) {
+private fun GlobalLevelCard(playerRating: Int, globalBest: Int, globalBestDate: LocalDate?, asked: Int, correct: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,18 +230,38 @@ private fun GlobalLevelCard(playerRating: Int, globalBest: Int, globalBestDate: 
             }
         }
 
-        if (globalBest > 0) {
+        val hasActivity = asked > 0
+        val hasBest = globalBest > 0
+        if (hasActivity || hasBest) {
             Spacer(Modifier.height(11.dp))
             Box(Modifier.fillMaxWidth().height(1.dp).background(Color.White.copy(alpha = 0.13f)))
             Spacer(Modifier.height(10.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                Text("$globalBest", style = MaterialTheme.typography.titleSmall, color = Color.White)
-                Text(
-                    text = if (globalBestDate != null) "Meilleure série le ${formatStreakDate(globalBestDate)}" else "Meilleure série",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFFC9BEFF)
-                )
+            if (hasActivity) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "$asked question${if (asked > 1) "s" else ""} posées${if (asked > 1) "s" else ""}",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "· ${successRate(asked, correct)} % de réussite",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFC9BEFF)
+                    )
+                    Icon(AppIcons.Sparkle, contentDescription = null, tint = TriviaPalette.gold, modifier = Modifier.size(16.dp))
+                }
+                if (hasBest) Spacer(Modifier.height(9.dp))
+            }
+            if (hasBest) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+                    Text("$globalBest", style = MaterialTheme.typography.titleSmall, color = Color.White)
+                    Text(
+                        text = if (globalBestDate != null) "Meilleure série le ${formatStreakDate(globalBestDate)}" else "Meilleure série",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFC9BEFF)
+                    )
+                }
             }
         }
     }
@@ -239,6 +273,9 @@ private fun CategoryStatTile(
     rating: Int,
     best: Int,
     bestDate: LocalDate?,
+    asked: Int,
+    correct: Int,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = catColors(category)
@@ -254,6 +291,7 @@ private fun CategoryStatTile(
                 .padding(bottom = depth)
                 .clip(shape)
                 .background(colors.main)
+                .clickable(onClick = onClick)
                 .heightIn(min = 140.dp)
                 .padding(horizontal = 13.dp, vertical = 11.dp)
         ) {
@@ -288,9 +326,24 @@ private fun CategoryStatTile(
 
             Spacer(Modifier.weight(1f))
 
-            if (best > 0) {
+            val hasActivity = asked > 0
+            val hasBest = best > 0
+            if (hasActivity || hasBest) {
                 Box(Modifier.fillMaxWidth().height(1.dp).background(overlay))
                 Spacer(Modifier.height(7.dp))
+            }
+            if (hasActivity) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = "$asked posée${if (asked > 1) "s" else ""} · ${successRate(asked, correct)} %",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                    Icon(AppIcons.Sparkle, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                }
+                if (hasBest) Spacer(Modifier.height(7.dp))
+            }
+            if (hasBest) {
                 Text("Meilleure série :", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.8f))
                 Spacer(Modifier.height(2.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {

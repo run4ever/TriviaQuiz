@@ -1,0 +1,10 @@
+-- Migration v4 -> v5 : historique des passages de questions (une ligne par réponse, date + justesse),
+-- pour l'écran « historique par catégorie ». Démarre à vide (pas de reconstitution du passé).
+CREATE TABLE question_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id TEXT NOT NULL,
+    answered_at INTEGER NOT NULL,
+    correct INTEGER NOT NULL
+);
+
+CREATE INDEX question_history_qid ON question_history(question_id);

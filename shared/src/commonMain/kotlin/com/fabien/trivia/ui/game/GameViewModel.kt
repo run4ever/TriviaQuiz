@@ -11,6 +11,7 @@ import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
+import com.fabien.trivia.data.QuestionHistoryRepository
 import com.fabien.trivia.data.ReviewPoolRepository
 import com.fabien.trivia.data.ReviewPoolSync
 import com.fabien.trivia.data.mergeReviewPool
@@ -28,12 +29,35 @@ import kotlin.math.roundToInt
 
 enum class GamePhase { HOME, CATEGORY_SELECT, PLAYING }
 
-/** Données affichées sur l'écran Profil : meilleures séries (records) globale + par catégorie, et leur date. */
+/**
+ * Données affichées sur l'écran Profil : meilleures séries (records) + leur date, et l'activité
+ * (questions posées + bonnes réponses), global et par catégorie.
+ * ⚠️ « posées » = `times_seen` → une question vue N fois compte N (répétitions incluses). Le mode
+ * révision étant neutre, il n'incrémente pas ces compteurs.
+ */
 data class ProfileStats(
     val globalBest: Int = 0,
     val globalBestDate: LocalDate? = null,
     val categoryBest: Map<Category, Int> = emptyMap(),
     val categoryBestDate: Map<Category, LocalDate?> = emptyMap(),
+    val globalAsked: Int = 0,
+    val globalCorrect: Int = 0,
+    val categoryAsked: Map<Category, Int> = emptyMap(),
+    val categoryCorrect: Map<Category, Int> = emptyMap(),
+)
+
+/** Un passage d'une question dans l'historique : date (jour) + justesse. */
+data class HistoryAttempt(val date: LocalDate, val correct: Boolean)
+
+/** Une question de l'historique d'une catégorie + tous ses passages (du plus récent au plus ancien). */
+data class QuestionHistoryItem(val question: Question, val attempts: List<HistoryAttempt>)
+
+/** Données de l'écran « historique par catégorie » : compteurs + questions distinctes avec leurs passages. */
+data class CategoryHistory(
+    val category: Category,
+    val totalAsked: Int,
+    val distinctCount: Int,
+    val items: List<QuestionHistoryItem>,
 )
 
 data class GameState(
@@ -68,10 +92,20 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val questionStatsRepository = QuestionStatsRepository(database)
     private val streakRepository = StreakRepository(database)
     private val reviewPoolRepository = ReviewPoolRepository(database)
+    private val questionHistoryRepository = QuestionHistoryRepository(database)
     private val ratingSync = PlayerRatingSync()
     private val streakSync = StreakSync()
     private val reviewPoolSync = ReviewPoolSync()
     private val remoteQuestions = RemoteQuestionRepository()
+
+    /**
+     * Banque de questions effective. Démarre sur le set bundlé (disponible instantanément,
+     * offline-first) puis est remplacée par les questions distantes dès qu'elles sont récupérées.
+     * Déclarée AVANT [_state] car [readProfileStats] (appelée à la création de l'état) en a besoin
+     * pour résoudre la catégorie de chaque question.
+     */
+    private var questionPool: List<Question> = QuestionRepository.questions
+
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings(),
@@ -82,19 +116,29 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         reviewCount = reviewPoolRepository.count()
     ))
 
-    private fun readProfileStats() = ProfileStats(
-        globalBest = streakRepository.bestCorrectStreak(null),
-        globalBestDate = streakRepository.bestStreakDate(null),
-        categoryBest = Category.entries.associateWith { streakRepository.bestCorrectStreak(it) },
-        categoryBestDate = Category.entries.associateWith { streakRepository.bestStreakDate(it) },
-    )
+    private fun readProfileStats(): ProfileStats {
+        // Activité par catégorie depuis l'HISTORIQUE (solo + multi, cohérent avec l'écran historique) :
+        // la catégorie n'y est pas stockée, on la résout via la banque (question_id → Category).
+        val categoryById = questionPool.associate { it.id to it.category }
+        val asked = HashMap<Category, Int>()
+        val correct = HashMap<Category, Int>()
+        questionHistoryRepository.countsByQuestion().forEach { row ->
+            val category = categoryById[row.questionId] ?: return@forEach
+            asked[category] = (asked[category] ?: 0) + row.asked
+            correct[category] = (correct[category] ?: 0) + row.correct
+        }
+        return ProfileStats(
+            globalBest = streakRepository.bestCorrectStreak(null),
+            globalBestDate = streakRepository.bestStreakDate(null),
+            categoryBest = Category.entries.associateWith { streakRepository.bestCorrectStreak(it) },
+            categoryBestDate = Category.entries.associateWith { streakRepository.bestStreakDate(it) },
+            categoryAsked = Category.entries.associateWith { asked[it] ?: 0 },
+            categoryCorrect = Category.entries.associateWith { correct[it] ?: 0 },
+            globalAsked = asked.values.sum(),
+            globalCorrect = correct.values.sum(),
+        )
+    }
     val state: StateFlow<GameState> = _state.asStateFlow()
-
-    /**
-     * Banque de questions effective. Démarre sur le set bundlé (disponible instantanément,
-     * offline-first) puis est remplacée par les questions distantes dès qu'elles sont récupérées.
-     */
-    private var questionPool: List<Question> = QuestionRepository.questions
 
     /** UID du compte connecté, null si déconnecté. Détermine si on pousse vers Firestore. */
     private var currentUid: String? = null
@@ -288,13 +332,35 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     }
 
     /**
-     * Met à jour le pool de révision depuis une source externe (multijoueur) : bonne réponse → retirée,
-     * mauvaise → ajoutée. N'affecte rien d'autre (le multijoueur gère son propre score).
+     * Réponse multijoueur : met à jour le pool de révision (bonne → retirée, mauvaise → ajoutée) ET
+     * enregistre le passage dans l'historique. N'affecte pas l'ELO ni les séries (le multi gère son score).
      */
-    fun recordReviewAnswer(questionId: String, correct: Boolean) {
+    fun recordMultiplayerAnswer(questionId: String, correct: Boolean) {
         reviewPoolRepository.record(questionId, correct)
         pushReviewPool()
+        questionHistoryRepository.record(questionId, correct)
         _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
+    }
+
+    /**
+     * Charge l'historique d'une catégorie pour l'écran dédié : questions DISTINCTES posées (résolues
+     * via la banque) avec leurs passages (dates + ✓/✗), plus les compteurs total/distinct.
+     */
+    fun loadCategoryHistory(category: Category): CategoryHistory {
+        val byId = questionPool.associateBy { it.id }
+        val ids = questionPool.filter { it.category == category }.map { it.id }
+        val attempts = questionHistoryRepository.forQuestions(ids) // déjà triés du plus récent au plus ancien
+        // groupBy conserve l'ordre de première apparition → questions les plus récemment posées en tête.
+        val items = attempts.groupBy { it.questionId }.mapNotNull { (qid, list) ->
+            val question = byId[qid] ?: return@mapNotNull null
+            QuestionHistoryItem(question, list.map { HistoryAttempt(it.date, it.correct) })
+        }
+        return CategoryHistory(
+            category = category,
+            totalAsked = attempts.size,
+            distinctCount = items.size,
+            items = items,
+        )
     }
 
     /**
@@ -330,6 +396,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         reviewPoolRepository.record(question.id, isCorrect)
         pushReviewPool()
         val reviewCount = reviewPoolRepository.count()
+        // Historique (solo) : on trace le passage (date + justesse) pour l'écran historique par catégorie.
+        questionHistoryRepository.record(question.id, isCorrect)
 
         // État persisté de la question : rating dynamique (graine du code si jamais jouée) + historique anti-grind.
         val stats = questionStatsRepository.getStats(question.id)
