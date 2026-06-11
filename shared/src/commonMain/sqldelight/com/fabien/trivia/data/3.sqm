@@ -1,0 +1,6 @@
+-- Migration v3 -> v4 : pool de révision (questions actuellement ratées, rejouées en mode révision).
+-- Une mauvaise réponse (solo ou multi) ajoute la question ; une bonne réponse la retire.
+CREATE TABLE review_pool (
+    question_id TEXT NOT NULL PRIMARY KEY,
+    added_at INTEGER NOT NULL
+);

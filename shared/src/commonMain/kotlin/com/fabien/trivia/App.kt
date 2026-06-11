@@ -75,6 +75,14 @@ fun App(driverFactory: DatabaseDriverFactory) {
             if (mpState.room?.status == GameStatus.PLAYING) viewModel.registerPlay()
         }
 
+        // Les réponses du multijoueur alimentent le pool de révision (géré par le GameViewModel,
+        // seul détenteur de la base locale) : mauvaise réponse → ajoutée, bonne → retirée.
+        LaunchedEffect(Unit) {
+            multiplayerViewModel.onAnswerGraded = { questionId, correct ->
+                viewModel.recordReviewAnswer(questionId, correct)
+            }
+        }
+
         val accountStatus = when {
             authState.user == null -> "Non connecté — appuyez pour vous connecter"
             authState.isGuest -> "Invité — appuyez pour créer un compte"
@@ -168,8 +176,10 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         categoryRatings = state.categoryRatings,
                         streak = state.streak,
                         pseudo = authState.pseudo,
+                        reviewCount = state.reviewCount,
                         onStartAllCategories = { viewModel.startGame(null) },
-                        onChooseCategory = viewModel::goToCategorySelect
+                        onChooseCategory = viewModel::goToCategorySelect,
+                        onReview = viewModel::startReview
                     )
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),

@@ -11,6 +11,7 @@ import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
+import com.fabien.trivia.data.ReviewPoolRepository
 import com.fabien.trivia.data.StreakRepository
 import com.fabien.trivia.data.StreakSync
 import com.fabien.trivia.data.TriviaDatabase
@@ -43,6 +44,10 @@ data class GameState(
     val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 750 },
     val lastRatingDelta: Int = 0,
     val selectedCategory: Category? = null,
+    /** Session de révision en cours (questions ratées rejouées). Mode neutre : n'affecte ni ELO, ni séries, ni anti-grind. */
+    val isReview: Boolean = false,
+    /** Nombre de questions actuellement dans le pool de révision (pour le bouton de l'accueil). */
+    val reviewCount: Int = 0,
     val streak: Int = 0,
     /** Bonnes réponses consécutives (solo), PERSISTÉE : continue d'un jour/session à l'autre, remise à 0 sur erreur. ≠ série de jours [streak]. */
     val correctStreak: Int = 0,
@@ -60,6 +65,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val ratingsRepository = RatingsRepository(database)
     private val questionStatsRepository = QuestionStatsRepository(database)
     private val streakRepository = StreakRepository(database)
+    private val reviewPoolRepository = ReviewPoolRepository(database)
     private val ratingSync = PlayerRatingSync()
     private val streakSync = StreakSync()
     private val remoteQuestions = RemoteQuestionRepository()
@@ -69,7 +75,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         streak = streakRepository.currentStreak(),
         correctStreak = streakRepository.correctStreak(null),
         bestCorrectStreak = streakRepository.bestCorrectStreak(null),
-        profileStats = readProfileStats()
+        profileStats = readProfileStats(),
+        reviewCount = reviewPoolRepository.count()
     ))
 
     private fun readProfileStats() = ProfileStats(
@@ -219,8 +226,41 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             // persistée (ne repart pas à 0 à chaque partie).
             correctStreak = streakRepository.correctStreak(category),
             bestCorrectStreak = streakRepository.bestCorrectStreak(category),
-            profileStats = _state.value.profileStats
+            profileStats = _state.value.profileStats,
+            reviewCount = reviewPoolRepository.count()
         )
+    }
+
+    /**
+     * Démarre une session de révision : les questions actuellement ratées (pool), dans leur ordre
+     * d'arrivée (pas de mélange). Mode NEUTRE — les réponses n'affectent ni l'ELO, ni les séries, ni
+     * l'anti-grind ; une bonne réponse retire la question du pool, une mauvaise l'y conserve.
+     * Les questions absentes de la banque courante (retirées de Firestore) sont ignorées.
+     */
+    fun startReview() {
+        val byId = questionPool.associateBy { it.id }
+        val questions = reviewPoolRepository.questionIds().mapNotNull { byId[it] }
+        if (questions.isEmpty()) return
+        _state.value = _state.value.copy(
+            phase = GamePhase.PLAYING,
+            isReview = true,
+            questions = questions,
+            currentIndex = 0,
+            selectedAnswerIndex = null,
+            answerConfirmed = false,
+            lastRatingDelta = 0,
+            selectedCategory = null,
+            reviewCount = reviewPoolRepository.count()
+        )
+    }
+
+    /**
+     * Met à jour le pool de révision depuis une source externe (multijoueur) : bonne réponse → retirée,
+     * mauvaise → ajoutée. N'affecte rien d'autre (le multijoueur gère son propre score).
+     */
+    fun recordReviewAnswer(questionId: String, correct: Boolean) {
+        reviewPoolRepository.record(questionId, correct)
+        _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
     }
 
     /**
@@ -237,6 +277,23 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         if (current.answerConfirmed) return
         val question = current.questions[current.currentIndex]
         val isCorrect = question.correctIndex == index
+
+        // Mode révision : NEUTRE (n'affecte ni ELO, ni séries, ni anti-grind). On met seulement à jour le
+        // pool — bonne réponse → question retirée, mauvaise → conservée — et on affiche le feedback.
+        if (current.isReview) {
+            reviewPoolRepository.record(question.id, isCorrect)
+            _state.value = current.copy(
+                selectedAnswerIndex = index,
+                answerConfirmed = true,
+                lastRatingDelta = 0,
+                reviewCount = reviewPoolRepository.count()
+            )
+            return
+        }
+
+        // Pool de révision (solo) : bonne réponse → question retirée, mauvaise → ajoutée.
+        reviewPoolRepository.record(question.id, isCorrect)
+        val reviewCount = reviewPoolRepository.count()
 
         // État persisté de la question : rating dynamique (graine du code si jamais jouée) + historique anti-grind.
         val stats = questionStatsRepository.getStats(question.id)
@@ -268,7 +325,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 lastRatingDelta = categoryDelta,
                 correctStreak = newCorrectStreak,
                 bestCorrectStreak = newBestCorrectStreak,
-                profileStats = readProfileStats()
+                profileStats = readProfileStats(),
+                reviewCount = reviewCount
             )
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
         } else {
@@ -282,7 +340,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
                 lastRatingDelta = globalDelta,
                 correctStreak = newCorrectStreak,
                 bestCorrectStreak = newBestCorrectStreak,
-                profileStats = readProfileStats()
+                profileStats = readProfileStats(),
+                reviewCount = reviewCount
             )
             ratingsRepository.savePlayerRating(newPlayerRating)
             ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
@@ -302,6 +361,22 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
 
     fun nextQuestion() {
         val current = _state.value
+        // Révision : on parcourt une seule fois le pool figé au démarrage, dans l'ordre. À la fin,
+        // retour à l'accueil (les bonnes réponses ont déjà été retirées du pool, les mauvaises conservées).
+        if (current.isReview) {
+            val nextReviewIndex = current.currentIndex + 1
+            if (nextReviewIndex >= current.questions.size) {
+                goHome()
+            } else {
+                _state.value = current.copy(
+                    currentIndex = nextReviewIndex,
+                    selectedAnswerIndex = null,
+                    answerConfirmed = false,
+                    lastRatingDelta = 0
+                )
+            }
+            return
+        }
         val nextIndex = current.currentIndex + 1
         val (newIndex, newQuestions) = if (nextIndex >= current.questions.size) {
             0 to questionsFor(current.selectedCategory).shuffled()
@@ -324,7 +399,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             streak = _state.value.streak,
             correctStreak = streakRepository.correctStreak(null),
             bestCorrectStreak = streakRepository.bestCorrectStreak(null),
-            profileStats = _state.value.profileStats
+            profileStats = _state.value.profileStats,
+            reviewCount = reviewPoolRepository.count()
         )
     }
 

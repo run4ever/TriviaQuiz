@@ -73,6 +73,9 @@ fun GameScreen(
         GameHeader(
             cat = cat,
             categoryIcon = categoryIcon(question.category),
+            isReview = state.isReview,
+            reviewIndex = state.currentIndex + 1,
+            reviewTotal = state.questions.size,
             correctStreak = state.correctStreak,
             rating = state.displayedRating,
             onClose = onGoHome
@@ -128,6 +131,7 @@ fun GameScreen(
             FeedbackBanner(
                 isCorrect = isCorrect,
                 delta = state.lastRatingDelta,
+                showDelta = !state.isReview,
                 explanation = question.explanation,
                 cat = cat,
                 onContinue = onNextQuestion
@@ -140,12 +144,15 @@ fun GameScreen(
 private fun GameHeader(
     cat: CatColors,
     categoryIcon: ImageVector,
+    isReview: Boolean,
+    reviewIndex: Int,
+    reviewTotal: Int,
     correctStreak: Int,
     rating: Int,
     onClose: () -> Unit
 ) {
-    // Tout sur une seule ligne : flamme (série, toujours visible, 0 après une erreur) / niveau (couronne
-    // + valeur, sans libellé de rang) / catégorie (icône seule) / fermer (poussé à droite).
+    // Tout sur une seule ligne : en révision, une pastille « livre + progression » ; sinon flamme (série,
+    // toujours visible, 0 après une erreur) + niveau (couronne + valeur). Puis catégorie / fermer (à droite).
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -154,13 +161,20 @@ private fun GameHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     ) {
-        HeaderPill {
-            Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
-            Text("$correctStreak", style = MaterialTheme.typography.titleMedium, color = Color.White)
-        }
-        HeaderPill {
-            Icon(AppIcons.Crown, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
-            Text("$rating", style = MaterialTheme.typography.titleSmall, color = Color.White)
+        if (isReview) {
+            HeaderPill {
+                Icon(AppIcons.Book, contentDescription = null, tint = Color.White, modifier = Modifier.size(19.dp))
+                Text("Révision · $reviewIndex/$reviewTotal", style = MaterialTheme.typography.titleSmall, color = Color.White)
+            }
+        } else {
+            HeaderPill {
+                Icon(AppIcons.Flame, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+                Text("$correctStreak", style = MaterialTheme.typography.titleMedium, color = Color.White)
+            }
+            HeaderPill {
+                Icon(AppIcons.Crown, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+                Text("$rating", style = MaterialTheme.typography.titleSmall, color = Color.White)
+            }
         }
         Box(
             modifier = Modifier
@@ -292,6 +306,7 @@ private fun AnswerCard(
 private fun FeedbackBanner(
     isCorrect: Boolean,
     delta: Int,
+    showDelta: Boolean,
     explanation: String,
     cat: CatColors,
     onContinue: () -> Unit
@@ -329,25 +344,28 @@ private fun FeedbackBanner(
                     color = if (isCorrect) TriviaPalette.good else Color(0xFFB42121),
                     modifier = Modifier.weight(1f)
                 )
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(TriviaPalette.card)
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    Icon(
-                        AppIcons.Bolt,
-                        contentDescription = null,
-                        tint = if (isCorrect) TriviaPalette.good else TriviaPalette.bad,
-                        modifier = Modifier.size(15.dp)
-                    )
-                    Text(
-                        text = if (delta >= 0) "+$delta" else "$delta",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = if (isCorrect) TriviaPalette.good else TriviaPalette.bad
-                    )
+                // Pastille de variation d'ELO — masquée en révision (mode neutre, pas de gain/perte).
+                if (showDelta) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(TriviaPalette.card)
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Icon(
+                            AppIcons.Bolt,
+                            contentDescription = null,
+                            tint = if (isCorrect) TriviaPalette.good else TriviaPalette.bad,
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Text(
+                            text = if (delta >= 0) "+$delta" else "$delta",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = if (isCorrect) TriviaPalette.good else TriviaPalette.bad
+                        )
+                    }
                 }
             }
 

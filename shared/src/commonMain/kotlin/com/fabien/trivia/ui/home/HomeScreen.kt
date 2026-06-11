@@ -60,8 +60,10 @@ fun HomeScreen(
     categoryRatings: Map<Category, Int>,
     streak: Int,
     pseudo: String,
+    reviewCount: Int,
     onStartAllCategories: () -> Unit,
-    onChooseCategory: () -> Unit
+    onChooseCategory: () -> Unit,
+    onReview: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -77,6 +79,8 @@ fun HomeScreen(
         PlayCta(onStartAllCategories)
         Spacer(Modifier.height(12.dp))
         CategoryCta(onChooseCategory)
+        Spacer(Modifier.height(12.dp))
+        ReviewCta(count = reviewCount, onClick = onReview)
 
         val strengths = categoryRatings.strengths()
         if (strengths.isNotEmpty()) {
@@ -241,6 +245,36 @@ private fun CategoryCta(onClick: () -> Unit) {
             )
         }
         PlayBadge()
+    }
+}
+
+@Composable
+private fun ReviewCta(count: Int, onClick: () -> Unit) {
+    val enabled = count > 0
+    ChunkyButton(
+        onClick = { if (enabled) onClick() },
+        color = if (enabled) Color(0xFFF0A03E) else TriviaPalette.inkFaint,
+        deep = if (enabled) Color(0xFFC8771C) else TriviaPalette.inkSoft,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier
+                .size(46.dp)
+                .clip(RoundedCornerShape(50))
+                .background(Color.White.copy(alpha = 0.18f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(AppIcons.Book, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text("Réviser mes erreurs", style = MaterialTheme.typography.titleMedium, color = Color.White)
+            Text(
+                if (enabled) "$count question${if (count > 1) "s" else ""} à revoir" else "Aucune erreur à revoir",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.85f)
+            )
+        }
     }
 }
 

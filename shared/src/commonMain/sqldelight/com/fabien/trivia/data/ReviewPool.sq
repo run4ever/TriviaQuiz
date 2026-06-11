@@ -1,0 +1,21 @@
+-- Pool de révision : questions actuellement ratées, à rejouer dans l'ordre d'arrivée.
+-- Une mauvaise réponse (solo ou multijoueur) ajoute la question ; une bonne réponse la retire.
+CREATE TABLE review_pool (
+    question_id TEXT NOT NULL PRIMARY KEY,
+    -- Horodatage d'arrivée (epoch millis) : sert à rejouer les questions dans l'ordre d'ajout.
+    added_at INTEGER NOT NULL
+);
+
+selectAll:
+SELECT question_id FROM review_pool ORDER BY added_at ASC;
+
+countAll:
+SELECT COUNT(*) FROM review_pool;
+
+-- INSERT OR IGNORE : si la question est déjà dans le pool, on conserve sa position d'origine
+-- (added_at inchangé). INSERT OR REPLACE n'est pas utilisé pour ne pas la renvoyer en fin de file.
+add:
+INSERT OR IGNORE INTO review_pool(question_id, added_at) VALUES (?, ?);
+
+remove:
+DELETE FROM review_pool WHERE question_id = ?;

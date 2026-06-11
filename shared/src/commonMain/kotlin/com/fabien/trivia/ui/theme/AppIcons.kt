@@ -61,6 +61,7 @@ object AppIcons {
     val Shield = line("shield", "M12 3l8 3v5.5c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6z")
     val Logout = line("logout", "M14 17l5-5-5-5M19 12H8M11 5H5a1 1 0 00-1 1v12a1 1 0 001 1h6")
     val Share = line("share", "M16 6l-4-4-4 4M12 2v13M5 12v7a1 1 0 001 1h12a1 1 0 001-1v-7")
+    val Book = line("book", "M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z")
     val Gear = line(
         "gear",
         "M12 15a3 3 0 100-6 3 3 0 000 6z" +

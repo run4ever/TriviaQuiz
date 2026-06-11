@@ -67,6 +67,12 @@ class MultiplayerViewModel(
     private val _state = MutableStateFlow(MultiplayerUiState())
     val state: StateFlow<MultiplayerUiState> = _state.asStateFlow()
 
+    /**
+     * Notifié à chaque réponse que le joueur soumet (avec sa justesse), pour alimenter le pool de
+     * révision géré par [com.fabien.trivia.ui.game.GameViewModel]. Branché depuis `App`.
+     */
+    var onAnswerGraded: ((questionId: String, correct: Boolean) -> Unit)? = null
+
     private var myId: String? = null
     private var roomCode: String? = null
     /** L'utilisateur a saisi son pseudo à la main → on ne le réécrase plus par un pré-remplissage. */
@@ -299,6 +305,8 @@ class MultiplayerViewModel(
         val mode = _state.value.room?.scoringMode ?: return
         val correct = round.question.correctIndex == choice
         val points = computePoints(correct, round.remainingMs, mode)
+        // Alimente le pool de révision : mauvaise réponse → ajoutée, bonne → retirée.
+        onAnswerGraded?.invoke(round.question.id, correct)
         myChoice = choice
         recomputeRound() // reflète le choix immédiatement
         val myScore = _state.value.players.find { it.id == uid }?.score ?: 0
