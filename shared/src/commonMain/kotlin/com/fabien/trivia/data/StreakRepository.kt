@@ -10,7 +10,8 @@ import kotlinx.datetime.toLocalDateTime
  *
  * Stockée en local dans la table clé→valeur `player_ratings` (clés dédiées, donc sans migration
  * de schéma ni interférence avec la synchro des ratings qui ne lit que `"global"` + noms de
- * catégories). Données propres à l'appareil pour l'instant (synchro par compte = plus tard).
+ * catégories). Synchronisée par compte via [StreakSync] (`players/{uid}.streaks`) : fusion à la
+ * connexion ([snapshot]/[write]) puis push après chaque partie.
  */
 class StreakRepository(database: TriviaDatabase) {
     private val queries = database.ratingsQueries
@@ -74,6 +75,32 @@ class StreakRepository(database: TriviaDatabase) {
             queries.upsertRating(bestKey(category), current.toLong())
             queries.upsertRating(bestDateKey(category), todayEpochDay().toLong())
         }
+    }
+
+    // --- Synchro par compte (cf. StreakSync) : photo complète + écriture en bloc ---
+
+    /** Photo de toutes les séries locales, pour fusion/push vers le cloud. */
+    fun snapshot(): StreakData = StreakData(
+        dailyCount = read(KEY_COUNT) ?: 0,
+        dailyLastDay = read(KEY_LAST_DAY) ?: 0,
+        currentGlobal = read(currentKey(null)) ?: 0,
+        currentByCategory = Category.entries.associateWith { read(currentKey(it)) ?: 0 },
+        bestGlobal = read(bestKey(null)) ?: 0,
+        bestByCategory = Category.entries.associateWith { read(bestKey(it)) ?: 0 },
+        bestDateGlobal = read(bestDateKey(null)) ?: 0,
+        bestDateByCategory = Category.entries.associateWith { read(bestDateKey(it)) ?: 0 },
+    )
+
+    /** Écrit en local une photo (résultat de la fusion cloud). Les dates à 0 (inconnues) ne sont pas écrites. */
+    fun write(data: StreakData) {
+        queries.upsertRating(KEY_COUNT, data.dailyCount.toLong())
+        if (data.dailyLastDay != 0) queries.upsertRating(KEY_LAST_DAY, data.dailyLastDay.toLong())
+        queries.upsertRating(currentKey(null), data.currentGlobal.toLong())
+        data.currentByCategory.forEach { (c, v) -> queries.upsertRating(currentKey(c), v.toLong()) }
+        queries.upsertRating(bestKey(null), data.bestGlobal.toLong())
+        data.bestByCategory.forEach { (c, v) -> queries.upsertRating(bestKey(c), v.toLong()) }
+        if (data.bestDateGlobal != 0) queries.upsertRating(bestDateKey(null), data.bestDateGlobal.toLong())
+        data.bestDateByCategory.forEach { (c, v) -> if (v != 0) queries.upsertRating(bestDateKey(c), v.toLong()) }
     }
 
     private fun currentKey(category: Category?) =

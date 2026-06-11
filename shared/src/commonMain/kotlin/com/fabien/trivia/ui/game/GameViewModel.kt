@@ -12,7 +12,9 @@ import com.fabien.trivia.data.QuestionStatsRepository
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
 import com.fabien.trivia.data.StreakRepository
+import com.fabien.trivia.data.StreakSync
 import com.fabien.trivia.data.TriviaDatabase
+import com.fabien.trivia.data.mergeStreaks
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,6 +61,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val questionStatsRepository = QuestionStatsRepository(database)
     private val streakRepository = StreakRepository(database)
     private val ratingSync = PlayerRatingSync()
+    private val streakSync = StreakSync()
     private val remoteQuestions = RemoteQuestionRepository()
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
@@ -126,6 +129,47 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             } catch (_: Exception) {
                 // Hors-ligne / erreur : le local reste source de vérité ; la synchro reprendra plus tard.
             }
+            try {
+                syncStreaks(uid)
+            } catch (_: Exception) {
+                // Idem : les séries restent locales, la synchro reprendra à la prochaine connexion.
+            }
+        }
+    }
+
+    /**
+     * Fusionne séries locales ↔ cloud à la connexion (cf. [mergeStreaks]) : on écrit le résultat en
+     * local ET on le repousse, puis on rafraîchit l'état affiché (Accueil / en-tête / Profil).
+     */
+    private suspend fun syncStreaks(uid: String) {
+        val local = streakRepository.snapshot()
+        val cloud = streakSync.fetch(uid)
+        val merged = if (cloud == null) local else mergeStreaks(local, cloud)
+        streakRepository.write(merged)
+        streakSync.push(uid, merged)
+        refreshStreakState()
+    }
+
+    /** Recharge depuis le local les séries affichées (contextuelles : catégorie en cours ou globale). */
+    private fun refreshStreakState() {
+        val category = _state.value.selectedCategory
+        _state.value = _state.value.copy(
+            streak = streakRepository.currentStreak(),
+            correctStreak = streakRepository.correctStreak(category),
+            bestCorrectStreak = streakRepository.bestCorrectStreak(category),
+            profileStats = readProfileStats(),
+        )
+    }
+
+    /** Pousse les séries locales vers Firestore (fire-and-forget) si connecté. */
+    private fun pushStreaks() {
+        val uid = currentUid ?: return
+        viewModelScope.launch {
+            try {
+                streakSync.push(uid, streakRepository.snapshot())
+            } catch (_: Exception) {
+                // Firestore rejoue l'écriture à la reconnexion.
+            }
         }
     }
 
@@ -163,6 +207,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val questions = questionsFor(category).shuffled()
         // Jouer aujourd'hui (re)alimente la série quotidienne.
         val streak = streakRepository.registerPlay()
+        pushStreaks()
         _state.value = GameState(
             phase = GamePhase.PLAYING,
             questions = questions,
@@ -184,6 +229,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
      */
     fun registerPlay() {
         _state.value = _state.value.copy(streak = streakRepository.registerPlay())
+        pushStreaks()
     }
 
     fun selectAnswer(index: Int) {
@@ -249,8 +295,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newTimesCorrect = (stats?.timesCorrect ?: 0L) + if (isCorrect) 1L else 0L
         questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating)
 
-        // Le rating joueur vient d'évoluer → on le pousse vers Firestore (si connecté).
+        // Le rating joueur et les séries viennent d'évoluer → on les pousse vers Firestore (si connecté).
         pushRatings()
+        pushStreaks()
     }
 
     fun nextQuestion() {
