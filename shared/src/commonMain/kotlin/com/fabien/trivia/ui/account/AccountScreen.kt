@@ -176,7 +176,7 @@ private fun ColumnScope.AuthContent(
                 value = email,
                 onValueChange = {
                     email = it
-                    if (signUp && !pseudoEdited) pseudo = it.substringBefore("@")
+                    if (signUp && !pseudoEdited) pseudo = it.substringBefore("@").capitalizeFirst()
                 },
                 placeholder = "ton@email.com",
                 keyboardType = KeyboardType.Email,
@@ -185,7 +185,7 @@ private fun ColumnScope.AuthContent(
             if (signUp) {
                 PseudoField(
                     value = pseudo,
-                    onValueChange = { pseudo = it; pseudoEdited = true },
+                    onValueChange = { pseudo = it.capitalizeFirst(); pseudoEdited = true },
                     helper = "Pré-rempli depuis ton email — modifiable.",
                 )
             }
@@ -516,6 +516,9 @@ private fun AccountField(
         )
     }
 }
+
+// Met la première lettre en majuscule (pseudo du formulaire d'inscription).
+private fun String.capitalizeFirst(): String = replaceFirstChar { it.uppercaseChar() }
 
 // Pseudo : AccountField + ligne d'aide (✦ helper)
 @Composable
