@@ -16,7 +16,9 @@ data class AuthUiState(
     val avatarAnimal: String? = null,
     val avatarStyle: String? = null,
     val isBusy: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    /** Message neutre/positif (ex. confirmation d'envoi du lien de réinitialisation), affiché en vert. */
+    val info: String? = null
 ) {
     val isSignedIn: Boolean get() = user != null
     val isGuest: Boolean get() = user?.isAnonymous == true
@@ -99,13 +101,35 @@ class AuthViewModel(
 
     fun signOut() = launchAuth { repository.signOut() }
 
+    /**
+     * Mot de passe oublié : déclenche l'email de réinitialisation Firebase pour [email].
+     * Anti-énumération : on affiche le même message de confirmation, que le compte existe ou non.
+     */
+    fun sendPasswordReset(email: String) {
+        val e = email.trim()
+        when {
+            e.isBlank() -> { _state.value = _state.value.copy(error = "Saisis ton adresse email d'abord.", info = null); return }
+            !e.contains('@') || !e.substringAfter('@').contains('.') ->
+                { _state.value = _state.value.copy(error = "Adresse email invalide.", info = null); return }
+        }
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isBusy = true, error = null, info = null)
+            // Échec silencieux (compte inconnu, etc.) → on masque le détail et on affiche le même message.
+            runCatching { repository.sendPasswordReset(e) }
+            _state.value = _state.value.copy(
+                isBusy = false,
+                info = "Si un compte existe pour $e, un email de réinitialisation vient d'être envoyé. Pense à vérifier tes spams.",
+            )
+        }
+    }
+
     fun clearError() {
-        _state.value = _state.value.copy(error = null)
+        _state.value = _state.value.copy(error = null, info = null)
     }
 
     private fun launchAuth(block: suspend () -> Unit) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isBusy = true, error = null)
+            _state.value = _state.value.copy(isBusy = true, error = null, info = null)
             try {
                 block()
             } catch (e: Exception) {

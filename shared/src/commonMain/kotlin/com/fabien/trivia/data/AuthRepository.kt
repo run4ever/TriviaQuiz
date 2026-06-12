@@ -64,6 +64,15 @@ class AuthRepository(private val auth: FirebaseAuth = Firebase.auth) {
         auth.currentUser?.linkWithCredential(credential)
     }
 
+    /**
+     * Envoie un email de réinitialisation de mot de passe (page de saisie hébergée par Firebase).
+     * Lève une exception si l'email est invalide / inconnu — l'appelant choisit de masquer ou non
+     * ce détail (anti-énumération).
+     */
+    suspend fun sendPasswordReset(email: String) {
+        auth.sendPasswordResetEmail(email)
+    }
+
     suspend fun signOut() {
         auth.signOut()
     }

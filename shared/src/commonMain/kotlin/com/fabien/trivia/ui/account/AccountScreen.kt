@@ -69,6 +69,7 @@ fun AccountScreen(
     state: AuthUiState,
     onSignIn: (email: String, password: String) -> Unit,
     onSignUp: (email: String, password: String, pseudo: String) -> Unit,
+    onForgotPassword: (email: String) -> Unit,
     onSavePseudo: (String) -> Unit,
     onSignOut: () -> Unit,
     onBack: () -> Unit,
@@ -103,8 +104,10 @@ fun AccountScreen(
             AuthContent(
                 isBusy = state.isBusy,
                 error = state.error,
+                info = state.info,
                 onSignIn = onSignIn,
                 onSignUp = onSignUp,
+                onForgotPassword = onForgotPassword,
             )
         }
     }
@@ -144,8 +147,10 @@ private fun AcctHeader(onBack: () -> Unit) {
 private fun ColumnScope.AuthContent(
     isBusy: Boolean,
     error: String?,
+    info: String?,
     onSignIn: (String, String) -> Unit,
     onSignUp: (String, String, String) -> Unit,
+    onForgotPassword: (String) -> Unit,
 ) {
     val baloo = MaterialTheme.typography.titleMedium.fontFamily
     var mode by remember { mutableStateOf(AuthMode.SignUp) }
@@ -227,11 +232,31 @@ private fun ColumnScope.AuthContent(
                 )
             }
 
+            // Mot de passe oublié (connexion uniquement) → email de réinitialisation Firebase.
+            if (!signUp) {
+                Text(
+                    "Mot de passe oublié ?",
+                    style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 13.5.sp, color = TriviaPalette.brand),
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(enabled = !isBusy) { onForgotPassword(email.trim()) }
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                )
+            }
+
             if (error != null) {
                 Text(
                     error,
                     style = MaterialTheme.typography.bodyMedium,
                     color = TriviaPalette.bad,
+                )
+            }
+            if (info != null) {
+                Text(
+                    info,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TriviaPalette.good,
                 )
             }
         }

@@ -200,6 +200,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                             if (authState.isGuest) authViewModel.linkEmail(email, password, pseudo)
                             else authViewModel.register(email, password, pseudo)
                         },
+                        onForgotPassword = authViewModel::sendPasswordReset,
                         onSavePseudo = { pseudo ->
                             authViewModel.setPseudo(pseudo)
                             authViewModel.savePseudo()
