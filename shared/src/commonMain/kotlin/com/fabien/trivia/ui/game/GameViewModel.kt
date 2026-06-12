@@ -6,6 +6,7 @@ import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DatabaseDriverFactory
 import com.fabien.trivia.data.PlayerRatingSync
 import com.fabien.trivia.data.PlayerRatings
+import com.fabien.trivia.data.PlayerSync
 import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
@@ -96,6 +97,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val reviewPoolSync = ReviewPoolSync()
     private val questionStatsSync = QuestionStatsSync()
     private val questionHistorySync = QuestionHistorySync()
+    // Push GROUPÉ (1 écriture/réponse) ; les *Sync individuels ne servent plus qu'à la réconciliation au login.
+    private val playerSync = PlayerSync()
     private val remoteQuestions = RemoteQuestionRepository()
 
     /**
@@ -231,24 +234,23 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         questionHistorySync.push(uid, merged)
     }
 
-    /** Pousse les stats par question vers Firestore (fire-and-forget) si connecté. */
-    private fun pushQuestionStats() {
+    /**
+     * Push GROUPÉ : pousse TOUT l'état synchronisable du joueur en UNE écriture `merge` sur `players/{uid}`
+     * (ratings + séries + pool de révision + stats + historique), au lieu de 5 écritures séparées.
+     * Fire-and-forget, ne touche pas au pseudo (merge). À appeler après toute évolution de l'état en jeu.
+     */
+    private fun pushAll() {
         val uid = currentUid ?: return
         viewModelScope.launch {
             try {
-                questionStatsSync.push(uid, questionStatsRepository.snapshot())
-            } catch (_: Exception) {
-                // Firestore rejoue l'écriture à la reconnexion.
-            }
-        }
-    }
-
-    /** Pousse l'historique vers Firestore (fire-and-forget) si connecté. */
-    private fun pushQuestionHistory() {
-        val uid = currentUid ?: return
-        viewModelScope.launch {
-            try {
-                questionHistorySync.push(uid, questionHistoryRepository.snapshot())
+                playerSync.pushAll(
+                    uid,
+                    currentLocalRatings(),
+                    streakRepository.snapshot(),
+                    reviewPoolRepository.snapshot(),
+                    questionStatsRepository.snapshot(),
+                    questionHistoryRepository.snapshot(),
+                )
             } catch (_: Exception) {
                 // Firestore rejoue l'écriture à la reconnexion.
             }
@@ -292,18 +294,6 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
     }
 
-    /** Pousse le pool de révision local vers Firestore (fire-and-forget) si connecté. */
-    private fun pushReviewPool() {
-        val uid = currentUid ?: return
-        viewModelScope.launch {
-            try {
-                reviewPoolSync.push(uid, reviewPoolRepository.snapshot())
-            } catch (_: Exception) {
-                // Firestore rejoue l'écriture à la reconnexion.
-            }
-        }
-    }
-
     /**
      * Fusionne séries locales ↔ cloud à la connexion (cf. [mergeStreaks]) : on écrit le résultat en
      * local ET on le repousse, puis on rafraîchit l'état affiché (Accueil / en-tête / Profil).
@@ -328,18 +318,6 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         )
     }
 
-    /** Pousse les séries locales vers Firestore (fire-and-forget) si connecté. */
-    private fun pushStreaks() {
-        val uid = currentUid ?: return
-        viewModelScope.launch {
-            try {
-                streakSync.push(uid, streakRepository.snapshot())
-            } catch (_: Exception) {
-                // Firestore rejoue l'écriture à la reconnexion.
-            }
-        }
-    }
-
     private fun currentLocalRatings() = PlayerRatings(
         global = _state.value.playerRating,
         categories = _state.value.categoryRatings
@@ -354,18 +332,6 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         )
     }
 
-    /** Pousse l'état local courant vers Firestore (fire-and-forget) si connecté. */
-    private fun pushRatings() {
-        val uid = currentUid ?: return
-        viewModelScope.launch {
-            try {
-                ratingSync.push(uid, currentLocalRatings())
-            } catch (_: Exception) {
-                // Firestore rejoue l'écriture à la reconnexion.
-            }
-        }
-    }
-
     fun goToCategorySelect() {
         _state.value = _state.value.copy(phase = GamePhase.CATEGORY_SELECT)
     }
@@ -374,7 +340,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val questions = questionsFor(category).shuffled()
         // Jouer aujourd'hui (re)alimente la série quotidienne.
         val streak = streakRepository.registerPlay()
-        pushStreaks()
+        pushAll()
         _state.value = GameState(
             phase = GamePhase.PLAYING,
             questions = questions,
@@ -420,16 +386,14 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
      */
     fun recordMultiplayerAnswer(questionId: String, correct: Boolean) {
         reviewPoolRepository.record(questionId, correct)
-        pushReviewPool()
         // Historique + compteurs d'affichage (solo + multi). On NE touche PAS aux compteurs anti-grind
         // solo (recordDisplayCount n'incrémente que seen_all / correct_all) pour ne pas fausser l'ELO.
         val category = questionPool.firstOrNull { it.id == questionId }?.category
         if (category != null) {
             questionHistoryRepository.record(questionId, category.name, correct)
             questionStatsRepository.recordDisplayCount(questionId, correct)
-            pushQuestionHistory()
-            pushQuestionStats()
         }
+        pushAll()
         _state.value = _state.value.copy(
             reviewCount = reviewPoolRepository.count(),
             profileStats = readProfileStats(),
@@ -455,7 +419,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
      */
     fun registerPlay() {
         _state.value = _state.value.copy(streak = streakRepository.registerPlay())
-        pushStreaks()
+        pushAll()
     }
 
     fun selectAnswer(index: Int) {
@@ -468,7 +432,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         // pool — bonne réponse → question retirée, mauvaise → conservée — et on affiche le feedback.
         if (current.isReview) {
             reviewPoolRepository.record(question.id, isCorrect)
-            pushReviewPool()
+            pushAll()
             _state.value = current.copy(
                 selectedAnswerIndex = index,
                 answerConfirmed = true,
@@ -480,7 +444,6 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
 
         // Pool de révision (solo) : bonne réponse → question retirée, mauvaise → ajoutée.
         reviewPoolRepository.record(question.id, isCorrect)
-        pushReviewPool()
         val reviewCount = reviewPoolRepository.count()
         // Historique (solo) : on trace le passage (date + justesse + catégorie) pour l'écran historique.
         questionHistoryRepository.record(question.id, question.category.name, isCorrect)
@@ -547,11 +510,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newCorrectAll = (stats?.correctAll ?: 0L) + if (isCorrect) 1L else 0L
         questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating, newSeenAll, newCorrectAll)
 
-        // Le rating joueur, les séries, les stats et l'historique viennent d'évoluer → push (si connecté).
-        pushRatings()
-        pushStreaks()
-        pushQuestionStats()
-        pushQuestionHistory()
+        // Rating, séries, pool, stats et historique viennent d'évoluer → un seul push groupé (si connecté).
+        pushAll()
     }
 
     fun nextQuestion() {

@@ -5,9 +5,12 @@ import dev.gitlive.firebase.firestore.FirebaseFirestore
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.serialization.Serializable
 
-/** Une entrée de stats côté Firestore (le rating dynamique n'est PAS synchronisé : futur communautaire). */
+/**
+ * Une entrée de stats côté Firestore (le rating dynamique n'est PAS synchronisé : futur communautaire).
+ * internal : réutilisée par le push groupé [PlayerSync].
+ */
 @Serializable
-private data class StatEntryDto(
+internal data class StatEntryDto(
     val id: String = "",
     val seen: Long = 0,
     val correct: Long = 0,

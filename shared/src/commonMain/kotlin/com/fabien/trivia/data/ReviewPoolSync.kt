@@ -26,9 +26,9 @@ fun mergeReviewPool(local: List<ReviewEntry>, cloud: List<ReviewEntry>): List<Re
         .sortedBy { it.addedAt }
 }
 
-/** Une entrée du pool côté Firestore. */
+/** Une entrée du pool côté Firestore. (internal : réutilisée par le push groupé [PlayerSync].) */
 @Serializable
-private data class ReviewEntryDto(val id: String = "", val addedAt: Long = 0)
+internal data class ReviewEntryDto(val id: String = "", val addedAt: Long = 0)
 
 /** Enveloppe : ne porte QUE le champ `reviewPool` → un set(merge=true) ne touche pas rating/pseudo/streaks. */
 @Serializable

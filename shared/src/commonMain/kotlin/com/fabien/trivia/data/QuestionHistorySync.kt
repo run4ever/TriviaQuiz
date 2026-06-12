@@ -25,9 +25,9 @@ fun mergeQuestionHistory(
         .sortedByDescending { it.answeredAt }
 }
 
-/** Une entrée d'historique côté Firestore. */
+/** Une entrée d'historique côté Firestore. (internal : réutilisée par le push groupé [PlayerSync].) */
 @Serializable
-private data class HistoryEntryDto(
+internal data class HistoryEntryDto(
     val id: String = "",
     val cat: String = "",
     val ts: Long = 0,

@@ -72,7 +72,7 @@ private fun mergeBest(lBest: Int, lDate: Int, cBest: Int, cDate: Int): Pair<Int,
 
 /** Sous-objet `streaks` du document `players/{uid}`. Catégories par nom d'enum (clé stable). */
 @Serializable
-private data class StreaksDto(
+internal data class StreaksDto(
     val dailyCount: Int = 0,
     val dailyLastDay: Int = 0,
     val currentGlobal: Int = 0,
@@ -98,7 +98,7 @@ private fun StreaksDto.toData() = StreakData(
     bestDateByCategory = Category.entries.associateWith { bestDateByCategory[it.name] ?: 0 },
 )
 
-private fun StreakData.toDto() = StreaksDto(
+internal fun StreakData.toDto() = StreaksDto(
     dailyCount = dailyCount,
     dailyLastDay = dailyLastDay,
     currentGlobal = currentGlobal,
