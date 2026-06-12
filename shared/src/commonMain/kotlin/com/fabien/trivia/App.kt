@@ -152,6 +152,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     AdminExportScreen(
                         modifier = Modifier.padding(innerPadding),
                         onBack = { showAdmin = false },
+                        // Après suppression de tous les joueurs : on vide aussi la base locale de l'admin.
+                        onResetLocalData = { viewModel.resetLocalData() },
                     )
                 } else if (showAccount) {
                     AccountScreen(

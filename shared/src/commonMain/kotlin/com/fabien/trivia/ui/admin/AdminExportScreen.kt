@@ -3,6 +3,8 @@ package com.fabien.trivia.ui.admin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +53,7 @@ import kotlinx.coroutines.delay
 fun AdminExportScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
+    onResetLocalData: () -> Unit = {},
     viewModel: AdminViewModel = viewModel { AdminViewModel() }
 ) {
     val baloo = MaterialTheme.typography.titleMedium.fontFamily
@@ -58,6 +61,16 @@ fun AdminExportScreen(
     val state by viewModel.state.collectAsState()
     val clipboard = LocalClipboardManager.current
     var copied by remember { mutableStateOf(false) }
+    var wipeArmed by remember { mutableStateOf(false) }
+
+    // Après une réinitialisation réussie : on vide AUSSI la base locale de l'admin (sinon elle re-sèmerait
+    // le cloud à la prochaine synchro) et on désarme le bouton.
+    LaunchedEffect(state.wipeTick) {
+        if (state.wipeTick > 0) {
+            onResetLocalData()
+            wipeArmed = false
+        }
+    }
 
     // À chaque export réussi : copie le JSON et affiche un retour « copié » pendant 2,5 s.
     LaunchedEffect(state.exportTick) {
@@ -98,7 +111,9 @@ fun AdminExportScreen(
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth().weight(1f).padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 10.dp),
+            modifier = Modifier.fillMaxWidth().weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Carte explicative — export
@@ -165,6 +180,50 @@ fun AdminExportScreen(
                     )
                 }
             }
+            // Carte explicative — réinitialisation (DESTRUCTIF)
+            ExplainerCard(
+                icon = AppIcons.Close,
+                iconBg = TriviaPalette.bad,
+                title = "Réinitialiser tous les joueurs",
+                text = "Modifier règle Firestore avant de cliquer puis rétablir:\n" +
+                    "match /players/{uid} {\n" +
+                    "  allow read, write: if request.auth.uid == uid\n" +
+                    "                     || request.auth.token.email == \"fabien.laurette@gmail.com\";\n" +
+                    "}",
+                baloo = baloo,
+                nunito = nunito
+            )
+
+            // Bouton rouge à double appui (1er = armer, 2e = confirmer) pour éviter toute suppression accidentelle.
+            ChunkyButton(
+                onClick = {
+                    if (!state.isWiping) {
+                        if (!wipeArmed) wipeArmed = true else { wipeArmed = false; viewModel.wipeAllPlayers() }
+                    }
+                },
+                color = if (state.isWiping) TriviaPalette.inkFaint else TriviaPalette.bad,
+                deep = if (state.isWiping) TriviaPalette.inkSoft else Color(0xFFB42121),
+                shape = RoundedCornerShape(18.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(AppIcons.Close, contentDescription = null, tint = Color.White, modifier = Modifier.size(21.dp))
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        when {
+                            state.isWiping -> "Réinitialisation…"
+                            wipeArmed -> "Confirmer : tout supprimer ?"
+                            else -> "Réinitialiser tous les joueurs"
+                        },
+                        style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.White)
+                    )
+                }
+            }
+
             // Retour d'état (succès / erreur)
             when {
                 copied -> StatusRow(
@@ -179,6 +238,13 @@ fun AdminExportScreen(
                     tint = TriviaPalette.good,
                     bg = TriviaPalette.goodTint,
                     text = "${state.seededCount} question(s) poussée(s) vers Firestore.",
+                    nunito = nunito
+                )
+                state.wipedCount != null -> StatusRow(
+                    icon = AppIcons.Check,
+                    tint = TriviaPalette.good,
+                    bg = TriviaPalette.goodTint,
+                    text = "${state.wipedCount} joueur(s) réinitialisé(s) (pseudos conservés). Relance l'app pour finir.",
                     nunito = nunito
                 )
                 state.error != null -> StatusRow(
