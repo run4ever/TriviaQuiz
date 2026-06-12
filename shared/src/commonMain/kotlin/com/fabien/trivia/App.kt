@@ -217,6 +217,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         modifier = Modifier.padding(innerPadding),
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
+                        categoryAsked = state.profileStats.categoryAsked,
                         streak = state.streak,
                         pseudo = authState.pseudo,
                         reviewCount = state.reviewCount,

@@ -40,19 +40,40 @@ fun progressToNextRank(rating: Int): Float {
     return ((rating - current.min) / span).coerceIn(0f, 1f)
 }
 
-// --- Seuils des blocs de l'Accueil (ajustables) ---
-const val STRENGTH_MIN = 1200 // « Tes points forts » : rating >= ce seuil
-const val WEAKNESS_MAX = 1000  // « Tes axes d'amélioration » : rating <= ce seuil
+/** Blocs « points forts » / « axes d'amélioration » de l'Accueil. */
+data class HomeHighlights(
+    val strengths: List<Map.Entry<Category, Int>>,
+    val weaknesses: List<Map.Entry<Category, Int>>,
+)
 
-fun Map<Category, Int>.strengths(): List<Map.Entry<Category, Int>> {
-    val strong = entries.filter { it.value >= STRENGTH_MIN }.sortedByDescending { it.value }.take(3)
-    if (strong.isNotEmpty()) return strong
-    // Secours : si aucune catégorie ne dépasse STRENGTH_MIN, on met en avant la meilleure —
-    // mais seulement si elle est au-dessus de la zone « faible » (évite un 750 affiché comme
-    // point fort, et tout doublon avec weaknesses()).
-    val best = entries.maxByOrNull { it.value }
-    return if (best != null && best.value > WEAKNESS_MAX) listOf(best) else emptyList()
+/**
+ * Calcule les points forts / axes d'amélioration de l'Accueil. Règles (Fabien, 2026-06-12) :
+ * - on ne considère QUE les catégories ayant reçu **≥ 2 questions** ([categoryAsked]) ;
+ * - chaque bloc affiche **2 à 3** catégories — jamais une seule (sinon le bloc n'est pas montré) ;
+ * - les deux blocs sont **disjoints** : jamais la même catégorie dans les deux, y compris en cas
+ *   d'égalité (départagée de façon stable par l'ordre des catégories), grâce à un découpage par position.
+ *
+ * Il faut ≥ 4 catégories éligibles pour remplir les deux blocs ; avec 2 ou 3, on n'affiche que les
+ * points forts (les 2 meilleures) ; avec moins de 2, rien.
+ */
+fun homeHighlights(
+    categoryRatings: Map<Category, Int>,
+    categoryAsked: Map<Category, Int>,
+): HomeHighlights {
+    val eligible = categoryRatings.entries
+        .filter { (categoryAsked[it.key] ?: 0) >= 2 }
+        .sortedWith(compareByDescending<Map.Entry<Category, Int>> { it.value }.thenBy { it.key.ordinal })
+    val n = eligible.size
+    return when {
+        n < 2 -> HomeHighlights(emptyList(), emptyList())
+        n < 4 -> HomeHighlights(strengths = eligible.take(2), weaknesses = emptyList())
+        else -> {
+            val strongCount = minOf(3, n - 2)          // laisse ≥ 2 catégories pour le bloc faible
+            val weakCount = minOf(3, n - strongCount)  // garantit des blocs disjoints
+            HomeHighlights(
+                strengths = eligible.take(strongCount),
+                weaknesses = eligible.takeLast(weakCount),
+            )
+        }
+    }
 }
-
-fun Map<Category, Int>.weaknesses(): List<Map.Entry<Category, Int>> =
-    entries.filter { it.value <= WEAKNESS_MAX }.sortedBy { it.value }.take(3)

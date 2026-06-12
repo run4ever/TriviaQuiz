@@ -48,8 +48,7 @@ import com.fabien.trivia.ui.theme.catColors
 import com.fabien.trivia.ui.theme.categoryIcon
 import com.fabien.trivia.ui.theme.levelName
 import com.fabien.trivia.ui.theme.progressToNextRank
-import com.fabien.trivia.ui.theme.strengths
-import com.fabien.trivia.ui.theme.weaknesses
+import com.fabien.trivia.ui.theme.homeHighlights
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -59,6 +58,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     playerRating: Int,
     categoryRatings: Map<Category, Int>,
+    categoryAsked: Map<Category, Int>,
     streak: Int,
     pseudo: String,
     reviewCount: Int,
@@ -85,15 +85,15 @@ fun HomeScreen(
         Spacer(Modifier.height(12.dp))
         ReviewCta(count = reviewCount, onClick = onReview)
 
-        val strengths = categoryRatings.strengths()
-        if (strengths.isNotEmpty()) {
+        // Points forts / axes d'amélioration : ≥2 questions posées requises, 2 mini par bloc, blocs disjoints.
+        val highlights = homeHighlights(categoryRatings, categoryAsked)
+        if (highlights.strengths.isNotEmpty()) {
             Spacer(Modifier.height(24.dp))
-            CatStrip("Tes points forts", strengths)
+            CatStrip("Tes points forts", highlights.strengths)
         }
-        val weaknesses = categoryRatings.weaknesses()
-        if (weaknesses.isNotEmpty()) {
+        if (highlights.weaknesses.isNotEmpty()) {
             Spacer(Modifier.height(20.dp))
-            CatStrip("Tes axes d'amélioration", weaknesses)
+            CatStrip("Tes axes d'amélioration", highlights.weaknesses)
         }
         Spacer(Modifier.height(8.dp))
     }
