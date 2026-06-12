@@ -3,6 +3,8 @@ package com.fabien.trivia.ui.account
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -151,74 +153,83 @@ private fun ColumnScope.AuthContent(
 
     Column(
         modifier = Modifier.fillMaxWidth().weight(1f).padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 6.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        GuestCard()
-
-        // Segmented : Se connecter | S'inscrire
-        Row(
+        // Contenu défilable : quand le clavier apparaît (imePadding réduit la hauteur),
+        // les champs gardent leur taille et le champ focalisé est ramené à l'écran.
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(TriviaPalette.card, RoundedCornerShape(16.dp))
-                .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(16.dp))
-                .padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            SegmentTab("Se connecter", active = !signUp, baloo = baloo, modifier = Modifier.weight(1f)) { mode = AuthMode.SignIn }
-            SegmentTab("S'inscrire", active = signUp, baloo = baloo, modifier = Modifier.weight(1f)) { mode = AuthMode.SignUp }
-        }
+            GuestCard()
 
-        // Formulaire : email → pseudo (inscription) → mot de passe
-        Column(verticalArrangement = Arrangement.spacedBy(13.dp)) {
-            AccountField(
-                icon = AppIcons.Mail,
-                label = "Email",
-                value = email,
-                onValueChange = {
-                    email = it
-                    if (signUp && !pseudoEdited) pseudo = it.substringBefore("@").capitalizeFirst()
-                },
-                placeholder = "ton@email.com",
-                keyboardType = KeyboardType.Email,
-                capitalization = KeyboardCapitalization.None,
-            )
-            if (signUp) {
-                PseudoField(
-                    value = pseudo,
-                    onValueChange = { pseudo = it.capitalizeFirst(); pseudoEdited = true },
-                    helper = "Pré-rempli depuis ton email — modifiable.",
+            // Segmented : Se connecter | S'inscrire
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(TriviaPalette.card, RoundedCornerShape(16.dp))
+                    .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(16.dp))
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                SegmentTab("Se connecter", active = !signUp, baloo = baloo, modifier = Modifier.weight(1f)) { mode = AuthMode.SignIn }
+                SegmentTab("S'inscrire", active = signUp, baloo = baloo, modifier = Modifier.weight(1f)) { mode = AuthMode.SignUp }
+            }
+
+            // Formulaire : email → pseudo (inscription) → mot de passe
+            Column(verticalArrangement = Arrangement.spacedBy(13.dp)) {
+                AccountField(
+                    icon = AppIcons.Mail,
+                    label = "Email",
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        if (signUp && !pseudoEdited) pseudo = it.substringBefore("@").capitalizeFirst()
+                    },
+                    placeholder = "ton@email.com",
+                    keyboardType = KeyboardType.Email,
+                    capitalization = KeyboardCapitalization.None,
+                )
+                if (signUp) {
+                    PseudoField(
+                        value = pseudo,
+                        onValueChange = { pseudo = it.capitalizeFirst(); pseudoEdited = true },
+                        helper = "Pré-rempli depuis ton email — modifiable.",
+                    )
+                }
+                AccountField(
+                    icon = AppIcons.Lock,
+                    label = "Mot de passe",
+                    value = password,
+                    onValueChange = { password = it },
+                    placeholder = "••••••••",
+                    keyboardType = KeyboardType.Password,
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailing = {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { passwordVisible = !passwordVisible }
+                                .padding(6.dp),
+                        ) {
+                            Icon(AppIcons.Eye, contentDescription = null, tint = TriviaPalette.inkFaint, modifier = Modifier.size(19.dp))
+                        }
+                    },
                 )
             }
-            AccountField(
-                icon = AppIcons.Lock,
-                label = "Mot de passe",
-                value = password,
-                onValueChange = { password = it },
-                placeholder = "••••••••",
-                keyboardType = KeyboardType.Password,
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailing = {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable { passwordVisible = !passwordVisible }
-                            .padding(6.dp),
-                    ) {
-                        Icon(AppIcons.Eye, contentDescription = null, tint = TriviaPalette.inkFaint, modifier = Modifier.size(19.dp))
-                    }
-                },
-            )
+
+            if (error != null) {
+                Text(
+                    error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TriviaPalette.bad,
+                )
+            }
         }
 
-        if (error != null) {
-            Text(
-                error,
-                style = MaterialTheme.typography.bodyMedium,
-                color = TriviaPalette.bad,
-            )
-        }
-
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(12.dp))
 
         ChunkyButton(
             onClick = {

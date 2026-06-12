@@ -13,7 +13,9 @@
       "Bash(tail:*)",
       "Bash(wc:*)",
       "Bash(sort:*)",
-      "Bash(uniq:*)"
+      "Bash(uniq:*)",
+      "Bash(comm:*)",
+      "Bash(python3:*)"
     ]
   }
 }

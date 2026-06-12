@@ -7710,6 +7710,167 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
 
+        Question(
+            id = "art_crime_chatiment_dostoievski",
+            title = "Auteur de Crime et Châtiment",
+            text = "Quel écrivain russe est l'auteur de « Crime et Châtiment » ?",
+            options = listOf("Léon Tolstoï", "Anton Tchekhov", "Fiodor Dostoïevski", "Nicolas Gogol"),
+            correctIndex = 2,
+            rating = 1500,
+            explanation = "« Crime et Châtiment » (1866), qui suit le tourment de l'étudiant Raskolnikov après un meurtre, est l'un des grands romans de Fiodor Dostoïevski.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "art_delacroix_liberte",
+            title = "La Liberté guidant le peuple",
+            text = "Quel peintre français a réalisé « La Liberté guidant le peuple » ?",
+            options = listOf("Gustave Courbet", "Eugène Delacroix", "Édouard Manet", "Théodore Géricault"),
+            correctIndex = 1,
+            rating = 1450,
+            explanation = "« La Liberté guidant le peuple » (1830), allégorie de la révolution de Juillet où une femme brandit le drapeau tricolore, est l'œuvre la plus célèbre d'Eugène Delacroix.",
+            category = Category.ART_ET_CULTURE
+        ),
+        Question(
+            id = "sci_uranium_combustible",
+            title = "Combustible des centrales nucléaires",
+            text = "Quel métal radioactif sert principalement de combustible dans les centrales nucléaires ?",
+            options = listOf("Le plomb", "Le titane", "L'uranium", "Le cuivre"),
+            correctIndex = 2,
+            rating = 1400,
+            explanation = "L'uranium, métal lourd radioactif, est le principal combustible des centrales nucléaires : la fission de ses noyaux libère une énorme quantité d'énergie.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_prisme_lumiere",
+            title = "Décomposer la lumière blanche",
+            text = "Quel objet décompose la lumière blanche en un spectre de couleurs ?",
+            options = listOf("Une loupe", "Un prisme", "Un miroir", "Une lentille"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Un prisme dévie chaque couleur d'un angle différent et sépare ainsi la lumière blanche en un spectre, comme Newton l'a démontré au XVIIe siècle.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_aimant_poles",
+            title = "Les pôles d'un aimant",
+            text = "Combien de pôles possède un aimant ?",
+            options = listOf("Un", "Trois", "Deux", "Quatre"),
+            correctIndex = 2,
+            rating = 1250,
+            explanation = "Un aimant possède toujours deux pôles, nord et sud. Même coupé en deux, chaque morceau reconstitue aussitôt un pôle nord et un pôle sud.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "sci_ph_acide",
+            title = "Une solution de pH inférieur à 7",
+            text = "Comment qualifie-t-on une solution dont le pH est inférieur à 7 ?",
+            options = listOf("Acide", "Basique", "Neutre", "Saline"),
+            correctIndex = 0,
+            rating = 1300,
+            explanation = "Sur l'échelle de pH (de 0 à 14), une valeur inférieure à 7 indique une solution acide ; supérieure à 7, elle est basique ; égale à 7, elle est neutre.",
+            category = Category.SCIENCES_ET_NATURE
+        ),
+        Question(
+            id = "div_call_of_duty_genre",
+            title = "Le genre de Call of Duty",
+            text = "À quel genre appartient la série de jeux vidéo « Call of Duty » ?",
+            options = listOf("Un jeu de course", "Un jeu de gestion", "Un jeu de rôle", "Un jeu de tir (FPS)"),
+            correctIndex = 3,
+            rating = 1300,
+            explanation = "« Call of Duty » est une série de jeux de tir à la première personne (FPS), centrée sur des combats militaires.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_forrest_gump_acteur",
+            title = "L'acteur de Forrest Gump",
+            text = "Quel acteur tient le rôle-titre du film « Forrest Gump » (1994) ?",
+            options = listOf("Kevin Costner", "Tom Hanks", "Robin Williams", "Bruce Willis"),
+            correctIndex = 1,
+            rating = 1300,
+            explanation = "Tom Hanks incarne Forrest Gump, rôle pour lequel il a reçu l'Oscar du meilleur acteur en 1995.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_eminem_ville",
+            title = "La ville d'Eminem",
+            text = "De quelle ville américaine le rappeur Eminem est-il originaire ?",
+            options = listOf("New York", "Los Angeles", "Detroit", "Atlanta"),
+            correctIndex = 2,
+            rating = 1350,
+            explanation = "Eminem a grandi à Detroit, dans le Michigan, cadre de son film semi-autobiographique « 8 Mile ».",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "div_fifa_editeur",
+            title = "L'éditeur des jeux FIFA",
+            text = "Quel éditeur a longtemps publié la série de jeux vidéo de football « FIFA » ?",
+            options = listOf("Electronic Arts", "Ubisoft", "Konami", "Nintendo"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "La série « FIFA » a été éditée pendant près de trente ans par Electronic Arts (EA), avant d'être renommée « EA Sports FC » en 2023.",
+            category = Category.DIVERTISSEMENT
+        ),
+        Question(
+            id = "hist_austerlitz_1805",
+            title = "Année d'Austerlitz",
+            text = "En quelle année Napoléon remporta-t-il la bataille d'Austerlitz ?",
+            options = listOf("1799", "1810", "1815", "1805"),
+            correctIndex = 3,
+            rating = 1500,
+            explanation = "La bataille d'Austerlitz, dite « bataille des Trois Empereurs », fut remportée par Napoléon le 2 décembre 1805 ; c'est considéré comme sa plus belle victoire.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_krach_1929",
+            title = "Le krach de Wall Street",
+            text = "En quelle année eut lieu le krach boursier de Wall Street qui déclencha la Grande Dépression ?",
+            options = listOf("1918", "1929", "1936", "1945"),
+            correctIndex = 1,
+            rating = 1350,
+            explanation = "Le krach d'octobre 1929 à la Bourse de New York marqua le début de la Grande Dépression, la plus grave crise économique du XXe siècle.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "hist_fondation_rome",
+            title = "Fondation de Rome",
+            text = "Selon la tradition, en quelle année la ville de Rome fut-elle fondée ?",
+            options = listOf("1200 av. J.-C.", "509 av. J.-C.", "753 av. J.-C.", "27 av. J.-C."),
+            correctIndex = 2,
+            rating = 1550,
+            explanation = "La tradition romaine fixe la fondation de Rome en 753 av. J.-C., attribuée à Romulus. 509 av. J.-C. correspond, lui, au début de la République romaine.",
+            category = Category.HISTOIRE
+        ),
+        Question(
+            id = "geo_capitale_pologne",
+            title = "Capitale de la Pologne",
+            text = "Quelle est la capitale de la Pologne ?",
+            options = listOf("Varsovie", "Cracovie", "Prague", "Budapest"),
+            correctIndex = 0,
+            rating = 1250,
+            explanation = "Varsovie est la capitale et la plus grande ville de la Pologne. Cracovie, ancienne capitale royale, en est une autre grande ville.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "spo_maillot_jaune",
+            title = "Le maillot du leader du Tour",
+            text = "Quel maillot porte le leader du classement général du Tour de France ?",
+            options = listOf("Le maillot vert", "Le maillot à pois", "Le maillot blanc", "Le maillot jaune"),
+            correctIndex = 3,
+            rating = 1100,
+            explanation = "Le leader du classement général du Tour de France porte le maillot jaune, dont la couleur rappelle le papier du journal L'Auto, organisateur historique de la course.",
+            category = Category.SPORTS
+        ),
+        Question(
+            id = "spo_ballon_or_football",
+            title = "Le sport du Ballon d'Or",
+            text = "Le Ballon d'Or récompense chaque année les meilleurs joueurs de quel sport ?",
+            options = listOf("Le tennis", "Le football", "Le basket-ball", "Le rugby"),
+            correctIndex = 1,
+            rating = 1150,
+            explanation = "Le Ballon d'Or, créé en 1956 par le magazine France Football, récompense chaque année les meilleurs footballeurs et footballeuses.",
+            category = Category.SPORTS
+        ),
+
     )
 
     fun getByCategory(category: Category): List<Question> =
