@@ -134,6 +134,15 @@ class MultiplayerViewModel(
         _state.value = _state.value.copy(pseudo = value)
     }
 
+    /**
+     * Réinitialise le pseudo pré-rempli à la déconnexion (piloté par [App] quand on n'est plus un compte
+     * email) : on repart d'un invité sans pseudo, sinon l'ancien (ex. « Fabien ») resterait pré-saisi.
+     */
+    fun resetPseudo() {
+        pseudoEdited = false
+        _state.value = _state.value.copy(pseudo = "")
+    }
+
     fun goToCreate() {
         _state.value = _state.value.copy(phase = MpPhase.CREATE, error = null)
     }

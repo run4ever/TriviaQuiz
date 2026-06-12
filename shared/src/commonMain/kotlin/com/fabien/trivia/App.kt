@@ -84,6 +84,9 @@ fun App(driverFactory: DatabaseDriverFactory) {
             if (authState.isEmailUser) {
                 val prefill = authState.pseudo.ifBlank { authState.user?.email?.substringBefore("@").orEmpty() }
                 if (prefill.isNotBlank()) multiplayerViewModel.prefillPseudo(prefill)
+            } else {
+                // Invité / déconnecté : on vide la pré-saisie (sinon l'ancien pseudo email reste affiché).
+                multiplayerViewModel.resetPseudo()
             }
         }
 

@@ -41,10 +41,13 @@ class AuthViewModel(
         viewModelScope.launch {
             repository.authState.collect { user ->
                 _state.value = _state.value.copy(user = user)
-                // Charge le pseudo enregistré pour un compte (pas pour un invité anonyme).
+                // Charge le pseudo enregistré pour un compte email ; sinon (invité anonyme ou déconnecté)
+                // on le VIDE — sans ça, l'ancien pseudo restait affiché (« Bonjour … ») après déconnexion.
                 if (user != null && !user.isAnonymous) {
                     val pseudo = runCatching { profiles.getPseudo(user.uid) }.getOrNull().orEmpty()
                     _state.value = _state.value.copy(pseudo = pseudo)
+                } else {
+                    _state.value = _state.value.copy(pseudo = "")
                 }
             }
         }
