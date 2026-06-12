@@ -11,3 +11,8 @@ SELECT id, rating FROM player_ratings;
 
 upsertRating:
 INSERT OR REPLACE INTO player_ratings(id, rating) VALUES (?, ?);
+
+-- Efface tout : ratings ELO ET séries (StreakRepository stocke ses clés dans la même table).
+-- Utilisé pour la réinitialisation locale à la déconnexion.
+deleteAll:
+DELETE FROM player_ratings;

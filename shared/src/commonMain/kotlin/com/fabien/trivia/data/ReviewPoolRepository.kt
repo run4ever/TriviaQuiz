@@ -43,4 +43,7 @@ class ReviewPoolRepository(database: TriviaDatabase) {
             entries.forEach { queries.upsert(it.id, it.addedAt) }
         }
     }
+
+    /** Vide le pool (réinitialisation locale à la déconnexion). */
+    fun clear() = queries.deleteAll()
 }

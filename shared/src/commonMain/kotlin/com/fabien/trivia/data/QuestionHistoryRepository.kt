@@ -8,33 +8,37 @@ import kotlinx.datetime.toLocalDateTime
 
 /**
  * Historique des passages de questions : une ligne par réponse (solo ou multijoueur), horodatée +
- * justesse. Source de l'écran « historique par catégorie ». La catégorie est résolue côté app via la
- * banque. Données locales par appareil (synchro par compte = plus tard, cf. point 13).
+ * justesse + catégorie. **Plafonné à 100 passages par catégorie** (trim après chaque insertion) → volume
+ * borné, synchronisable par compte dans un seul document. Source de l'écran « historique par catégorie »
+ * (désormais une liste plate des passages récents).
  */
 class QuestionHistoryRepository(database: TriviaDatabase) {
     private val queries = database.questionHistoryQueries
 
-    /** Un passage : la date (jour local) + si la réponse était bonne. */
+    /** Un passage : la question, la date (jour local) et si la réponse était bonne. */
     data class Attempt(val questionId: String, val date: LocalDate, val correct: Boolean)
 
-    /** Compteurs agrégés d'une question : nombre de passages + nombre de bonnes réponses. */
-    data class QuestionCount(val questionId: String, val asked: Int, val correct: Int)
+    /** Une entrée brute pour la synchro par compte (catégorie + horodatage conservés). */
+    data class HistoryEntry(
+        val questionId: String,
+        val category: String,
+        val answeredAt: Long,
+        val correct: Boolean,
+    )
 
-    /** Enregistre un passage, horodaté à maintenant. */
-    fun record(questionId: String, correct: Boolean) {
-        queries.insert(questionId, Clock.System.now().toEpochMilliseconds(), if (correct) 1L else 0L)
+    companion object {
+        const val PER_CATEGORY_CAP = 100
     }
 
-    /** Compteurs (posées + bonnes) agrégés par question, sur tout l'historique. */
-    fun countsByQuestion(): List<QuestionCount> =
-        queries.selectCountsByQuestion().executeAsList().map {
-            QuestionCount(it.question_id, it.asked.toInt(), (it.correct ?: 0L).toInt())
-        }
+    /** Enregistre un passage horodaté à maintenant, puis plafonne la catégorie à 100. */
+    fun record(questionId: String, category: String, correct: Boolean) {
+        queries.insert(questionId, Clock.System.now().toEpochMilliseconds(), if (correct) 1L else 0L, category)
+        queries.trimCategory(category)
+    }
 
-    /** Tous les passages des questions [ids], du plus récent au plus ancien. Vide si [ids] est vide. */
-    fun forQuestions(ids: List<String>): List<Attempt> {
-        if (ids.isEmpty()) return emptyList()
-        return queries.selectForQuestions(ids).executeAsList().map { row ->
+    /** Les passages récents d'une catégorie (au plus 100), du plus récent au plus ancien. */
+    fun recentForCategory(category: String): List<Attempt> =
+        queries.selectRecentForCategory(category).executeAsList().map { row ->
             Attempt(
                 questionId = row.question_id,
                 date = Instant.fromEpochMilliseconds(row.answered_at)
@@ -42,5 +46,21 @@ class QuestionHistoryRepository(database: TriviaDatabase) {
                 correct = row.correct == 1L,
             )
         }
+
+    /** Snapshot complet (déjà plafonné à 100/cat) pour la synchro. */
+    fun snapshot(): List<HistoryEntry> =
+        queries.selectAllForSync().executeAsList().map {
+            HistoryEntry(it.question_id, it.category ?: "", it.answered_at, it.correct == 1L)
+        }
+
+    /** Remplace tout l'historique local par [entries] (catégories conservées). Pour la synchro. */
+    fun write(entries: List<HistoryEntry>) {
+        queries.deleteAll()
+        entries.forEach {
+            queries.insert(it.questionId, it.answeredAt, if (it.correct) 1L else 0L, it.category)
+        }
     }
+
+    /** Efface tout (réinitialisation à la déconnexion). */
+    fun deleteAll() = queries.deleteAll()
 }

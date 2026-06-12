@@ -4,14 +4,31 @@ CREATE TABLE question_stats (
     times_correct INTEGER NOT NULL DEFAULT 0,
     -- Rating dynamique de la question (évolue selon les résultats du joueur).
     -- NULL tant que la question n'a jamais été jouée : on utilise alors le rating "graine" défini dans le code.
-    rating INTEGER
+    rating INTEGER,
+    -- Compteurs "affichage" comptant SOLO + MULTI (les colonnes times_* ci-dessus restent solo, pour
+    -- ne pas fausser l'ELO/anti-grind). Source des compteurs « questions posées / taux » du Profil.
+    seen_all INTEGER NOT NULL DEFAULT 0,
+    correct_all INTEGER NOT NULL DEFAULT 0
 );
 
 selectStats:
-SELECT times_seen, times_correct, rating FROM question_stats WHERE question_id = ?;
+SELECT times_seen, times_correct, rating, seen_all, correct_all FROM question_stats WHERE question_id = ?;
 
 -- INSERT OR REPLACE plutôt qu'un UPSERT (ON CONFLICT DO UPDATE) car ce dernier
 -- n'est pas supporté par le SQLite embarqué des anciens Android (API 24).
 upsertStats:
-INSERT OR REPLACE INTO question_stats(question_id, times_seen, times_correct, rating)
-VALUES (?, ?, ?, ?);
+INSERT OR REPLACE INTO question_stats(question_id, times_seen, times_correct, rating, seen_all, correct_all)
+VALUES (?, ?, ?, ?, ?, ?);
+
+-- Compteurs « affichage » (solo + multi) par question, pour les stats du Profil. Borné au nombre de
+-- questions distinctes vues, indépendant du volume d'historique.
+selectTotals:
+SELECT question_id, seen_all, correct_all FROM question_stats WHERE seen_all > 0;
+
+-- Snapshot complet pour la synchro par compte (le rating dynamique est EXCLU : il deviendra une valeur
+-- communautaire calculée côté serveur).
+selectAllForSync:
+SELECT question_id, times_seen, times_correct, seen_all, correct_all FROM question_stats;
+
+deleteAll:
+DELETE FROM question_stats;

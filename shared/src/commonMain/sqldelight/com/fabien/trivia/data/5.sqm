@@ -1,0 +1,13 @@
+-- Migration v5 -> v6 :
+-- 1) Compteurs "affichage" solo+multi dans question_stats (seen_all / correct_all). Les colonnes
+--    times_seen / times_correct restent SOLO (anti-grind + ELO) ; seen_all / correct_all comptent
+--    solo ET multi, et servent les compteurs du Profil. Backfill depuis les compteurs solo existants
+--    pour ne pas repartir de zéro.
+-- 2) Colonne category dans question_history, pour plafonner l'historique à 100 passages PAR catégorie
+--    (et le synchroniser). Les lignes antérieures (sans catégorie) restent NULL.
+ALTER TABLE question_stats ADD COLUMN seen_all INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE question_stats ADD COLUMN correct_all INTEGER NOT NULL DEFAULT 0;
+UPDATE question_stats SET seen_all = times_seen, correct_all = times_correct;
+
+ALTER TABLE question_history ADD COLUMN category TEXT;
+CREATE INDEX question_history_cat ON question_history(category);

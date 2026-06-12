@@ -19,4 +19,7 @@ class RatingsRepository(database: TriviaDatabase) {
     fun saveCategoryRating(category: Category, rating: Int) {
         queries.upsertRating(category.name, rating.toLong())
     }
+
+    /** Efface ratings ELO ET séries (même table `player_ratings`). Pour la réinitialisation locale. */
+    fun clear() = queries.deleteAll()
 }

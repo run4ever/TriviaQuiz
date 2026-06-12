@@ -1,29 +1,46 @@
--- Historique des passages de questions : UNE ligne par réponse (solo ou multijoueur), avec sa date
--- et sa justesse. Permet l'écran « historique par catégorie » (dates + ✓/✗). La catégorie n'est PAS
--- stockée ici : elle est résolue côté app via la banque (question_id → Question.category).
--- Démarre à vide : les parties jouées avant cette table n'ont pas d'historique daté.
+-- Historique des passages de questions : UNE ligne par réponse (solo ou multijoueur), avec sa date,
+-- sa justesse et sa catégorie. Plafonné à 100 passages PAR catégorie (trim après chaque insertion) →
+-- volume borné, synchronisable dans un seul document. La catégorie est désormais stockée (résolue via
+-- la banque au moment de l'enregistrement) pour permettre le trim/affichage par catégorie.
 CREATE TABLE question_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     question_id TEXT NOT NULL,
     answered_at INTEGER NOT NULL,  -- epoch millis
-    correct INTEGER NOT NULL       -- 0 / 1
+    correct INTEGER NOT NULL,      -- 0 / 1
+    category TEXT                  -- nom d'enum Category ; NULL pour les lignes d'avant la v6
 );
 
 CREATE INDEX question_history_qid ON question_history(question_id);
+CREATE INDEX question_history_cat ON question_history(category);
 
 insert:
-INSERT INTO question_history(question_id, answered_at, correct) VALUES (?, ?, ?);
+INSERT INTO question_history(question_id, answered_at, correct, category) VALUES (?, ?, ?, ?);
 
--- Tous les passages des questions fournies (celles d'une catégorie), du plus récent au plus ancien.
-selectForQuestions:
+-- Supprime, dans une catégorie, tous les passages au-delà des 100 plus récents.
+trimCategory:
+DELETE FROM question_history
+WHERE category = :category
+  AND id NOT IN (
+    SELECT id FROM question_history
+    WHERE category = :category
+    ORDER BY answered_at DESC, id DESC
+    LIMIT 100
+  );
+
+-- Les passages récents d'une catégorie (au plus 100), du plus récent au plus ancien.
+selectRecentForCategory:
 SELECT question_id, answered_at, correct
 FROM question_history
-WHERE question_id IN ?
-ORDER BY answered_at DESC;
+WHERE category = ?
+ORDER BY answered_at DESC, id DESC
+LIMIT 100;
 
--- Compteurs agrégés par question (posées + bonnes réponses), pour les stats du Profil. Borné au
--- nombre de questions distinctes, indépendant de la taille de l'historique.
-selectCountsByQuestion:
-SELECT question_id, COUNT(*) AS asked, SUM(correct) AS correct
+-- Tout l'historique (déjà plafonné à 100/cat) pour la synchro par compte.
+selectAllForSync:
+SELECT question_id, answered_at, correct, category
 FROM question_history
-GROUP BY question_id;
+WHERE category IS NOT NULL
+ORDER BY answered_at DESC, id DESC;
+
+deleteAll:
+DELETE FROM question_history;

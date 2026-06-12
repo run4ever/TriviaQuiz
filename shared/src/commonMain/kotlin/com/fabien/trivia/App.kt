@@ -151,7 +151,14 @@ fun App(driverFactory: DatabaseDriverFactory) {
                             authViewModel.setPseudo(pseudo)
                             authViewModel.savePseudo()
                         },
-                        onSignOut = authViewModel::signOut,
+                        onSignOut = {
+                            // On réinitialise la progression LOCALE AVANT de se déconnecter : ainsi le
+                            // nouvel invité anonyme repart vierge, et on ne pousse pas de défauts vers le
+                            // cloud de l'ancien compte (ses données restent dans son doc, restaurées au
+                            // prochain login). cf. GameViewModel.resetLocalData.
+                            viewModel.resetLocalData()
+                            authViewModel.signOut()
+                        },
                         onBack = {
                             showAccount = false
                             authViewModel.clearError()

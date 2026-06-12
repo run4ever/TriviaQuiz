@@ -9,11 +9,14 @@ import com.fabien.trivia.data.PlayerRatings
 import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.QuestionRepository
 import com.fabien.trivia.data.QuestionStatsRepository
+import com.fabien.trivia.data.QuestionStatsSync
 import com.fabien.trivia.data.RatingsRepository
 import com.fabien.trivia.data.RemoteQuestionRepository
 import com.fabien.trivia.data.QuestionHistoryRepository
+import com.fabien.trivia.data.QuestionHistorySync
 import com.fabien.trivia.data.ReviewPoolRepository
 import com.fabien.trivia.data.ReviewPoolSync
+import com.fabien.trivia.data.mergeQuestionHistory
 import com.fabien.trivia.data.mergeReviewPool
 import com.fabien.trivia.data.StreakRepository
 import com.fabien.trivia.data.StreakSync
@@ -46,18 +49,13 @@ data class ProfileStats(
     val categoryCorrect: Map<Category, Int> = emptyMap(),
 )
 
-/** Un passage d'une question dans l'historique : date (jour) + justesse. */
-data class HistoryAttempt(val date: LocalDate, val correct: Boolean)
+/** Un passage récent dans l'historique d'une catégorie : la question, sa date et sa justesse. */
+data class RecentAttempt(val question: Question, val date: LocalDate, val correct: Boolean)
 
-/** Une question de l'historique d'une catégorie + tous ses passages (du plus récent au plus ancien). */
-data class QuestionHistoryItem(val question: Question, val attempts: List<HistoryAttempt>)
-
-/** Données de l'écran « historique par catégorie » : compteurs + questions distinctes avec leurs passages. */
+/** Données de l'écran « historique par catégorie » : la liste plate des passages récents (≤ 100). */
 data class CategoryHistory(
     val category: Category,
-    val totalAsked: Int,
-    val distinctCount: Int,
-    val items: List<QuestionHistoryItem>,
+    val attempts: List<RecentAttempt>,
 )
 
 data class GameState(
@@ -96,6 +94,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val ratingSync = PlayerRatingSync()
     private val streakSync = StreakSync()
     private val reviewPoolSync = ReviewPoolSync()
+    private val questionStatsSync = QuestionStatsSync()
+    private val questionHistorySync = QuestionHistorySync()
     private val remoteQuestions = RemoteQuestionRepository()
 
     /**
@@ -117,15 +117,16 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     ))
 
     private fun readProfileStats(): ProfileStats {
-        // Activité par catégorie depuis l'HISTORIQUE (solo + multi, cohérent avec l'écran historique) :
-        // la catégorie n'y est pas stockée, on la résout via la banque (question_id → Category).
+        // Activité par catégorie depuis les COMPTEURS d'affichage de question_stats (seen_all / correct_all,
+        // solo + multi). Bornés au nombre de questions vues, et synchronisés par compte. La catégorie n'y
+        // est pas stockée → résolue via la banque (question_id → Category).
         val categoryById = questionPool.associate { it.id to it.category }
         val asked = HashMap<Category, Int>()
         val correct = HashMap<Category, Int>()
-        questionHistoryRepository.countsByQuestion().forEach { row ->
+        questionStatsRepository.totals().forEach { row ->
             val category = categoryById[row.questionId] ?: return@forEach
-            asked[category] = (asked[category] ?: 0) + row.asked
-            correct[category] = (correct[category] ?: 0) + row.correct
+            asked[category] = (asked[category] ?: 0) + row.seenAll
+            correct[category] = (correct[category] ?: 0) + row.correctAll
         }
         return ProfileStats(
             globalBest = streakRepository.bestCorrectStreak(null),
@@ -193,7 +194,89 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             } catch (_: Exception) {
                 // Idem : le pool de révision reste local, la synchro reprendra à la prochaine connexion.
             }
+            try {
+                syncQuestionStats(uid)
+            } catch (_: Exception) {
+                // Idem : les stats par question restent locales, la synchro reprendra plus tard.
+            }
+            try {
+                syncQuestionHistory(uid)
+            } catch (_: Exception) {
+                // Idem : l'historique reste local, la synchro reprendra plus tard.
+            }
         }
+    }
+
+    /**
+     * Stats par question à la connexion : stratégie « cloud autoritaire » (comme les ratings) pour éviter
+     * le double-comptage d'une fusion additive. Si un doc cloud existe → on écrase le local ; sinon on
+     * sème le cloud depuis le local. Puis on rafraîchit les compteurs du Profil.
+     */
+    private suspend fun syncQuestionStats(uid: String) {
+        val cloud = questionStatsSync.fetch(uid)
+        if (cloud != null) {
+            questionStatsRepository.write(cloud)
+        } else {
+            questionStatsSync.push(uid, questionStatsRepository.snapshot())
+        }
+        _state.value = _state.value.copy(profileStats = readProfileStats())
+    }
+
+    /** Historique à la connexion : union local ↔ cloud puis re-plafond à 100/cat (cf. [mergeQuestionHistory]). */
+    private suspend fun syncQuestionHistory(uid: String) {
+        val local = questionHistoryRepository.snapshot()
+        val cloud = questionHistorySync.fetch(uid)
+        val merged = if (cloud == null) local else mergeQuestionHistory(local, cloud)
+        questionHistoryRepository.write(merged)
+        questionHistorySync.push(uid, merged)
+    }
+
+    /** Pousse les stats par question vers Firestore (fire-and-forget) si connecté. */
+    private fun pushQuestionStats() {
+        val uid = currentUid ?: return
+        viewModelScope.launch {
+            try {
+                questionStatsSync.push(uid, questionStatsRepository.snapshot())
+            } catch (_: Exception) {
+                // Firestore rejoue l'écriture à la reconnexion.
+            }
+        }
+    }
+
+    /** Pousse l'historique vers Firestore (fire-and-forget) si connecté. */
+    private fun pushQuestionHistory() {
+        val uid = currentUid ?: return
+        viewModelScope.launch {
+            try {
+                questionHistorySync.push(uid, questionHistoryRepository.snapshot())
+            } catch (_: Exception) {
+                // Firestore rejoue l'écriture à la reconnexion.
+            }
+        }
+    }
+
+    /**
+     * Réinitialise toute la progression LOCALE (à appeler à la déconnexion explicite, AVANT le signOut).
+     * ⚠️ On met d'abord `currentUid = null` pour COUPER toute synchro : sinon on pousserait les valeurs par
+     * défaut vers le cloud de l'ancien compte email et on EFFACERAIT ses données. Les données du compte
+     * restent intactes dans son doc Firestore et seront restaurées à la prochaine connexion. Le nouvel
+     * invité anonyme (créé juste après) sèmera son propre cloud avec ces défauts.
+     */
+    fun resetLocalData() {
+        currentUid = null
+        ratingsRepository.clear()            // ratings ELO + séries (même table)
+        questionStatsRepository.deleteAll()
+        questionHistoryRepository.deleteAll()
+        reviewPoolRepository.clear()
+        _state.value = GameState(
+            playerRating = ratingsRepository.getPlayerRating(),
+            categoryRatings = ratingsRepository.getAllCategoryRatings(),
+            streak = streakRepository.currentStreak(),
+            correctStreak = streakRepository.correctStreak(null),
+            bestCorrectStreak = streakRepository.bestCorrectStreak(null),
+            profileStats = readProfileStats(),
+            reviewCount = reviewPoolRepository.count(),
+        )
     }
 
     /**
@@ -338,29 +421,32 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     fun recordMultiplayerAnswer(questionId: String, correct: Boolean) {
         reviewPoolRepository.record(questionId, correct)
         pushReviewPool()
-        questionHistoryRepository.record(questionId, correct)
-        _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
+        // Historique + compteurs d'affichage (solo + multi). On NE touche PAS aux compteurs anti-grind
+        // solo (recordDisplayCount n'incrémente que seen_all / correct_all) pour ne pas fausser l'ELO.
+        val category = questionPool.firstOrNull { it.id == questionId }?.category
+        if (category != null) {
+            questionHistoryRepository.record(questionId, category.name, correct)
+            questionStatsRepository.recordDisplayCount(questionId, correct)
+            pushQuestionHistory()
+            pushQuestionStats()
+        }
+        _state.value = _state.value.copy(
+            reviewCount = reviewPoolRepository.count(),
+            profileStats = readProfileStats(),
+        )
     }
 
     /**
-     * Charge l'historique d'une catégorie pour l'écran dédié : questions DISTINCTES posées (résolues
-     * via la banque) avec leurs passages (dates + ✓/✗), plus les compteurs total/distinct.
+     * Charge l'historique d'une catégorie pour l'écran dédié : la liste plate des passages récents
+     * (au plus 100, du plus récent au plus ancien), chaque passage = question + date + ✓/✗.
      */
     fun loadCategoryHistory(category: Category): CategoryHistory {
         val byId = questionPool.associateBy { it.id }
-        val ids = questionPool.filter { it.category == category }.map { it.id }
-        val attempts = questionHistoryRepository.forQuestions(ids) // déjà triés du plus récent au plus ancien
-        // groupBy conserve l'ordre de première apparition → questions les plus récemment posées en tête.
-        val items = attempts.groupBy { it.questionId }.mapNotNull { (qid, list) ->
-            val question = byId[qid] ?: return@mapNotNull null
-            QuestionHistoryItem(question, list.map { HistoryAttempt(it.date, it.correct) })
+        val attempts = questionHistoryRepository.recentForCategory(category.name).mapNotNull { a ->
+            val question = byId[a.questionId] ?: return@mapNotNull null
+            RecentAttempt(question, a.date, a.correct)
         }
-        return CategoryHistory(
-            category = category,
-            totalAsked = attempts.size,
-            distinctCount = items.size,
-            items = items,
-        )
+        return CategoryHistory(category = category, attempts = attempts)
     }
 
     /**
@@ -396,8 +482,8 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         reviewPoolRepository.record(question.id, isCorrect)
         pushReviewPool()
         val reviewCount = reviewPoolRepository.count()
-        // Historique (solo) : on trace le passage (date + justesse) pour l'écran historique par catégorie.
-        questionHistoryRepository.record(question.id, isCorrect)
+        // Historique (solo) : on trace le passage (date + justesse + catégorie) pour l'écran historique.
+        questionHistoryRepository.record(question.id, question.category.name, isCorrect)
 
         // État persisté de la question : rating dynamique (graine du code si jamais jouée) + historique anti-grind.
         val stats = questionStatsRepository.getStats(question.id)
@@ -456,11 +542,16 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newQuestionRating = (questionRating - categoryDelta).coerceAtLeast(100)
         val newTimesSeen = (stats?.timesSeen ?: 0L) + 1L
         val newTimesCorrect = (stats?.timesCorrect ?: 0L) + if (isCorrect) 1L else 0L
-        questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating)
+        // Compteurs d'affichage (solo + multi) : le solo incrémente aussi seen_all / correct_all.
+        val newSeenAll = (stats?.seenAll ?: 0L) + 1L
+        val newCorrectAll = (stats?.correctAll ?: 0L) + if (isCorrect) 1L else 0L
+        questionStatsRepository.save(question.id, newTimesSeen, newTimesCorrect, newQuestionRating, newSeenAll, newCorrectAll)
 
-        // Le rating joueur et les séries viennent d'évoluer → on les pousse vers Firestore (si connecté).
+        // Le rating joueur, les séries, les stats et l'historique viennent d'évoluer → push (si connecté).
         pushRatings()
         pushStreaks()
+        pushQuestionStats()
+        pushQuestionHistory()
     }
 
     fun nextQuestion() {

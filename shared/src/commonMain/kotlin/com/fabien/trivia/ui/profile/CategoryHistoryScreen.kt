@@ -19,8 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.ui.game.CategoryHistory
-import com.fabien.trivia.ui.game.QuestionHistoryItem
+import com.fabien.trivia.ui.game.RecentAttempt
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.CatColors
 import com.fabien.trivia.ui.theme.TriviaPalette
@@ -47,9 +45,9 @@ private fun formatHistoryDate(d: LocalDate): String =
     "${d.dayOfMonth} ${HISTORY_MONTHS_FR[d.monthNumber - 1]} ${d.year}"
 
 /**
- * Écran « historique d'une catégorie » : ouvert au clic sur une tuile du Profil. Liste les questions
- * DISTINCTES déjà posées dans cette catégorie ; un clic déplie les dates de chaque passage avec un
- * indicateur ✓/✗. En-tête : « N questions posées dont X distinctes ».
+ * Écran « historique d'une catégorie » : ouvert au clic sur une tuile du Profil. Liste plate des
+ * derniers passages (au plus 100, du plus récent au plus ancien) : chaque ligne = ✓/✗ + question + date.
+ * On n'affiche plus le nombre d'occurrences ni le détail daté par question (l'historique est plafonné).
  */
 @Composable
 fun CategoryHistoryScreen(
@@ -66,28 +64,22 @@ fun CategoryHistoryScreen(
         Header(cat = cat, title = history.category.displayName, icon = categoryIcon(history.category), onBack = onBack)
 
         Text(
-            text = countsLabel(history.totalAsked, history.distinctCount),
+            text = recentLabel(history.attempts.size),
             style = MaterialTheme.typography.bodyMedium,
             color = TriviaPalette.inkSoft,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp)
         )
 
-        if (history.items.isEmpty()) {
+        if (history.attempts.isEmpty()) {
             EmptyState()
         } else {
-            val expanded = remember { mutableStateMapOf<String, Boolean>() }
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(9.dp)
             ) {
-                items(history.items, key = { it.question.id }) { item ->
-                    QuestionRow(
-                        item = item,
-                        accent = cat,
-                        expanded = expanded[item.question.id] == true,
-                        onToggle = { expanded[item.question.id] = !(expanded[item.question.id] == true) }
-                    )
+                items(history.attempts) { attempt ->
+                    AttemptRow(attempt = attempt, accent = cat)
                 }
                 item { Spacer(Modifier.height(10.dp)) }
             }
@@ -95,11 +87,9 @@ fun CategoryHistoryScreen(
     }
 }
 
-private fun countsLabel(total: Int, distinct: Int): String {
-    val posees = "$total question${if (total > 1) "s" else ""} posée${if (total > 1) "s" else ""}"
-    val distinctes = "$distinct distincte${if (distinct > 1) "s" else ""}"
-    return "$posees dont $distinctes"
-}
+private fun recentLabel(count: Int): String =
+    if (count == 0) "Aucun passage récent"
+    else "$count dernier${if (count > 1) "s" else ""} passage${if (count > 1) "s" else ""}"
 
 @Composable
 private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onBack: () -> Unit) {
@@ -136,74 +126,43 @@ private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.grap
 }
 
 @Composable
-private fun QuestionRow(
-    item: QuestionHistoryItem,
-    accent: CatColors,
-    expanded: Boolean,
-    onToggle: () -> Unit
-) {
-    val label = item.question.title.ifBlank { item.question.text }
-    Column(
+private fun AttemptRow(attempt: RecentAttempt, accent: CatColors) {
+    val good = attempt.correct
+    val label = attempt.question.title.ifBlank { attempt.question.text }
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(TriviaPalette.card)
-            .clickable(onClick = onToggle)
-            .padding(horizontal = 14.dp, vertical = 12.dp)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(11.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Box(
+            modifier = Modifier.size(24.dp).clip(RoundedCornerShape(50))
+                .background(if (good) TriviaPalette.good else TriviaPalette.bad),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                if (good) AppIcons.Check else AppIcons.Close,
+                contentDescription = if (good) "Bonne réponse" else "Mauvaise réponse",
+                tint = Color.White,
+                modifier = Modifier.size(14.dp)
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleSmall,
-                color = TriviaPalette.ink,
-                modifier = Modifier.weight(1f)
+                color = TriviaPalette.ink
             )
-            // Pastille du nombre de passages.
-            Box(
-                modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(accent.tint).padding(horizontal = 8.dp, vertical = 3.dp)
-            ) {
-                Text("${item.attempts.size}×", style = MaterialTheme.typography.labelMedium, color = accent.deep)
-            }
-            Icon(
-                if (expanded) AppIcons.ChevronLeft else AppIcons.ChevronRight,
-                contentDescription = null,
-                tint = TriviaPalette.inkFaint,
-                modifier = Modifier.size(18.dp)
-            )
-        }
-
-        if (expanded) {
-            Spacer(Modifier.height(10.dp))
-            Box(Modifier.fillMaxWidth().height(1.dp).background(TriviaPalette.line))
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(2.dp))
             Text(
-                text = item.question.text,
+                text = formatHistoryDate(attempt.date),
                 style = MaterialTheme.typography.bodyMedium,
-                color = TriviaPalette.inkSoft
+                color = TriviaPalette.inkSoft,
+                fontSize = 12.sp
             )
-            Spacer(Modifier.height(8.dp))
-            item.attempts.forEach { attempt ->
-                Row(
-                    modifier = Modifier.padding(vertical = 3.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val good = attempt.correct
-                    Box(
-                        modifier = Modifier.size(20.dp).clip(RoundedCornerShape(50))
-                            .background(if (good) TriviaPalette.good else TriviaPalette.bad),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            if (good) AppIcons.Check else AppIcons.Close,
-                            contentDescription = if (good) "Bonne réponse" else "Mauvaise réponse",
-                            tint = Color.White,
-                            modifier = Modifier.size(13.dp)
-                        )
-                    }
-                    Text(formatHistoryDate(attempt.date), style = MaterialTheme.typography.bodyMedium, color = TriviaPalette.ink)
-                }
-            }
         }
     }
 }
@@ -221,7 +180,7 @@ private fun EmptyState() {
             color = TriviaPalette.ink
         )
         Text(
-            "Joue dans cette catégorie : les questions posées apparaîtront ici avec leurs dates.",
+            "Joue dans cette catégorie : tes derniers passages apparaîtront ici.",
             style = MaterialTheme.typography.bodyMedium,
             color = TriviaPalette.inkSoft,
             fontSize = 13.sp
