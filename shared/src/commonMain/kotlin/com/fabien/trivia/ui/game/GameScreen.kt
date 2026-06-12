@@ -211,8 +211,9 @@ private fun HeaderPill(modifier: Modifier = Modifier, content: @Composable () ->
     ) { content() }
 }
 
+/** Carte de réponse (badge + texte + révélation animée). `internal` : réutilisée par la relecture H3. */
 @Composable
-private fun AnswerCard(
+internal fun AnswerCard(
     letter: String,
     text: String,
     cat: CatColors,

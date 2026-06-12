@@ -401,6 +401,19 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     }
 
     /**
+     * Relecture d'une question depuis l'historique (H3) : **NEUTRE** — n'affecte ni ELO, ni séries, ni
+     * historique, ni stats. Seul effet : si la réponse est BONNE, on retire la question du pool de
+     * révision (si elle y était encore). Une mauvaise réponse ne change rien (pas de ré-ajout au pool
+     * depuis une simple relecture).
+     */
+    fun reviewHistoryAnswer(questionId: String, correct: Boolean) {
+        if (!correct) return
+        reviewPoolRepository.remove(questionId)
+        _state.value = _state.value.copy(reviewCount = reviewPoolRepository.count())
+        pushAll()
+    }
+
+    /**
      * Charge l'historique d'une catégorie pour l'écran dédié : la liste plate des passages récents
      * (au plus 100, du plus récent au plus ancien), chaque passage = question + date + ✓/✗.
      */

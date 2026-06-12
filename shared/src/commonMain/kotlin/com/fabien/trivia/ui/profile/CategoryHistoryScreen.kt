@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.ui.game.CategoryHistory
 import com.fabien.trivia.ui.game.RecentAttempt
@@ -37,22 +38,23 @@ import com.fabien.trivia.ui.theme.categoryIcon
 import kotlinx.datetime.LocalDate
 
 private val HISTORY_MONTHS_FR = listOf(
-    "janv.", "févr.", "mars", "avril", "mai", "juin",
-    "juil.", "août", "sept.", "oct.", "nov.", "déc."
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre"
 )
 
 private fun formatHistoryDate(d: LocalDate): String =
     "${d.dayOfMonth} ${HISTORY_MONTHS_FR[d.monthNumber - 1]} ${d.year}"
 
 /**
- * Écran « historique d'une catégorie » : ouvert au clic sur une tuile du Profil. Liste plate des
- * derniers passages (au plus 100, du plus récent au plus ancien) : chaque ligne = ✓/✗ + question + date.
- * On n'affiche plus le nombre d'occurrences ni le détail daté par question (l'historique est plafonné).
+ * Écran « historique d'une catégorie » (H3) : ouvert au clic sur une tuile du Profil. Les passages récents
+ * (au plus 100) sont **regroupés par jour** (en-tête = date du jour), du plus récent au plus ancien. Chaque
+ * ligne = question + icône ✓/✗ à droite (sans date). Un clic sur une question l'ouvre en relecture.
  */
 @Composable
 fun CategoryHistoryScreen(
     modifier: Modifier = Modifier,
     history: CategoryHistory,
+    onSelectQuestion: (Question) -> Unit,
     onBack: () -> Unit
 ) {
     val cat = catColors(history.category)
@@ -63,23 +65,21 @@ fun CategoryHistoryScreen(
     ) {
         Header(cat = cat, title = history.category.displayName, icon = categoryIcon(history.category), onBack = onBack)
 
-        Text(
-            text = recentLabel(history.attempts.size),
-            style = MaterialTheme.typography.bodyMedium,
-            color = TriviaPalette.inkSoft,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp)
-        )
-
         if (history.attempts.isEmpty()) {
             EmptyState()
         } else {
+            // groupBy conserve l'ordre (attempts déjà triés du plus récent au plus ancien) → jours en ordre décroissant.
+            val byDay = history.attempts.groupBy { it.date }
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 18.dp),
-                verticalArrangement = Arrangement.spacedBy(9.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(history.attempts) { attempt ->
-                    AttemptRow(attempt = attempt, accent = cat)
+                item { Spacer(Modifier.height(6.dp)) }
+                byDay.forEach { (date, attempts) ->
+                    item(key = "day_$date") { DayHeader(date) }
+                    items(attempts) { attempt ->
+                        AttemptRow(attempt = attempt, onClick = { onSelectQuestion(attempt.question) })
+                    }
                 }
                 item { Spacer(Modifier.height(10.dp)) }
             }
@@ -87,9 +87,16 @@ fun CategoryHistoryScreen(
     }
 }
 
-private fun recentLabel(count: Int): String =
-    if (count == 0) "Aucun passage récent"
-    else "$count dernier${if (count > 1) "s" else ""} passage${if (count > 1) "s" else ""}"
+@Composable
+private fun DayHeader(date: LocalDate) {
+    Text(
+        text = formatHistoryDate(date),
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.ExtraBold,
+        color = TriviaPalette.inkSoft,
+        modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+    )
+}
 
 @Composable
 private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onBack: () -> Unit) {
@@ -102,11 +109,7 @@ private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.grap
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(AppIcons.ChevronLeft, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
-            Text(
-                "Profil",
-                style = MaterialTheme.typography.titleSmall,
-                color = Color.White
-            )
+            Text("Profil", style = MaterialTheme.typography.titleSmall, color = Color.White)
         }
         Spacer(Modifier.height(6.dp))
         Row(
@@ -126,7 +129,7 @@ private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.grap
 }
 
 @Composable
-private fun AttemptRow(attempt: RecentAttempt, accent: CatColors) {
+private fun AttemptRow(attempt: RecentAttempt, onClick: () -> Unit) {
     val good = attempt.correct
     val label = attempt.question.title.ifBlank { attempt.question.text }
     Row(
@@ -134,10 +137,17 @@ private fun AttemptRow(attempt: RecentAttempt, accent: CatColors) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(TriviaPalette.card)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(11.dp)
     ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall,
+            color = TriviaPalette.ink,
+            modifier = Modifier.weight(1f)
+        )
         Box(
             modifier = Modifier.size(24.dp).clip(RoundedCornerShape(50))
                 .background(if (good) TriviaPalette.good else TriviaPalette.bad),
@@ -148,20 +158,6 @@ private fun AttemptRow(attempt: RecentAttempt, accent: CatColors) {
                 contentDescription = if (good) "Bonne réponse" else "Mauvaise réponse",
                 tint = Color.White,
                 modifier = Modifier.size(14.dp)
-            )
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleSmall,
-                color = TriviaPalette.ink
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = formatHistoryDate(attempt.date),
-                style = MaterialTheme.typography.bodyMedium,
-                color = TriviaPalette.inkSoft,
-                fontSize = 12.sp
             )
         }
     }

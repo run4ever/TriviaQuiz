@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DatabaseDriverFactory
+import com.fabien.trivia.data.Question
 import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.ui.account.AccountScreen
 import com.fabien.trivia.ui.account.AuthViewModel
@@ -32,6 +33,7 @@ import com.fabien.trivia.ui.multiplayer.MultiplayerScreen
 import com.fabien.trivia.ui.multiplayer.MultiplayerViewModel
 import com.fabien.trivia.ui.profile.CategoryHistoryScreen
 import com.fabien.trivia.ui.profile.ProfileScreen
+import com.fabien.trivia.ui.profile.QuestionPreviewScreen
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.CultureGeneraleTheme
 
@@ -46,6 +48,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
     var showAccount by remember { mutableStateOf(false) }
     var showAdmin by remember { mutableStateOf(false) }
     var historyCategory by remember { mutableStateOf<Category?>(null) }
+    var previewQuestion by remember { mutableStateOf<Question?>(null) }
 
     CultureGeneraleTheme {
         val state by viewModel.state.collectAsState()
@@ -72,6 +75,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
             showAccount = false
             showAdmin = false
             historyCategory = null
+            previewQuestion = null
         }
 
         // Pré-remplissage du pseudo multijoueur depuis le compte connecté (modifiable ensuite).
@@ -176,12 +180,22 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         isAdmin = authState.isAdmin,
                         onOpenAdmin = { showAdmin = true },
                     )
+                } else if (previewQuestion != null) {
+                    // H3 — relecture d'une question depuis l'historique (neutre, sauf retrait du pool si correct).
+                    val q = previewQuestion!!
+                    QuestionPreviewScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        question = q,
+                        onAnswered = { correct -> viewModel.reviewHistoryAnswer(q.id, correct) },
+                        onQuit = { previewQuestion = null }
+                    )
                 } else if (historyCategory != null) {
                     val category = historyCategory!!
                     val history = remember(category, state.profileStats) { viewModel.loadCategoryHistory(category) }
                     CategoryHistoryScreen(
                         modifier = Modifier.padding(innerPadding),
                         history = history,
+                        onSelectQuestion = { previewQuestion = it },
                         onBack = { historyCategory = null }
                     )
                 } else {
