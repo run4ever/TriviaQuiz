@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fabien.trivia.ui.avatar.Avatar
 import com.fabien.trivia.ui.components.ChunkyButton
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.TriviaPalette
@@ -73,6 +74,9 @@ fun AccountScreen(
     onBack: () -> Unit,
     isAdmin: Boolean = false,
     onOpenAdmin: () -> Unit = {},
+    avatarAnimal: String? = null,
+    avatarStyle: String? = null,
+    onOpenAvatar: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -91,6 +95,9 @@ fun AccountScreen(
                 onSignOut = onSignOut,
                 isAdmin = isAdmin,
                 onOpenAdmin = onOpenAdmin,
+                avatarAnimal = avatarAnimal,
+                avatarStyle = avatarStyle,
+                onOpenAvatar = onOpenAvatar,
             )
         } else {
             AuthContent(
@@ -327,6 +334,9 @@ private fun ColumnScope.SignedInContent(
     onSignOut: () -> Unit,
     isAdmin: Boolean,
     onOpenAdmin: () -> Unit,
+    avatarAnimal: String?,
+    avatarStyle: String?,
+    onOpenAvatar: () -> Unit,
 ) {
     val baloo = MaterialTheme.typography.titleMedium.fontFamily
     val nunito = MaterialTheme.typography.bodyMedium.fontFamily
@@ -347,16 +357,14 @@ private fun ColumnScope.SignedInContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(13.dp),
         ) {
-            val initial = (pseudo.firstOrNull() ?: email?.firstOrNull())?.uppercaseChar()?.toString() ?: "?"
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(initial, style = TextStyle(fontFamily = baloo, fontWeight = FontWeight.ExtraBold, fontSize = 22.sp, color = Color.White))
-            }
+            Avatar(
+                animal = avatarAnimal,
+                style = avatarStyle,
+                pseudo = pseudo,
+                seed = email ?: pseudo,
+                size = 48.dp,
+                modifier = Modifier.clip(RoundedCornerShape(15.dp)).clickable(onClick = onOpenAvatar),
+            )
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier

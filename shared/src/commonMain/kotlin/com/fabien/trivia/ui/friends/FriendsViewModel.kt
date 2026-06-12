@@ -67,10 +67,10 @@ class FriendsViewModel(
         }
     }
 
-    /** Met à jour MA fiche publique (pseudo + rating). À appeler à la connexion / au changement de pseudo. */
-    fun updateMyDirectory(uid: String, pseudo: String, rating: Int) {
+    /** Met à jour MA fiche publique (pseudo + rating + avatar). À la connexion / changement de pseudo ou avatar. */
+    fun updateMyDirectory(uid: String, pseudo: String, rating: Int, avatarAnimal: String?, avatarStyle: String?) {
         if (pseudo.isBlank()) return
-        viewModelScope.launch { runCatching { directory.upsert(uid, pseudo, rating) } }
+        viewModelScope.launch { runCatching { directory.upsert(uid, pseudo, rating, avatarAnimal, avatarStyle) } }
     }
 
     fun setSort(sort: FriendSort) {

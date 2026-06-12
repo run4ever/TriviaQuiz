@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 data class AuthUiState(
     val user: AuthUser? = null,
     val pseudo: String = "",
+    val avatarAnimal: String? = null,
+    val avatarStyle: String? = null,
     val isBusy: Boolean = false,
     val error: String? = null
 ) {
@@ -41,13 +43,17 @@ class AuthViewModel(
         viewModelScope.launch {
             repository.authState.collect { user ->
                 _state.value = _state.value.copy(user = user)
-                // Charge le pseudo enregistré pour un compte email ; sinon (invité anonyme ou déconnecté)
-                // on le VIDE — sans ça, l'ancien pseudo restait affiché (« Bonjour … ») après déconnexion.
+                // Charge le profil (pseudo + avatar) pour un compte email ; sinon (invité anonyme ou
+                // déconnecté) on VIDE — sans ça, l'ancien pseudo/avatar restait affiché après déconnexion.
                 if (user != null && !user.isAnonymous) {
-                    val pseudo = runCatching { profiles.getPseudo(user.uid) }.getOrNull().orEmpty()
-                    _state.value = _state.value.copy(pseudo = pseudo)
+                    val profile = runCatching { profiles.getProfile(user.uid) }.getOrNull()
+                    _state.value = _state.value.copy(
+                        pseudo = profile?.pseudo.orEmpty(),
+                        avatarAnimal = profile?.avatarAnimal,
+                        avatarStyle = profile?.avatarStyle,
+                    )
                 } else {
-                    _state.value = _state.value.copy(pseudo = "")
+                    _state.value = _state.value.copy(pseudo = "", avatarAnimal = null, avatarStyle = null)
                 }
             }
         }
@@ -62,6 +68,13 @@ class AuthViewModel(
         val pseudo = _state.value.pseudo.trim()
         if (pseudo.isBlank()) return
         launchAuth { profiles.setPseudo(uid, pseudo) }
+    }
+
+    /** Enregistre l'avatar choisi (compte email) + maj de l'état → l'effet directory de App le propage aux amis. */
+    fun setAvatar(animal: String, style: String) {
+        val uid = _state.value.user?.uid ?: return
+        _state.value = _state.value.copy(avatarAnimal = animal, avatarStyle = style)
+        launchAuth { profiles.setAvatar(uid, animal, style) }
     }
 
     fun continueAsGuest() = launchAuth { repository.signInAnonymously() }

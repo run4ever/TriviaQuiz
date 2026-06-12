@@ -24,6 +24,7 @@ import com.fabien.trivia.data.multiplayer.GameStatus
 import com.fabien.trivia.ui.account.AccountScreen
 import com.fabien.trivia.ui.account.AuthViewModel
 import com.fabien.trivia.ui.admin.AdminExportScreen
+import com.fabien.trivia.ui.avatar.AvatarPickerScreen
 import com.fabien.trivia.ui.category.CategoryScreen
 import com.fabien.trivia.ui.friends.FriendsScreen
 import com.fabien.trivia.ui.friends.FriendsViewModel
@@ -51,6 +52,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
     var showAccount by remember { mutableStateOf(false) }
     var showAdmin by remember { mutableStateOf(false) }
     var showFriends by remember { mutableStateOf(false) }
+    var showAvatarPicker by remember { mutableStateOf(false) }
     var historyCategory by remember { mutableStateOf<Category?>(null) }
     var previewQuestion by remember { mutableStateOf<Question?>(null) }
 
@@ -79,10 +81,10 @@ fun App(driverFactory: DatabaseDriverFactory) {
 
         // Met à jour ma fiche publique (directory) à la connexion / au changement de pseudo (compte email).
         // Le rating poussé = celui de l'instant (login) — suffisant en V1, pas de write à chaque réponse.
-        LaunchedEffect(authState.isEmailUser, authState.user?.uid, authState.pseudo) {
+        LaunchedEffect(authState.isEmailUser, authState.user?.uid, authState.pseudo, authState.avatarAnimal, authState.avatarStyle) {
             val uid = authState.user?.uid
             if (authState.isEmailUser && uid != null && authState.pseudo.isNotBlank()) {
-                friendsViewModel.updateMyDirectory(uid, authState.pseudo, state.playerRating)
+                friendsViewModel.updateMyDirectory(uid, authState.pseudo, state.playerRating, authState.avatarAnimal, authState.avatarStyle)
             }
         }
 
@@ -94,6 +96,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
             showAccount = false
             showAdmin = false
             showFriends = false
+            showAvatarPicker = false
             historyCategory = null
             previewQuestion = null
         }
@@ -131,7 +134,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
 
         // On masque la barre pendant une partie en cours (solo ou multi).
         val inMultiplayerGame = currentTab == AppTab.MULTIPLAYER && mpState.room?.status == GameStatus.PLAYING
-        val hideBottomBar = state.phase == GamePhase.PLAYING || inMultiplayerGame || showFriends
+        val hideBottomBar = state.phase == GamePhase.PLAYING || inMultiplayerGame || showFriends || showAvatarPicker
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -168,7 +171,18 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     )
                 }
 
-                AppTab.PROFILE -> if (showAdmin) {
+                AppTab.PROFILE -> if (showAvatarPicker) {
+                    AvatarPickerScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        currentAnimal = authState.avatarAnimal,
+                        currentStyle = authState.avatarStyle,
+                        onSave = { animal, style ->
+                            authViewModel.setAvatar(animal, style)
+                            showAvatarPicker = false
+                        },
+                        onBack = { showAvatarPicker = false },
+                    )
+                } else if (showAdmin) {
                     AdminExportScreen(
                         modifier = Modifier.padding(innerPadding),
                         onBack = { showAdmin = false },
@@ -204,6 +218,9 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         },
                         isAdmin = authState.isAdmin,
                         onOpenAdmin = { showAdmin = true },
+                        avatarAnimal = authState.avatarAnimal,
+                        avatarStyle = authState.avatarStyle,
+                        onOpenAvatar = { showAvatarPicker = true },
                     )
                 } else if (previewQuestion != null) {
                     // H3 — relecture d'une question depuis l'historique (neutre, sauf retrait du pool si correct).
@@ -230,6 +247,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         categoryRatings = state.categoryRatings,
                         accountStatus = accountStatus,
                         pseudo = authState.pseudo,
+                        avatarAnimal = authState.avatarAnimal,
+                        avatarStyle = authState.avatarStyle,
                         isSignedIn = authState.isEmailUser,
                         stats = state.profileStats,
                         onOpenAccount = { showAccount = true },
@@ -255,6 +274,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         categoryAsked = state.profileStats.categoryAsked,
                         streak = state.streak,
                         pseudo = authState.pseudo,
+                        avatarAnimal = authState.avatarAnimal,
+                        avatarStyle = authState.avatarStyle,
                         reviewCount = state.reviewCount,
                         isEmailUser = authState.isEmailUser,
                         friends = friendsState.sortedFriends,

@@ -42,8 +42,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DirectoryEntry
 import com.fabien.trivia.data.displayName
+import com.fabien.trivia.ui.avatar.Avatar
 import com.fabien.trivia.ui.components.ChunkyButton
-import com.fabien.trivia.ui.components.PseudoAvatar
 import com.fabien.trivia.ui.components.LevelPill
 import com.fabien.trivia.ui.components.ProgressRing
 import com.fabien.trivia.ui.theme.AppIcons
@@ -66,6 +66,8 @@ fun HomeScreen(
     categoryAsked: Map<Category, Int>,
     streak: Int,
     pseudo: String,
+    avatarAnimal: String?,
+    avatarStyle: String?,
     reviewCount: Int,
     isEmailUser: Boolean,
     friends: List<DirectoryEntry>,
@@ -83,7 +85,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 14.dp)
     ) {
-        PlayerHeader(streak, pseudo, onOpenAccount)
+        PlayerHeader(streak, pseudo, avatarAnimal, avatarStyle, onOpenAccount)
         Spacer(Modifier.height(18.dp))
         LevelHeroCard(playerRating, onOpenProfile)
         Spacer(Modifier.height(16.dp))
@@ -121,7 +123,7 @@ private fun greetingWord(): String {
 }
 
 @Composable
-private fun PlayerHeader(streak: Int, pseudo: String, onOpenAccount: () -> Unit) {
+private fun PlayerHeader(streak: Int, pseudo: String, avatarAnimal: String?, avatarStyle: String?, onOpenAccount: () -> Unit) {
     val hasPseudo = pseudo.isNotBlank()
     // Valeur initiale recalculée à chaque (ré)entrée en composition (couvre les changements d'onglet),
     // puis rafraîchie sur ON_RESUME → au retour de l'arrière-plan (ex. ouverture le matin) le mot est
@@ -139,23 +141,7 @@ private fun PlayerHeader(streak: Int, pseudo: String, onOpenAccount: () -> Unit)
                 .clickable(onClick = onOpenAccount),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(46.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
-                contentAlignment = Alignment.Center
-            ) {
-                if (hasPseudo) {
-                    Text(
-                        text = pseudo.take(1).uppercase(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
-                    )
-                } else {
-                    Icon(AppIcons.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                }
-            }
+            Avatar(animal = avatarAnimal, style = avatarStyle, pseudo = pseudo, seed = pseudo.ifBlank { "me" }, size = 46.dp)
             Spacer(Modifier.width(12.dp))
             Text(
                 text = if (hasPseudo) "$greeting $pseudo" else greeting,
@@ -378,7 +364,7 @@ private fun FriendMiniCard(entry: DirectoryEntry, onClick: () -> Unit) {
             .padding(vertical = 14.dp, horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        PseudoAvatar(pseudo = entry.pseudo, seed = entry.uid, size = 52.dp)
+        Avatar(animal = entry.avatarAnimal, style = entry.avatarStyle, pseudo = entry.pseudo, seed = entry.uid, size = 52.dp)
         Spacer(Modifier.height(8.dp))
         Text(
             entry.pseudo.ifBlank { "Joueur" },

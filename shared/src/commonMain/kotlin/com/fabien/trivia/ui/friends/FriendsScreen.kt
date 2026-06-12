@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fabien.trivia.data.DirectoryEntry
-import com.fabien.trivia.ui.components.PseudoAvatar
+import com.fabien.trivia.ui.avatar.Avatar
 import com.fabien.trivia.ui.theme.AppIcons
 import com.fabien.trivia.ui.theme.TriviaPalette
 import com.fabien.trivia.ui.theme.levelName
@@ -242,7 +242,7 @@ private fun PersonRow(entry: DirectoryEntry, trailing: @Composable () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        PseudoAvatar(pseudo = entry.pseudo, seed = entry.uid, size = 46.dp)
+        Avatar(animal = entry.avatarAnimal, style = entry.avatarStyle, pseudo = entry.pseudo, seed = entry.uid, size = 46.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 entry.pseudo.ifBlank { "Joueur" },

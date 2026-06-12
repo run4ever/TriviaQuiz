@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.displayName
+import com.fabien.trivia.ui.avatar.Avatar
 import com.fabien.trivia.ui.components.ProgressRing
 import com.fabien.trivia.ui.game.ProfileStats
 import com.fabien.trivia.ui.theme.AppIcons
@@ -62,6 +63,8 @@ fun ProfileScreen(
     categoryRatings: Map<Category, Int>,
     accountStatus: String,
     pseudo: String,
+    avatarAnimal: String?,
+    avatarStyle: String?,
     isSignedIn: Boolean,
     stats: ProfileStats,
     onOpenAccount: () -> Unit,
@@ -82,7 +85,7 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        AccountCard(isSignedIn, pseudo, accountStatus, onOpenAccount)
+        AccountCard(isSignedIn, pseudo, avatarAnimal, avatarStyle, accountStatus, onOpenAccount)
         GlobalLevelCard(
             playerRating = playerRating,
             globalBest = stats.globalBest,
@@ -120,11 +123,10 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun AccountCard(isSignedIn: Boolean, pseudo: String, accountStatus: String, onOpenAccount: () -> Unit) {
+private fun AccountCard(isSignedIn: Boolean, pseudo: String, avatarAnimal: String?, avatarStyle: String?, accountStatus: String, onOpenAccount: () -> Unit) {
     val hasPseudo = pseudo.isNotBlank()
     val title = if (hasPseudo) "PSEUDO" else "COMPTE"
     val value = if (hasPseudo) pseudo else accountStatus
-    val initial = value.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,15 +137,7 @@ private fun AccountCard(isSignedIn: Boolean, pseudo: String, accountStatus: Stri
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = initial, style = MaterialTheme.typography.titleLarge, color = Color.White)
-        }
+        Avatar(animal = avatarAnimal, style = avatarStyle, pseudo = pseudo, seed = value, size = 44.dp, modifier = Modifier.clip(RoundedCornerShape(14.dp)))
         Column(modifier = Modifier.weight(1f)) {
             if (isSignedIn) {
                 ConnectedBadge()

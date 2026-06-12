@@ -6,13 +6,21 @@ import dev.gitlive.firebase.firestore.firestore
 import kotlinx.serialization.Serializable
 
 /** Fiche publique d'un joueur (pour recherche + affichage d'un ami). */
-data class DirectoryEntry(val uid: String, val pseudo: String, val rating: Int)
+data class DirectoryEntry(
+    val uid: String,
+    val pseudo: String,
+    val rating: Int,
+    val avatarAnimal: String? = null,
+    val avatarStyle: String? = null,
+)
 
 @Serializable
 private data class DirectoryDto(
     val pseudo: String = "",
     val pseudoLower: String = "",
     val rating: Int = 750,
+    val avatarAnimal: String = "",
+    val avatarStyle: String = "",
 )
 
 /**
@@ -23,11 +31,17 @@ private data class DirectoryDto(
 class DirectoryRepository(private val firestore: FirebaseFirestore = Firebase.firestore) {
     private val directory get() = firestore.collection("directory")
 
-    /** Met à jour (merge) sa propre fiche publique. À appeler à la connexion / au changement de pseudo. */
-    suspend fun upsert(uid: String, pseudo: String, rating: Int) {
+    /** Met à jour (merge) sa propre fiche publique. À appeler à la connexion / au changement de pseudo/avatar. */
+    suspend fun upsert(uid: String, pseudo: String, rating: Int, avatarAnimal: String?, avatarStyle: String?) {
         directory.document(uid).set(
             DirectoryDto.serializer(),
-            DirectoryDto(pseudo = pseudo, pseudoLower = pseudo.lowercase(), rating = rating),
+            DirectoryDto(
+                pseudo = pseudo,
+                pseudoLower = pseudo.lowercase(),
+                rating = rating,
+                avatarAnimal = avatarAnimal.orEmpty(),
+                avatarStyle = avatarStyle.orEmpty(),
+            ),
             merge = true,
         )
     }
@@ -37,7 +51,7 @@ class DirectoryRepository(private val firestore: FirebaseFirestore = Firebase.fi
         val snap = directory.document(uid).get()
         if (!snap.exists) return null
         val dto = snap.data(DirectoryDto.serializer())
-        return DirectoryEntry(uid, dto.pseudo, dto.rating)
+        return DirectoryEntry(uid, dto.pseudo, dto.rating, dto.avatarAnimal.ifBlank { null }, dto.avatarStyle.ifBlank { null })
     }
 
     /** Fiches de plusieurs joueurs (pour afficher la liste d'amis) ; ignore les absents. */
@@ -56,7 +70,7 @@ class DirectoryRepository(private val firestore: FirebaseFirestore = Firebase.fi
                 if (doc.id == excludeUid) return@mapNotNull null
                 val dto = doc.data(DirectoryDto.serializer())
                 if (!dto.pseudoLower.startsWith(q)) return@mapNotNull null
-                DirectoryEntry(doc.id, dto.pseudo, dto.rating)
+                DirectoryEntry(doc.id, dto.pseudo, dto.rating, dto.avatarAnimal.ifBlank { null }, dto.avatarStyle.ifBlank { null })
             }
             .sortedBy { it.pseudo.lowercase() }
             .take(limit)
