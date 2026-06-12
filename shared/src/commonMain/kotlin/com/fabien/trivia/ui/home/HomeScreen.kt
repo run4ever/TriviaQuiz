@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -32,13 +34,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.fabien.trivia.data.Category
+import com.fabien.trivia.data.DirectoryEntry
 import com.fabien.trivia.data.displayName
 import com.fabien.trivia.ui.components.ChunkyButton
+import com.fabien.trivia.ui.components.PseudoAvatar
 import com.fabien.trivia.ui.components.LevelPill
 import com.fabien.trivia.ui.components.ProgressRing
 import com.fabien.trivia.ui.theme.AppIcons
@@ -62,11 +67,14 @@ fun HomeScreen(
     streak: Int,
     pseudo: String,
     reviewCount: Int,
+    isEmailUser: Boolean,
+    friends: List<DirectoryEntry>,
     onStartAllCategories: () -> Unit,
     onChooseCategory: () -> Unit,
     onReview: () -> Unit,
     onOpenProfile: () -> Unit,
-    onOpenAccount: () -> Unit
+    onOpenAccount: () -> Unit,
+    onOpenFriends: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -84,6 +92,14 @@ fun HomeScreen(
         CategoryCta(onChooseCategory)
         Spacer(Modifier.height(12.dp))
         ReviewCta(count = reviewCount, onClick = onReview)
+
+        Spacer(Modifier.height(22.dp))
+        FriendsSection(
+            isEmailUser = isEmailUser,
+            friends = friends,
+            onOpenFriends = onOpenFriends,
+            onOpenAccount = onOpenAccount,
+        )
 
         // Points forts / axes d'amélioration : ≥2 questions posées requises, 2 mini par bloc, blocs disjoints.
         val highlights = homeHighlights(categoryRatings, categoryAsked)
@@ -289,6 +305,98 @@ private fun ReviewCta(count: Int, onClick: () -> Unit) {
                 color = Color.White.copy(alpha = 0.85f)
             )
         }
+    }
+}
+
+// ── Section « Amis » (accueil) : 3 états selon connexion / présence d'amis ──
+@Composable
+private fun FriendsSection(
+    isEmailUser: Boolean,
+    friends: List<DirectoryEntry>,
+    onOpenFriends: () -> Unit,
+    onOpenAccount: () -> Unit,
+) {
+    when {
+        !isEmailUser -> FriendsPrompt("Connectez-vous pour rechercher vos amis", onOpenAccount)
+        friends.isEmpty() -> FriendsPrompt("Recherchez vos amis", onOpenFriends)
+        else -> {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("Amis", style = MaterialTheme.typography.titleMedium, color = TriviaPalette.ink, fontWeight = FontWeight.ExtraBold)
+                Text(
+                    "Afficher tout",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TriviaPalette.brand,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onOpenFriends).padding(horizontal = 4.dp, vertical = 2.dp),
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(friends, key = { it.uid }) { entry -> FriendMiniCard(entry, onOpenFriends) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FriendsPrompt(text: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(18.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Box(
+            modifier = Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).background(TriviaPalette.brand),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(AppIcons.Users, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+        }
+        Text(text, style = MaterialTheme.typography.titleSmall, color = TriviaPalette.ink, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+        Icon(AppIcons.ChevronRight, contentDescription = null, tint = TriviaPalette.inkFaint, modifier = Modifier.size(20.dp))
+    }
+}
+
+@Composable
+private fun FriendMiniCard(entry: DirectoryEntry, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(120.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(TriviaPalette.card)
+            .border(1.5.dp, TriviaPalette.line, RoundedCornerShape(18.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 14.dp, horizontal = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        PseudoAvatar(pseudo = entry.pseudo, seed = entry.uid, size = 52.dp)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            entry.pseudo.ifBlank { "Joueur" },
+            style = MaterialTheme.typography.titleSmall,
+            color = TriviaPalette.ink,
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            entry.rating.levelName(),
+            style = MaterialTheme.typography.bodySmall,
+            color = TriviaPalette.inkSoft,
+            fontSize = 11.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

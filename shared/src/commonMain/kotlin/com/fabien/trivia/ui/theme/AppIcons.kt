@@ -51,6 +51,8 @@ object AppIcons {
     val Users = line("users", "M16 19v-1a4 4 0 00-4-4H6a4 4 0 00-4 4v1M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM22 19v-1a4 4 0 00-3-3.8M16 4.2a4 4 0 010 7.6")
     val Close = line("x", "M6 6l12 12M18 6L6 18")
     val Check = line("check", "M5 12.5l4.5 4.5L19 6")
+    val Search = line("search", "M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15zM21 21l-5.2-5.2")
+    val Plus = line("plus", "M12 5v14M5 12h14")
 
     // Compte / formulaire (contour)
     val Cloud = line("cloud", "M7 18a4 4 0 01-.5-7.97 5.5 5.5 0 0110.6-1.2A3.75 3.75 0 0117 18zM9.5 13.5l1.8 1.8 3.2-3.5")

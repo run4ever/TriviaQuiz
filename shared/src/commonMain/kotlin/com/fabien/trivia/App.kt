@@ -25,6 +25,8 @@ import com.fabien.trivia.ui.account.AccountScreen
 import com.fabien.trivia.ui.account.AuthViewModel
 import com.fabien.trivia.ui.admin.AdminExportScreen
 import com.fabien.trivia.ui.category.CategoryScreen
+import com.fabien.trivia.ui.friends.FriendsScreen
+import com.fabien.trivia.ui.friends.FriendsViewModel
 import com.fabien.trivia.ui.game.GamePhase
 import com.fabien.trivia.ui.game.GameScreen
 import com.fabien.trivia.ui.game.GameViewModel
@@ -44,9 +46,11 @@ fun App(driverFactory: DatabaseDriverFactory) {
     val viewModel = viewModel { GameViewModel(driverFactory) }
     val authViewModel = viewModel { AuthViewModel() }
     val multiplayerViewModel = viewModel { MultiplayerViewModel() }
+    val friendsViewModel = viewModel { FriendsViewModel() }
     var currentTab by remember { mutableStateOf(AppTab.GAME) }
     var showAccount by remember { mutableStateOf(false) }
     var showAdmin by remember { mutableStateOf(false) }
+    var showFriends by remember { mutableStateOf(false) }
     var historyCategory by remember { mutableStateOf<Category?>(null) }
     var previewQuestion by remember { mutableStateOf<Question?>(null) }
 
@@ -54,6 +58,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
         val state by viewModel.state.collectAsState()
         val authState by authViewModel.state.collectAsState()
         val mpState by multiplayerViewModel.state.collectAsState()
+        val friendsState by friendsViewModel.state.collectAsState()
 
         // Par défaut on a toujours un compte (anonyme) : à froid ou après une déconnexion,
         // on crée/recrée un invité anonyme. L'UI traite `null` comme un invité le temps que
@@ -67,6 +72,20 @@ fun App(driverFactory: DatabaseDriverFactory) {
             viewModel.onUserChanged(authState.user?.uid)
         }
 
+        // Amis : (re)charge ma liste à la connexion/déconnexion.
+        LaunchedEffect(authState.user?.uid) {
+            friendsViewModel.onUserChanged(authState.user?.uid)
+        }
+
+        // Met à jour ma fiche publique (directory) à la connexion / au changement de pseudo (compte email).
+        // Le rating poussé = celui de l'instant (login) — suffisant en V1, pas de write à chaque réponse.
+        LaunchedEffect(authState.isEmailUser, authState.user?.uid, authState.pseudo) {
+            val uid = authState.user?.uid
+            if (authState.isEmailUser && uid != null && authState.pseudo.isNotBlank()) {
+                friendsViewModel.updateMyDirectory(uid, authState.pseudo, state.playerRating)
+            }
+        }
+
         // H1 — À la connexion COMME à la déconnexion (bascule compte email ↔ invité), revenir à l'Accueil
         // et réinitialiser la vue Profil : sinon l'écran compte/connexion resterait affiché au retour sur
         // l'onglet Profil. (Se déclenche aussi au tout 1er affichage, sans effet visible = valeurs par défaut.)
@@ -74,6 +93,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
             currentTab = AppTab.GAME
             showAccount = false
             showAdmin = false
+            showFriends = false
             historyCategory = null
             previewQuestion = null
         }
@@ -111,7 +131,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
 
         // On masque la barre pendant une partie en cours (solo ou multi).
         val inMultiplayerGame = currentTab == AppTab.MULTIPLAYER && mpState.room?.status == GameStatus.PLAYING
-        val hideBottomBar = state.phase == GamePhase.PLAYING || inMultiplayerGame
+        val hideBottomBar = state.phase == GamePhase.PLAYING || inMultiplayerGame || showFriends
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -218,7 +238,17 @@ fun App(driverFactory: DatabaseDriverFactory) {
                 }
 
                 AppTab.GAME -> when (state.phase) {
-                    GamePhase.HOME -> HomeScreen(
+                    GamePhase.HOME -> if (showFriends) {
+                        FriendsScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            state = friendsState,
+                            onBack = { showFriends = false; friendsViewModel.search("") },
+                            onSearch = friendsViewModel::search,
+                            onSetSort = friendsViewModel::setSort,
+                            onAdd = friendsViewModel::addFriend,
+                            onRemove = friendsViewModel::removeFriend,
+                        )
+                    } else HomeScreen(
                         modifier = Modifier.padding(innerPadding),
                         playerRating = state.playerRating,
                         categoryRatings = state.categoryRatings,
@@ -226,6 +256,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         streak = state.streak,
                         pseudo = authState.pseudo,
                         reviewCount = state.reviewCount,
+                        isEmailUser = authState.isEmailUser,
+                        friends = friendsState.sortedFriends,
                         onStartAllCategories = { viewModel.startGame(null) },
                         onChooseCategory = viewModel::goToCategorySelect,
                         onReview = viewModel::startReview,
@@ -239,7 +271,8 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         onOpenAccount = {
                             currentTab = AppTab.PROFILE
                             showAccount = true
-                        }
+                        },
+                        onOpenFriends = { showFriends = true }
                     )
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),
