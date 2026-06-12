@@ -53,10 +53,16 @@ data class ProfileStats(
 /** Un passage récent dans l'historique d'une catégorie : la question, sa date et sa justesse. */
 data class RecentAttempt(val question: Question, val date: LocalDate, val correct: Boolean)
 
-/** Données de l'écran « historique par catégorie » : la liste plate des passages récents (≤ 100). */
+/**
+ * Données de l'écran « historique par catégorie » : la liste plate des passages récents (≤ 100) + les
+ * stats cumulées de la catégorie affichées dans l'en-tête (posées / taux / meilleure série).
+ */
 data class CategoryHistory(
     val category: Category,
     val attempts: List<RecentAttempt>,
+    val asked: Int,
+    val correct: Int,
+    val bestStreak: Int,
 )
 
 data class GameState(
@@ -423,7 +429,14 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             val question = byId[a.questionId] ?: return@mapNotNull null
             RecentAttempt(question, a.date, a.correct)
         }
-        return CategoryHistory(category = category, attempts = attempts)
+        val stats = _state.value.profileStats
+        return CategoryHistory(
+            category = category,
+            attempts = attempts,
+            asked = stats.categoryAsked[category] ?: 0,
+            correct = stats.categoryCorrect[category] ?: 0,
+            bestStreak = stats.categoryBest[category] ?: 0,
+        )
     }
 
     /**

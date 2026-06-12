@@ -63,7 +63,15 @@ fun CategoryHistoryScreen(
             .fillMaxSize()
             .background(TriviaPalette.bg)
     ) {
-        Header(cat = cat, title = history.category.displayName, icon = categoryIcon(history.category), onBack = onBack)
+        Header(
+            cat = cat,
+            title = history.category.displayName,
+            icon = categoryIcon(history.category),
+            asked = history.asked,
+            correct = history.correct,
+            bestStreak = history.bestStreak,
+            onBack = onBack
+        )
 
         if (history.attempts.isEmpty()) {
             EmptyState()
@@ -99,7 +107,15 @@ private fun DayHeader(date: LocalDate) {
 }
 
 @Composable
-private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onBack: () -> Unit) {
+private fun Header(
+    cat: CatColors,
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    asked: Int,
+    correct: Int,
+    bestStreak: Int,
+    onBack: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth().background(cat.main).padding(start = 12.dp, end = 14.dp, top = 8.dp, bottom = 16.dp)) {
         Row(
             modifier = Modifier
@@ -125,6 +141,31 @@ private fun Header(cat: CatColors, title: String, icon: androidx.compose.ui.grap
             }
             Text(title, style = MaterialTheme.typography.headlineSmall, color = Color.White)
         }
+        // Stats cumulées de la catégorie, sous le libellé (dans la zone colorée).
+        Spacer(Modifier.height(14.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            val rate = if (asked > 0) (correct * 100) / asked else 0
+            HeaderStat("$asked", "posées", Modifier.weight(1f))
+            HeaderStat("$rate %", "réussite", Modifier.weight(1f))
+            HeaderStat("$bestStreak", "meilleure série", Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun HeaderStat(value: String, label: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Text(value, style = MaterialTheme.typography.titleLarge, color = Color.White, maxLines = 1)
+        Spacer(Modifier.height(1.dp))
+        Text(
+            label,
+            style = MaterialTheme.typography.labelMedium,
+            color = Color.White.copy(alpha = 0.85f),
+            maxLines = 2
+        )
     }
 }
 
