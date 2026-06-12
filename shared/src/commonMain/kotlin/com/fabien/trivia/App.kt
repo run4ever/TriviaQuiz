@@ -64,6 +64,16 @@ fun App(driverFactory: DatabaseDriverFactory) {
             viewModel.onUserChanged(authState.user?.uid)
         }
 
+        // H1 — À la connexion COMME à la déconnexion (bascule compte email ↔ invité), revenir à l'Accueil
+        // et réinitialiser la vue Profil : sinon l'écran compte/connexion resterait affiché au retour sur
+        // l'onglet Profil. (Se déclenche aussi au tout 1er affichage, sans effet visible = valeurs par défaut.)
+        LaunchedEffect(authState.isEmailUser) {
+            currentTab = AppTab.GAME
+            showAccount = false
+            showAdmin = false
+            historyCategory = null
+        }
+
         // Pré-remplissage du pseudo multijoueur depuis le compte connecté (modifiable ensuite).
         // Repli sur le préfixe de l'email si aucun pseudo n'est encore enregistré.
         LaunchedEffect(authState.isEmailUser, authState.pseudo, authState.user?.email) {
@@ -198,7 +208,18 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         reviewCount = state.reviewCount,
                         onStartAllCategories = { viewModel.startGame(null) },
                         onChooseCategory = viewModel::goToCategorySelect,
-                        onReview = viewModel::startReview
+                        onReview = viewModel::startReview,
+                        // H2 — clic « Niveau global » → onglet Profil ; clic « Bonjour … » → écran Compte.
+                        onOpenProfile = {
+                            currentTab = AppTab.PROFILE
+                            showAccount = false
+                            showAdmin = false
+                            historyCategory = null
+                        },
+                        onOpenAccount = {
+                            currentTab = AppTab.PROFILE
+                            showAccount = true
+                        }
                     )
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),

@@ -2,6 +2,7 @@ package com.fabien.trivia.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +64,9 @@ fun HomeScreen(
     reviewCount: Int,
     onStartAllCategories: () -> Unit,
     onChooseCategory: () -> Unit,
-    onReview: () -> Unit
+    onReview: () -> Unit,
+    onOpenProfile: () -> Unit,
+    onOpenAccount: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -72,9 +75,9 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 14.dp)
     ) {
-        PlayerHeader(streak, pseudo)
+        PlayerHeader(streak, pseudo, onOpenAccount)
         Spacer(Modifier.height(18.dp))
-        LevelHeroCard(playerRating)
+        LevelHeroCard(playerRating, onOpenProfile)
         Spacer(Modifier.height(16.dp))
         PlayCta(onStartAllCategories)
         Spacer(Modifier.height(12.dp))
@@ -102,7 +105,7 @@ private fun greetingWord(): String {
 }
 
 @Composable
-private fun PlayerHeader(streak: Int, pseudo: String) {
+private fun PlayerHeader(streak: Int, pseudo: String, onOpenAccount: () -> Unit) {
     val hasPseudo = pseudo.isNotBlank()
     // Valeur initiale recalculée à chaque (ré)entrée en composition (couvre les changements d'onglet),
     // puis rafraîchie sur ON_RESUME → au retour de l'arrière-plan (ex. ouverture le matin) le mot est
@@ -112,30 +115,39 @@ private fun PlayerHeader(streak: Int, pseudo: String) {
         greeting = greetingWord()
     }
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Box(
+        // H2 — la zone « avatar + Bonjour … » ouvre l'écran Compte (la pastille de série reste à part).
+        Row(
             modifier = Modifier
-                .size(46.dp)
+                .weight(1f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
-            contentAlignment = Alignment.Center
+                .clickable(onClick = onOpenAccount),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (hasPseudo) {
-                Text(
-                    text = pseudo.take(1).uppercase(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White
-                )
-            } else {
-                Icon(AppIcons.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+            Box(
+                modifier = Modifier
+                    .size(46.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Brush.linearGradient(listOf(TriviaPalette.brand, Color(0xFFEC4899)))),
+                contentAlignment = Alignment.Center
+            ) {
+                if (hasPseudo) {
+                    Text(
+                        text = pseudo.take(1).uppercase(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White
+                    )
+                } else {
+                    Icon(AppIcons.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+                }
             }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = if (hasPseudo) "$greeting $pseudo" else greeting,
+                style = MaterialTheme.typography.headlineSmall,
+                color = TriviaPalette.ink,
+                modifier = Modifier.weight(1f)
+            )
         }
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = if (hasPseudo) "$greeting $pseudo" else greeting,
-            style = MaterialTheme.typography.headlineSmall,
-            color = TriviaPalette.ink,
-            modifier = Modifier.weight(1f)
-        )
         if (streak > 0) StreakPill(streak)
     }
 }
@@ -156,7 +168,7 @@ private fun StreakPill(streak: Int) {
 }
 
 @Composable
-private fun LevelHeroCard(playerRating: Int) {
+private fun LevelHeroCard(playerRating: Int, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -164,6 +176,8 @@ private fun LevelHeroCard(playerRating: Int) {
             .background(
                 Brush.linearGradient(listOf(Color(0xFF231C46), Color(0xFF3A2A7A), Color(0xFF5B3FD6)))
             )
+            // H2 — la carte « Niveau global » ouvre l'onglet Profil.
+            .clickable(onClick = onClick)
             .padding(20.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
