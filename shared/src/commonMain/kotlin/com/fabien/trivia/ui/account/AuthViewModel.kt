@@ -63,6 +63,9 @@ class AuthViewModel(
      */
     private suspend fun applyUser(user: AuthUser?) {
         if (user != null && !user.isAnonymous) {
+            // Duplique l'email (stocké côté Auth) dans players/{uid} → visible/recherchable dans Firestore.
+            // Fire-and-forget : un échec d'écriture ne doit pas bloquer la connexion.
+            user.email?.let { email -> runCatching { profiles.setEmail(user.uid, email) } }
             val profile = runCatching { profiles.getProfile(user.uid) }.getOrNull()
             _state.value = _state.value.copy(
                 user = user,

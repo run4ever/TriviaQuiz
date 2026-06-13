@@ -3,6 +3,7 @@ package com.fabien.trivia.data
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import dev.gitlive.firebase.firestore.firestore
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Lecture complète du profil. */
@@ -20,6 +21,13 @@ private data class PseudoDto(val pseudo: String = "")
 /** Enveloppe pour écrire UNIQUEMENT l'avatar (merge → préserve pseudo + ratings). */
 @Serializable
 private data class AvatarDto(val avatarAnimal: String = "", val avatarStyle: String = "")
+
+/**
+ * Enveloppe pour écrire UNIQUEMENT l'email (merge). Champ nommé `address_email` (et non `email`) pour
+ * qu'il apparaisse en tête dans la console Firestore, qui trie les champs par ordre alphabétique.
+ */
+@Serializable
+private data class EmailDto(@SerialName("address_email") val email: String = "")
 
 /** Profil d'affichage (côté app) : pseudo + avatar choisi (null si non défini → défaut `avatar_bear_round`). */
 data class UserProfile(val pseudo: String, val avatarAnimal: String?, val avatarStyle: String?)
@@ -52,5 +60,10 @@ class UserProfileRepository(private val firestore: FirebaseFirestore = Firebase.
 
     suspend fun setAvatar(uid: String, animal: String, style: String) {
         doc(uid).set(AvatarDto.serializer(), AvatarDto(animal, style), merge = true)
+    }
+
+    /** Duplique l'email (qui vit dans Firebase Auth) dans `players/{uid}` pour retrouver un compte côté Firestore. */
+    suspend fun setEmail(uid: String, email: String) {
+        doc(uid).set(EmailDto.serializer(), EmailDto(email.trim()), merge = true)
     }
 }
