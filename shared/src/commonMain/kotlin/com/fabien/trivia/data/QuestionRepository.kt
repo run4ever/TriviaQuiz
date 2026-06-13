@@ -3,7 +3,8 @@ package com.fabien.trivia.data
 object QuestionRepository {
     val questions = listOf(
         Question(
-            id = "geo_australie_capitale",
+            id = "geo_capitale_australie",
+            tags = listOf("capitale"),
             title = "Capitale de l'Australie",
             text = "Quelle est la capitale de l'Australie ?",
             options = listOf("Canberra", "Sydney", "Melbourne", "Brisbane"),
@@ -53,7 +54,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_canada_capitale",
+            id = "geo_capitale_canada",
+            tags = listOf("capitale"),
             title = "Capitale du Canada",
             text = "Quelle est la capitale du Canada ?",
             options = listOf("Toronto", "Ottawa", "Vancouver", "Montréal"),
@@ -93,7 +95,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_egypte_capitale",
+            id = "geo_capitale_egypte",
+            tags = listOf("capitale"),
             title = "Capitale de l'Égypte",
             text = "Quelle est la capitale de l'Égypte ?",
             options = listOf("Alexandrie", "Le Caire", "Louxor", "Gizeh"),
@@ -133,13 +136,14 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_espagne_capitale",
+            id = "geo_capitale_espagne",
+            tags = listOf("capitale"),
             title = "Capitale de l'Espagne",
             text = "Quelle est la capitale de l'Espagne ?",
             options = listOf("Barcelone", "Madrid", "Séville", "Valence"),
             correctIndex = 1,
             rating = 600,
-            explanation = "Madrid est la capitale et la plus grande ville de l'Espagne, située au cœur géographique du pays sur le plateau de la Meseta. Devenue capitale au XVIe siècle sous Philippe II, elle abrite la résidence du roi ainsi que le célèbre musée du Prado. Avec plus de 3 millions d'habitants, c'est l'une des plus grandes métropoles d'Europe.",
+            explanation = "Madrid est la capitale et la plus grande ville de l'Espagne, située au cœur géographique du pays. Avec plus de 3 millions d'habitants, c'est l'une des plus grandes métropoles d'Europe.",
             category = Category.GEOGRAPHIE
         ),
         Question(
@@ -149,7 +153,7 @@ object QuestionRepository {
             options = listOf("La Loire", "Le Rhône", "La Seine", "La Garonne"),
             correctIndex = 2,
             rating = 600,
-            explanation = "La Seine traverse Paris d'est en ouest sur environ 13 km, séparant la rive gauche de la rive droite. Longue de 777 km, elle prend sa source en Bourgogne et se jette dans la Manche au Havre. Ses berges parisiennes sont inscrites au patrimoine mondial de l'UNESCO, et elle est traversée par 37 ponts dans la capitale.",
+            explanation = "La Seine traverse Paris d'est en ouest sur environ 13 km, séparant la rive gauche de la rive droite. Longue de 777 km, elle prend sa source en Bourgogne et se jette dans la Manche au Havre.",
             category = Category.GEOGRAPHIE
         ),
         Question(
@@ -183,7 +187,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_norvege_capitale",
+            id = "geo_capitale_norvege",
+            tags = listOf("capitale"),
             title = "Capitale de la Norvège",
             text = "Quelle est la capitale de la Norvège ?",
             options = listOf("Stockholm", "Helsinki", "Oslo", "Copenhague"),
@@ -203,7 +208,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_ouagadougou_pays",
+            id = "geo_capitale_burkina_faso",
+            tags = listOf("capitale"),
             title = "Capitale du Burkina Faso",
             text = "Ouagadougou est la capitale de quel pays ?",
             options = listOf("Mali", "Niger", "Burkina Faso", "Tchad"),
@@ -324,7 +330,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_copenhague_detroit",
-            title = "Capitale du Danemark",
+            title = "Ile de Copenhague",
             text = "Sur quelle île se trouve principalement Copenhague ?",
             options = listOf("Fionie", "Bornholm", "Seeland", "Lolland"),
             correctIndex = 2,
@@ -333,7 +339,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_suriname_capitale",
+            id = "geo_capitale_suriname",
+            tags = listOf("capitale"),
             title = "Capitale du Suriname",
             text = "Quelle est la capitale du Suriname ?",
             options = listOf("Paramaribo", "Georgetown", "Cayenne", "Belmopan"),
@@ -443,7 +450,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_timor_oriental_capitale",
+            id = "geo_capitale_timor_oriental",
+            tags = listOf("capitale"),
             title = "Capitale du Timor oriental",
             text = "Quelle est la capitale du Timor oriental ?",
             options = listOf("Dili", "Manille", "Bandar Seri Begawan", "Port Moresby"),
@@ -2887,7 +2895,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_baltique_capitale",
+            id = "geo_capitale_estonie",
+            tags = listOf("capitale"),
             title = "Capitale de l'Estonie",
             text = "Quelle est la capitale de l'Estonie ?",
             options = listOf("Riga", "Vilnius", "Tallinn", "Helsinki"),
@@ -2907,7 +2916,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_bamako_pays",
+            id = "geo_capitale_mali",
+            tags = listOf("capitale"),
             title = "Capitale du Mali",
             text = "Bamako est la capitale de quel pays ?",
             options = listOf("Mali", "Niger", "Burkina Faso", "Sénégal"),
@@ -2947,7 +2957,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_nouvelle_zelande_capitale",
+            id = "geo_capitale_nouvelle_zelande",
+            tags = listOf("capitale"),
             title = "Capitale de la Nouvelle-Zélande",
             text = "Quelle est la capitale de la Nouvelle-Zélande ?",
             options = listOf("Auckland", "Christchurch", "Wellington", "Hamilton"),
@@ -2977,7 +2988,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_brunei_capitale",
+            id = "geo_capitale_brunei",
+            tags = listOf("capitale"),
             title = "Capitale du Brunei",
             text = "Quelle est la capitale du Brunei ?",
             options = listOf("Bandar Seri Begawan", "Kuala Lumpur", "Dili", "Manille"),
@@ -3007,7 +3019,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_maputo_capitale",
+            id = "geo_capitale_mozambique",
+            tags = listOf("capitale"),
             title = "Capitale du Mozambique",
             text = "Quelle est la capitale du Mozambique ?",
             options = listOf("Maputo", "Luanda", "Harare", "Lusaka"),
@@ -3057,7 +3070,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_micronesie_capitale",
+            id = "geo_capitale_micronesie",
+            tags = listOf("capitale"),
             title = "Capitale des États fédérés de Micronésie",
             text = "Quelle est la capitale des États fédérés de Micronésie ?",
             options = listOf("Majuro", "Palikir", "Yaren", "Tarawa"),
@@ -4067,7 +4081,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_ljubljana_capitale",
+            id = "geo_capitale_slovenie",
+            tags = listOf("capitale"),
             title = "Capitale de la Slovénie",
             text = "Quelle est la capitale de la Slovénie ?",
             options = listOf("Zagreb", "Ljubljana", "Bratislava", "Sarajevo"),
@@ -5092,7 +5107,8 @@ object QuestionRepository {
             category = Category.DIVERTISSEMENT
         ),
         Question(
-            id = "geo_bhoutan_capitale",
+            id = "geo_capitale_bhoutan",
+            tags = listOf("capitale"),
             title = "Capitale du Bhoutan",
             text = "Quelle est la capitale du Bhoutan ?",
             options = listOf("Katmandou", "Thimphou", "Paro", "Dacca"),
@@ -5122,7 +5138,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_cotonou_capitale",
+            id = "geo_capitale_benin",
+            tags = listOf("capitale"),
             title = "Capitale officielle du Bénin",
             text = "Quelle est la capitale officielle du Bénin ?",
             options = listOf("Porto-Novo", "Cotonou", "Parakou", "Abomey"),
@@ -5619,6 +5636,7 @@ object QuestionRepository {
 
         Question(
             id = "geo_capitale_botswana",
+            tags = listOf("capitale"),
             title = "Capitale du Botswana",
             text = "Quelle est la capitale du Botswana ?",
             options = listOf("Lusaka", "Gaborone", "Windhoek", "Harare"),
@@ -5630,6 +5648,7 @@ object QuestionRepository {
 
         Question(
             id = "geo_capitale_kirghizistan",
+            tags = listOf("capitale"),
             title = "Capitale du Kirghizistan",
             text = "Quelle est la capitale du Kirghizistan ?",
             options = listOf("Bichkek", "Achgabat", "Douchanbé", "Almaty"),
@@ -5760,6 +5779,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_mongolie",
+            tags = listOf("capitale"),
             title = "Capitale de la Mongolie",
             text = "Quelle est la capitale de la Mongolie ?",
             options = listOf("Astana", "Oulan-Bator", "Tachkent", "Bichkek"),
@@ -5780,6 +5800,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_uruguay",
+            tags = listOf("capitale"),
             title = "Capitale de l'Uruguay",
             text = "Quelle est la capitale de l'Uruguay ?",
             options = listOf("Asuncion", "Montevideo", "La Paz", "Quito"),
@@ -5810,6 +5831,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_liban",
+            tags = listOf("capitale"),
             title = "Capitale du Liban",
             text = "Quelle est la capitale du Liban ?",
             options = listOf("Damas", "Beyrouth", "Amman", "Nicosie"),
@@ -5830,6 +5852,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_georgie",
+            tags = listOf("capitale"),
             title = "Capitale de la Géorgie",
             text = "Quelle est la capitale de la Géorgie ?",
             options = listOf("Tbilissi", "Erevan", "Bakou", "Batoumi"),
@@ -5850,6 +5873,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_cambodge",
+            tags = listOf("capitale"),
             title = "Capitale du Cambodge",
             text = "Quelle est la capitale du Cambodge ?",
             options = listOf("Vientiane", "Phnom Penh", "Hanoï", "Bangkok"),
@@ -6409,6 +6433,7 @@ object QuestionRepository {
         // ── Géographie : montée à 120 (moyennes + 1 difficile) ──
         Question(
             id = "geo_capitale_maroc",
+            tags = listOf("capitale"),
             title = "Capitale du Maroc",
             text = "Quelle est la capitale du Maroc ?",
             options = listOf("Casablanca", "Marrakech", "Rabat", "Fès"),
@@ -6419,6 +6444,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_turquie",
+            tags = listOf("capitale"),
             title = "Capitale de la Turquie",
             text = "Quelle est la capitale de la Turquie ?",
             options = listOf("Ankara", "Istanbul", "Izmir", "Antalya"),
@@ -6429,6 +6455,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_bresil",
+            tags = listOf("capitale"),
             title = "Capitale du Brésil",
             text = "Quelle est la capitale du Brésil ?",
             options = listOf("Rio de Janeiro", "Brasília", "São Paulo", "Salvador"),
@@ -7037,10 +7064,9 @@ object QuestionRepository {
             explanation = "« 2001, l'Odyssée de l'espace » (1968) est un film de science-fiction réalisé par Stanley Kubrick.",
             category = Category.DIVERTISSEMENT
         ),
-
-        // ── Complément final pour atteindre 120/catégorie ──
         Question(
             id = "geo_capitale_perou",
+            tags = listOf("capitale"),
             title = "Capitale du Pérou",
             text = "Quelle est la capitale du Pérou ?",
             options = listOf("Bogotá", "Lima", "Quito", "Santiago"),
@@ -7120,7 +7146,8 @@ object QuestionRepository {
             category = Category.GEOGRAPHIE
         ),
         Question(
-            id = "geo_quito_pays",
+            id = "geo_capitale_equateur",
+            tags = listOf("capitale"),
             title = "Pays de Quito",
             text = "De quel pays Quito est-elle la capitale ?",
             options = listOf("L'Équateur", "Le Pérou", "La Colombie", "La Bolivie"),
@@ -7171,6 +7198,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_hongrie",
+            tags = listOf("capitale"),
             title = "Capitale de la Hongrie",
             text = "Quelle est la capitale de la Hongrie ?",
             options = listOf("Budapest", "Vienne", "Prague", "Bucarest"),
@@ -7201,6 +7229,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_coree_sud",
+            tags = listOf("capitale"),
             title = "Capitale de la Corée du Sud",
             text = "Quelle est la capitale de la Corée du Sud ?",
             options = listOf("Séoul", "Pyongyang", "Tokyo", "Bangkok"),
@@ -7842,6 +7871,7 @@ object QuestionRepository {
         ),
         Question(
             id = "geo_capitale_pologne",
+            tags = listOf("capitale"),
             title = "Capitale de la Pologne",
             text = "Quelle est la capitale de la Pologne ?",
             options = listOf("Varsovie", "Cracovie", "Prague", "Budapest"),

@@ -20,7 +20,8 @@ private data class QuestionDto(
     val correctIndex: Int = 0,
     val rating: Int = 1000,
     val explanation: String = "",
-    val category: String = ""
+    val category: String = "",
+    val tags: List<String> = emptyList()
 )
 
 private fun Question.toDto() = QuestionDto(
@@ -30,7 +31,8 @@ private fun Question.toDto() = QuestionDto(
     correctIndex = correctIndex,
     rating = rating,
     explanation = explanation,
-    category = category.name
+    category = category.name,
+    tags = tags
 )
 
 /**
@@ -47,7 +49,8 @@ private data class QuestionExportDto(
     val options: List<String>,
     val correctIndex: Int,
     val explanation: String,
-    val rating: Int
+    val rating: Int,
+    val tags: List<String> = emptyList()
 )
 
 /** Résultat d'un export : le JSON formaté + le nombre de questions, pour le retour UI. */
@@ -84,7 +87,8 @@ class RemoteQuestionRepository(private val firestore: FirebaseFirestore = Fireba
                 options = q.options,
                 correctIndex = q.correctIndex,
                 explanation = q.explanation,
-                rating = q.rating
+                rating = q.rating,
+                tags = q.tags
             )
         }
         val json = exportJson.encodeToString(ListSerializer(QuestionExportDto.serializer()), dtos)
@@ -106,7 +110,8 @@ class RemoteQuestionRepository(private val firestore: FirebaseFirestore = Fireba
                 correctIndex = dto.correctIndex,
                 rating = dto.rating,
                 explanation = dto.explanation,
-                category = category
+                category = category,
+                tags = dto.tags
             )
         }
     }

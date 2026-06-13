@@ -37,5 +37,11 @@ data class Question(
     val correctIndex: Int,
     val rating: Int,
     val explanation: String,
-    val category: Category
+    val category: Category,
+    /**
+     * Mots-clés transverses pour regrouper des questions par thème (ex. `["capitale"]`), indépendamment
+     * de la catégorie — sert aux « entrées directes » (filtre `array-contains` côté Firestore). Vide par
+     * défaut. Pour les capitales, l'id (`geo_capitale_<pays>`) porte AUSSI l'info ; le tag la rend requêtable.
+     */
+    val tags: List<String> = emptyList()
 )
