@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Calque MONOCHROME (Android 13+, icônes thématisées). Le système remplace la couleur
+     par la teinte du thème ; seule la forme (alpha) compte. Même « ? » vectoriel. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M49.86,23L56.89,23.25L61.91,24.26L67.18,26.77L68.94,28.02L71.7,31.03L73.45,34.04L74.21,36.3L74.71,38.81L74.71,44.09L73.96,47.6L71.45,52.37L68.18,55.63L65.92,57.14L58.14,60.4L44.09,63.41L41.57,61.4L39.82,58.39L39.32,55.88L39.57,53.12L40.32,51.36L41.32,50.36L44.09,48.85L54.88,46.09L56.38,45.09L57.64,43.33L57.64,40.32L56.64,38.56L55.13,37.31L51.11,36.3L44.34,36.81L40.07,38.06L36.81,39.57L35.05,37.81L33.54,35.3L33.29,31.03L34.3,28.52L36.3,26.51L39.06,25.01L44.59,23.5L49.61,23.25Z M47.85,67.43L51.62,67.43L53.37,67.93L55.88,69.44L57.64,71.45L58.64,74.21L58.64,77.97L58.14,79.73L56.64,82.24L53.37,84.5L51.36,85L48.35,85L44.59,83.74L42.08,81.23L40.82,78.22L40.82,74.46L41.32,72.7L42.58,70.44L43.83,69.19L46.09,67.93L47.6,67.68Z" />
+</vector>
