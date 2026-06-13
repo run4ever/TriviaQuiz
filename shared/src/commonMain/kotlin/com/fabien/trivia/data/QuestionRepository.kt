@@ -3,6 +3,36 @@ package com.fabien.trivia.data
 object QuestionRepository {
     val questions = listOf(
         Question(
+            id = "geo_choucroute_alsace",
+            title = "Origine de la choucroute",
+            text = "De quelle région française la choucroute est-elle la spécialité emblématique ?",
+            options = listOf("Alsace", "Bretagne", "Provence", "Savoie"),
+            correctIndex = 0,
+            rating = 1000,
+            explanation = "La choucroute (chou finement émincé puis fermenté) est la spécialité emblématique de l'Alsace, même si la technique de fermentation du chou est bien plus ancienne et venue d'Asie.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_lesotho_enclave",
+            title = "Pays enclavé dans l'Afrique du Sud",
+            text = "Quel pays est entièrement entouré par l'Afrique du Sud ?",
+            options = listOf("Lesotho", "Eswatini", "Botswana", "Namibie"),
+            correctIndex = 0,
+            rating = 1500,
+            explanation = "Le Lesotho est l'un des rares pays au monde entièrement enclavé dans un seul autre État : il est totalement entouré par l'Afrique du Sud.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
+            id = "geo_pyrenees_frontiere",
+            title = "Frontière France-Espagne",
+            text = "Quelle chaîne de montagnes marque la frontière entre la France et l'Espagne ?",
+            options = listOf("Les Pyrénées", "Les Alpes", "Le Jura", "Les Vosges"),
+            correctIndex = 0,
+            rating = 950,
+            explanation = "Les Pyrénées forment une frontière naturelle d'environ 430 km entre la France et l'Espagne, de l'océan Atlantique à la mer Méditerranée.",
+            category = Category.GEOGRAPHIE
+        ),
+        Question(
             id = "geo_capitale_chine",
             tags = listOf("capitale"),
             title = "Capitale de la Chine",
