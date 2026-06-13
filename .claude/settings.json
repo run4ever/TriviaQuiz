@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Read",
       "Bash(echo:*)",
       "Bash(printf:*)",
       "Bash(grep:*)",
