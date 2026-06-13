@@ -1,11 +1,11 @@
-TEAM_ID=
+TEAM_ID=4LRJ228Q62
 
 PRODUCT_NAME=TriviaQuiz
 // Bundle id FIGÉ (sans $(TEAM_ID)) : doit correspondre à l'app Firebase iOS et à App Store Connect.
 PRODUCT_BUNDLE_IDENTIFIER=com.fabien.trivia.TriviaQuiz
 
-CURRENT_PROJECT_VERSION=1
-MARKETING_VERSION=1.0
+CURRENT_PROJECT_VERSION=6
+MARKETING_VERSION=1.6.0
 
 // Lie l'app à la libsqlite3 du système, requise par le driver natif SQLDelight (SQLiter)
 OTHER_LDFLAGS=$(inherited) -lsqlite3
