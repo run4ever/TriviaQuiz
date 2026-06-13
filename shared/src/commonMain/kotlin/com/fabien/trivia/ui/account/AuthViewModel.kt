@@ -43,21 +43,31 @@ class AuthViewModel(
 
     init {
         viewModelScope.launch {
-            repository.authState.collect { user ->
-                _state.value = _state.value.copy(user = user)
-                // Charge le profil (pseudo + avatar) pour un compte email ; sinon (invité anonyme ou
-                // déconnecté) on VIDE — sans ça, l'ancien pseudo/avatar restait affiché après déconnexion.
-                if (user != null && !user.isAnonymous) {
-                    val profile = runCatching { profiles.getProfile(user.uid) }.getOrNull()
-                    _state.value = _state.value.copy(
-                        pseudo = profile?.pseudo.orEmpty(),
-                        avatarAnimal = profile?.avatarAnimal,
-                        avatarStyle = profile?.avatarStyle,
-                    )
-                } else {
-                    _state.value = _state.value.copy(pseudo = "", avatarAnimal = null, avatarStyle = null)
-                }
-            }
+            repository.authState.collect { applyUser(it) }
+        }
+    }
+
+    /**
+     * Applique l'utilisateur courant à l'état + (re)charge son profil (pseudo + avatar) pour un compte
+     * email ; sinon (invité anonyme ou déconnecté) on VIDE — sans ça, l'ancien pseudo/avatar restait
+     * affiché après déconnexion.
+     *
+     * ⚠️ iOS : le `Flow` `authStateChanged` de GitLive ne ré-émet PAS de façon fiable après
+     * `signIn`/`register`/`linkWithCredential` (l'UI restait bloquée en « mode invité » alors que le
+     * compte était bien créé côté serveur). On ne peut donc pas dépendre que du listener : [launchAuth]
+     * rappelle [applyUser] explicitement depuis `currentUser` après chaque action.
+     */
+    private suspend fun applyUser(user: AuthUser?) {
+        if (user != null && !user.isAnonymous) {
+            val profile = runCatching { profiles.getProfile(user.uid) }.getOrNull()
+            _state.value = _state.value.copy(
+                user = user,
+                pseudo = profile?.pseudo.orEmpty(),
+                avatarAnimal = profile?.avatarAnimal,
+                avatarStyle = profile?.avatarStyle,
+            )
+        } else {
+            _state.value = _state.value.copy(user = user, pseudo = "", avatarAnimal = null, avatarStyle = null)
         }
     }
 
@@ -132,6 +142,9 @@ class AuthViewModel(
             _state.value = _state.value.copy(isBusy = true, error = null, info = null)
             try {
                 block()
+                // iOS : authStateChanged ne ré-émet pas après signIn/register/link → on rafraîchit
+                // explicitement depuis currentUser (cf. docstring applyUser). Inoffensif sur Android.
+                applyUser(repository.currentUser)
             } catch (e: Exception) {
                 _state.value = _state.value.copy(error = e.message ?: "Une erreur est survenue")
             } finally {

@@ -18,6 +18,10 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 
+# CocoaPods : on versionne Podfile + Podfile.lock (versions figées) mais PAS les pods
+# téléchargés, régénérés par `pod install`.
+iosApp/Pods/
+
 # Signature release (NE JAMAIS committer la clé ni les mots de passe)
 keystore.properties
 *.jks
