@@ -16,6 +16,10 @@ val generateAppVersion by tasks.registering {
     outputs.dir(outputDir)
     val versionName = libs.versions.appVersionName.get()
     val versionCode = libs.versions.appVersionCode.get()
+    // Déclare la version en INPUT : sinon Gradle voit la sortie existante et marque la tâche
+    // UP-TO-DATE → l'AppVersion.kt restait figé à l'ancienne valeur après un bump (bug : footer 1.1.0).
+    inputs.property("versionName", versionName)
+    inputs.property("versionCode", versionCode)
     doLast {
         val file = outputDir.get().asFile.resolve("com/fabien/trivia/AppVersion.kt")
         file.parentFile.mkdirs()
