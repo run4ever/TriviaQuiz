@@ -34,11 +34,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.fabien.trivia.AppVersion
 import com.fabien.trivia.data.Category
 import com.fabien.trivia.data.DirectoryEntry
 import com.fabien.trivia.data.displayName
@@ -113,6 +115,17 @@ fun HomeScreen(
             Spacer(Modifier.height(20.dp))
             CatStrip("Tes axes d'amélioration", highlights.weaknesses)
         }
+
+        Spacer(Modifier.height(16.dp))
+        // Version de l'app (pratique pour les retours de testeurs). Vient de libs.versions.toml.
+        Text(
+            "v${AppVersion.NAME}",
+            style = MaterialTheme.typography.labelSmall,
+            color = TriviaPalette.inkFaint,
+            fontSize = 11.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
         Spacer(Modifier.height(8.dp))
     }
 }
