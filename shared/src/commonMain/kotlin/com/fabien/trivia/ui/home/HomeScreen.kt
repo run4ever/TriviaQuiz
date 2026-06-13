@@ -75,6 +75,7 @@ fun HomeScreen(
     friends: List<DirectoryEntry>,
     onStartAllCategories: () -> Unit,
     onChooseCategory: () -> Unit,
+    onPlayCategory: (Category) -> Unit,
     onReview: () -> Unit,
     onOpenProfile: () -> Unit,
     onOpenAccount: () -> Unit,
@@ -109,11 +110,11 @@ fun HomeScreen(
         val highlights = homeHighlights(categoryRatings, categoryAsked)
         if (highlights.strengths.isNotEmpty()) {
             Spacer(Modifier.height(24.dp))
-            CatStrip("Tes points forts", highlights.strengths)
+            CatStrip("Tes points forts", highlights.strengths, onPlayCategory)
         }
         if (highlights.weaknesses.isNotEmpty()) {
             Spacer(Modifier.height(20.dp))
-            CatStrip("Tes axes d'amélioration", highlights.weaknesses)
+            CatStrip("Tes axes d'amélioration", highlights.weaknesses, onPlayCategory)
         }
 
         Spacer(Modifier.height(16.dp))
@@ -431,20 +432,27 @@ private fun CategoryChips() {
 }
 
 @Composable
-private fun CatStrip(title: String, cats: List<Map.Entry<Category, Int>>) {
+private fun CatStrip(title: String, cats: List<Map.Entry<Category, Int>>, onPlayCategory: (Category) -> Unit) {
     Text(title, style = MaterialTheme.typography.titleMedium, color = TriviaPalette.ink, fontWeight = FontWeight.ExtraBold)
     Spacer(Modifier.height(12.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         cats.forEach { (category, rating) ->
-            CatPick(category, rating, Modifier.weight(1f))
+            CatPick(category, rating, onPlay = { onPlayCategory(category) }, modifier = Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-private fun CatPick(category: Category, rating: Int, modifier: Modifier) {
+private fun CatPick(category: Category, rating: Int, onPlay: () -> Unit, modifier: Modifier) {
     val colors = catColors(category)
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    // Cliquable → lance une partie solo sur la catégorie.
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .clickable(onClick = onPlay)
+            .padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -455,12 +463,16 @@ private fun CatPick(category: Category, rating: Int, modifier: Modifier) {
             Icon(categoryIcon(category), contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
         }
         Spacer(Modifier.height(6.dp))
+        // Libellé centré (gère le retour à la ligne, ex. « Sciences et nature »).
         Text(
             category.displayName,
             style = MaterialTheme.typography.bodySmall,
-            color = TriviaPalette.ink
+            color = TriviaPalette.ink,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(4.dp))
-        LevelPill(rating = rating, bg = colors.tint, fg = colors.deep)
+        // Pill réduit au nombre de points (le libellé de niveau passait sur 2 lignes sur petits écrans).
+        LevelPill(rating = rating, bg = colors.tint, fg = colors.deep, showLabel = false)
     }
 }

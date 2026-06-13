@@ -181,6 +181,7 @@ fun LevelPill(
     bg: Color,
     fg: Color,
     modifier: Modifier = Modifier,
+    showLabel: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -191,6 +192,7 @@ fun LevelPill(
     ) {
         Icon(AppIcons.Crown, contentDescription = null, tint = fg, modifier = Modifier.size(12.dp))
         Text("$rating", style = MaterialTheme.typography.labelSmall, color = fg)
-        Text(rating.levelName(), style = MaterialTheme.typography.labelSmall, color = fg)
+        // Libellé de niveau optionnel (masqué dans les pills étroits pour éviter le retour à la ligne).
+        if (showLabel) Text(rating.levelName(), style = MaterialTheme.typography.labelSmall, color = fg)
     }
 }

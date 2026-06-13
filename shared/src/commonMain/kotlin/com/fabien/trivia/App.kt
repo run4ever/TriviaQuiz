@@ -282,6 +282,7 @@ fun App(driverFactory: DatabaseDriverFactory) {
                         friends = friendsState.sortedFriends,
                         onStartAllCategories = { viewModel.startGame(null) },
                         onChooseCategory = viewModel::goToCategorySelect,
+                        onPlayCategory = { viewModel.startGame(it) },
                         onReview = viewModel::startReview,
                         // H2 — clic « Niveau global » → onglet Profil ; clic « Bonjour … » → écran Compte.
                         onOpenProfile = {
