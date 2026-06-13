@@ -4,5 +4,9 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- L'app n'utilise que du chiffrement standard exempté (TLS/HTTPS, Firebase) → pas de question
+	     de conformité export à chaque build, ni de documentation à fournir. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
