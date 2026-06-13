@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.fabien.trivia.data.AuthRepository
 import com.fabien.trivia.data.AuthUser
 import com.fabien.trivia.data.UserProfileRepository
+import dev.gitlive.firebase.auth.FirebaseAuthInvalidCredentialsException
+import dev.gitlive.firebase.auth.FirebaseAuthInvalidUserException
+import dev.gitlive.firebase.auth.FirebaseAuthUserCollisionException
+import dev.gitlive.firebase.auth.FirebaseAuthWeakPasswordException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -146,10 +150,25 @@ class AuthViewModel(
                 // explicitement depuis currentUser (cf. docstring applyUser). Inoffensif sur Android.
                 applyUser(repository.currentUser)
             } catch (e: Exception) {
-                _state.value = _state.value.copy(error = e.message ?: "Une erreur est survenue")
+                _state.value = _state.value.copy(error = authErrorMessage(e))
             } finally {
                 _state.value = _state.value.copy(isBusy = false)
             }
         }
     }
+}
+
+/**
+ * Traduit en français les erreurs d'authentification Firebase. Mappées par **type** d'exception GitLive
+ * (et non par message) car le texte natif diffère selon la plateforme (ex. mauvais mot de passe : Android
+ * « The password is invalid… » vs iOS « The supplied auth credential is incorrect… »). NB : Firebase fusionne
+ * « mauvais mot de passe » et « email inconnu » en une seule erreur `InvalidCredentials` (protection anti-énumération).
+ * [FirebaseAuthWeakPasswordException] hérite de [FirebaseAuthInvalidCredentialsException] → la tester d'abord.
+ */
+private fun authErrorMessage(e: Throwable): String = when (e) {
+    is FirebaseAuthWeakPasswordException -> "Mot de passe trop faible : utilise au moins 6 caractères."
+    is FirebaseAuthInvalidCredentialsException -> "Email ou mot de passe incorrect."
+    is FirebaseAuthInvalidUserException -> "Aucun compte ne correspond à cet email."
+    is FirebaseAuthUserCollisionException -> "Un compte existe déjà avec cet email."
+    else -> "Connexion impossible. Vérifie ta connexion internet et réessaie."
 }
