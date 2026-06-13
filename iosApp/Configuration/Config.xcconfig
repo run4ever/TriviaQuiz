@@ -1,7 +1,8 @@
 TEAM_ID=
 
 PRODUCT_NAME=TriviaQuiz
-PRODUCT_BUNDLE_IDENTIFIER=com.fabien.trivia.TriviaQuiz$(TEAM_ID)
+// Bundle id FIGÉ (sans $(TEAM_ID)) : doit correspondre à l'app Firebase iOS et à App Store Connect.
+PRODUCT_BUNDLE_IDENTIFIER=com.fabien.trivia.TriviaQuiz
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0
