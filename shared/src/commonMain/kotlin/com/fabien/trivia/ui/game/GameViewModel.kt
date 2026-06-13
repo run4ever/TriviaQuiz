@@ -384,7 +384,9 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
      * de la catégorie de la question (cf. [selectAnswer]) ; le rating global, lui, n'est pas touché.
      */
     fun startTagGame(tag: String) {
-        val questions = questionPool.filter { tag in it.tags }.shuffled()
+        // Thème = petit pool « catalogue » → ordre FIXE par difficulté CROISSANTE (rating) plutôt que
+        // mélangé : on parcourt tout le thème sans répétition, des plus faciles aux plus dures.
+        val questions = questionPool.filter { tag in it.tags }.sortedBy { it.rating }
         if (questions.isEmpty()) return
         val streak = streakRepository.registerPlay()
         pushAll()
@@ -608,11 +610,13 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             return
         }
         val nextIndex = current.currentIndex + 1
-        // Pool à réutiliser quand on a fait le tour : filtré par thème en mode tag, sinon par catégorie.
-        val refill = current.selectedTag?.let { tag -> questionPool.filter { tag in it.tags } }
-            ?: questionsFor(current.selectedCategory)
         val (newIndex, newQuestions) = if (nextIndex >= current.questions.size) {
-            0 to refill.shuffled()
+            // Fin du tour → on réalimente. Mode thème : même ordre fixe par difficulté croissante qu'au
+            // démarrage (cf. startTagGame). Sinon (catégorie / toutes) : re-mélange.
+            val refill = current.selectedTag?.let { tag ->
+                questionPool.filter { tag in it.tags }.sortedBy { it.rating }
+            } ?: questionsFor(current.selectedCategory).shuffled()
+            0 to refill
         } else {
             nextIndex to current.questions
         }
