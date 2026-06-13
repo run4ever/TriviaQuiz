@@ -652,28 +652,35 @@ private fun MAnswerRow(
     val baloo = MaterialTheme.typography.titleMedium.fontFamily
     val correctChosen = reveal && isCorrect
     val wrongChosen = reveal && isMine && !isCorrect
+    // Réponse choisie AVANT la révélation : surlignée en violet pour que le joueur voie son choix
+    // pendant l'attente des autres (la bonne/mauvaise n'est dévoilée qu'à la révélation).
+    val pendingMine = !reveal && isMine
 
     val targetBg = when {
         correctChosen -> TriviaPalette.goodTint
         wrongChosen -> TriviaPalette.badTint
+        pendingMine -> TriviaPalette.brand.copy(alpha = 0.12f)
         else -> TriviaPalette.card
     }
     val targetBorder = when {
         correctChosen -> TriviaPalette.good
         wrongChosen -> TriviaPalette.bad
+        pendingMine -> TriviaPalette.brand
         else -> TriviaPalette.line
     }
     val targetFg = when {
         correctChosen -> Color(0xFF15723A)
         wrongChosen -> Color(0xFFB42121)
+        pendingMine -> TriviaPalette.brandDeep
         else -> TriviaPalette.ink
     }
     val targetBadgeBg = when {
         correctChosen -> TriviaPalette.good
         wrongChosen -> TriviaPalette.bad
+        pendingMine -> TriviaPalette.brand
         else -> catColors.main.copy(alpha = 0.11f)
     }
-    val badgeFg = if (correctChosen || wrongChosen) Color.White else catColors.deep
+    val badgeFg = if (correctChosen || wrongChosen || pendingMine) Color.White else catColors.deep
 
     val bg by animateColorAsState(targetBg, label = "answBg")
     val border by animateColorAsState(targetBorder, label = "answBorder")
