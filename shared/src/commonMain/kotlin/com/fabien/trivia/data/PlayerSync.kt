@@ -17,6 +17,7 @@ import kotlinx.serialization.Serializable
 private data class PlayerDocDto(
     val global: Int = 750,
     val categories: Map<String, Int> = emptyMap(),
+    val tags: Map<String, Int> = emptyMap(),
     val streaks: StreaksDto = StreaksDto(),
     val reviewPool: List<ReviewEntryDto> = emptyList(),
     val questionStats: List<StatEntryDto> = emptyList(),
@@ -43,6 +44,7 @@ class PlayerSync(private val firestore: FirebaseFirestore = Firebase.firestore) 
         val dto = PlayerDocDto(
             global = ratings.global,
             categories = ratings.categories.entries.associate { (category, rating) -> category.name to rating },
+            tags = ratings.tags,
             streaks = streaks.toDto(),
             reviewPool = reviewPool.map { ReviewEntryDto(it.id, it.addedAt) },
             questionStats = stats.map {

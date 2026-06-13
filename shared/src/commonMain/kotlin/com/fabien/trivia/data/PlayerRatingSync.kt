@@ -8,7 +8,9 @@ import kotlinx.serialization.Serializable
 /** Ratings du joueur, modèle interne (côté app). */
 data class PlayerRatings(
     val global: Int,
-    val categories: Map<Category, Int>
+    val categories: Map<Category, Int>,
+    /** Ratings par tag suivi (ex. « capitale »), cf. [TRACKED_TAGS]. */
+    val tags: Map<String, Int> = emptyMap()
 )
 
 /**
@@ -19,7 +21,8 @@ data class PlayerRatings(
 @Serializable
 private data class PlayerRatingsDto(
     val global: Int = 750,
-    val categories: Map<String, Int> = emptyMap()
+    val categories: Map<String, Int> = emptyMap(),
+    val tags: Map<String, Int> = emptyMap()
 )
 
 /**
@@ -42,7 +45,8 @@ class PlayerRatingSync(private val firestore: FirebaseFirestore = Firebase.fires
             global = dto.global,
             categories = Category.entries.associateWith { category ->
                 dto.categories[category.name] ?: 750
-            }
+            },
+            tags = TRACKED_TAGS.associateWith { tag -> dto.tags[tag] ?: 750 }
         )
     }
 
@@ -53,7 +57,8 @@ class PlayerRatingSync(private val firestore: FirebaseFirestore = Firebase.fires
     suspend fun push(uid: String, ratings: PlayerRatings) {
         val dto = PlayerRatingsDto(
             global = ratings.global,
-            categories = ratings.categories.entries.associate { (category, rating) -> category.name to rating }
+            categories = ratings.categories.entries.associate { (category, rating) -> category.name to rating },
+            tags = ratings.tags
         )
         doc(uid).set(PlayerRatingsDto.serializer(), dto, merge = true)
     }

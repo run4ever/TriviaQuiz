@@ -300,7 +300,9 @@ fun App(driverFactory: DatabaseDriverFactory) {
                     GamePhase.CATEGORY_SELECT -> CategoryScreen(
                         modifier = Modifier.padding(innerPadding),
                         categoryRatings = state.categoryRatings,
+                        capitaleRating = state.tagRatings[com.fabien.trivia.data.TAG_CAPITALE] ?: 750,
                         onSelectCategory = { viewModel.startGame(it) },
+                        onSelectCapitales = { viewModel.startTagGame(com.fabien.trivia.data.TAG_CAPITALE) },
                         onGoBack = viewModel::goHome
                     )
                     GamePhase.PLAYING -> GameScreen(

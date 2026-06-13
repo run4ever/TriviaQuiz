@@ -49,7 +49,9 @@ import com.fabien.trivia.ui.theme.categoryIcon
 fun CategoryScreen(
     modifier: Modifier = Modifier,
     categoryRatings: Map<Category, Int>,
+    capitaleRating: Int,
     onSelectCategory: (Category) -> Unit,
+    onSelectCapitales: () -> Unit,
     onGoBack: () -> Unit
 ) {
     Column(
@@ -95,6 +97,17 @@ fun CategoryScreen(
                     onClick = { onSelectCategory(category) }
                 )
             }
+            // 7ᵉ thème transverse : « Capitales » (questions taguées « capitale », toutes catégories).
+            item {
+                ThemeCard(
+                    title = "Capitales",
+                    icon = categoryIcon(Category.GEOGRAPHIE),
+                    main = Color(0xFF0FA697),
+                    deep = Color(0xFF0B7E73),
+                    rating = capitaleRating,
+                    onClick = onSelectCapitales
+                )
+            }
         }
     }
 }
@@ -102,6 +115,26 @@ fun CategoryScreen(
 @Composable
 private fun CategoryCard(category: Category, rating: Int, onClick: () -> Unit) {
     val colors = catColors(category)
+    ThemeCard(
+        title = category.displayName,
+        icon = categoryIcon(category),
+        main = colors.main,
+        deep = colors.deep,
+        rating = rating,
+        onClick = onClick,
+    )
+}
+
+/** Carte « chunky » générique d'un thème (catégorie ou tag) : icône + libellé + niveau, effet enfoncé. */
+@Composable
+private fun ThemeCard(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    main: Color,
+    deep: Color,
+    rating: Int,
+    onClick: () -> Unit,
+) {
     val shape = RoundedCornerShape(22.dp)
     val depth = 7.dp
     val interaction = remember { MutableInteractionSource() }
@@ -118,7 +151,7 @@ private fun CategoryCard(category: Category, rating: Int, onClick: () -> Unit) {
             Modifier
                 .matchParentSize()
                 .padding(top = depth)
-                .background(colors.deep, shape)
+                .background(deep, shape)
         )
         // Face avant colorée.
         Column(
@@ -126,7 +159,7 @@ private fun CategoryCard(category: Category, rating: Int, onClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(bottom = depth)
                 .offset(y = sink)
-                .background(colors.main, shape)
+                .background(main, shape)
                 .clip(shape)
                 .clickable(interactionSource = interaction, indication = null, onClick = onClick)
                 .heightIn(min = 128.dp)
@@ -140,10 +173,10 @@ private fun CategoryCard(category: Category, rating: Int, onClick: () -> Unit) {
                     .background(Color.White.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(categoryIcon(category), contentDescription = null, tint = Color.White, modifier = Modifier.size(26.dp))
+                Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(26.dp))
             }
             Column {
-                Text(category.displayName, style = MaterialTheme.typography.titleMedium, color = Color.White)
+                Text(title, style = MaterialTheme.typography.titleMedium, color = Color.White)
                 Spacer(Modifier.height(6.dp))
                 LevelPill(rating = rating, bg = Color.White.copy(alpha = 0.18f), fg = Color.White)
             }

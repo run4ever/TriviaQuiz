@@ -20,6 +20,18 @@ class RatingsRepository(database: TriviaDatabase) {
         queries.upsertRating(category.name, rating.toLong())
     }
 
+    // Ratings par TAG (ex. « capitale ») : même table KV, clé préfixée `tag_` pour ne pas collisionner
+    // avec « global » ni les noms de catégories.
+    fun getTagRating(tag: String): Int =
+        queries.getRating("tag_$tag").executeAsOneOrNull()?.toInt() ?: 750
+
+    fun getAllTagRatings(): Map<String, Int> =
+        TRACKED_TAGS.associateWith { getTagRating(it) }
+
+    fun saveTagRating(tag: String, rating: Int) {
+        queries.upsertRating("tag_$tag", rating.toLong())
+    }
+
     /** Efface ratings ELO ET séries (même table `player_ratings`). Pour la réinitialisation locale. */
     fun clear() = queries.deleteAll()
 }

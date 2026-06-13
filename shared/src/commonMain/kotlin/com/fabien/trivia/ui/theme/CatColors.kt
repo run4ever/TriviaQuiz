@@ -41,5 +41,5 @@ object TriviaPalette {
     val brand = Color(0xFF7A5AF8)     // accent produit (violet)
     val brandDeep = Color(0xFF553BD0)
 
-    val night = Color(0xFF161320)     // bouton « Jouer une catégorie » (noir)
+    val night = Color(0xFF161320)     // bouton « Jouer un thème » (noir)
 }

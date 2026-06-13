@@ -267,9 +267,9 @@ private fun CategoryCta(onClick: () -> Unit) {
         CategoryChips()
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text("Jouer une catégorie", style = MaterialTheme.typography.titleMedium, color = Color.White)
+            Text("Jouer un thème", style = MaterialTheme.typography.titleMedium, color = Color.White)
             Text(
-                "Au choix parmi 6",
+                "Au choix",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.82f)
             )

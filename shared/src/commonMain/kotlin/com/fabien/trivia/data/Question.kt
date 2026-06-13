@@ -45,3 +45,13 @@ data class Question(
      */
     val tags: List<String> = emptyList()
 )
+
+/** Tag « capitale » (questions de capitales, cf. id `geo_capitale_<pays>`). */
+const val TAG_CAPITALE = "capitale"
+
+/**
+ * Tags qui ont leur PROPRE progression (rating ELO + niveau), en plus de la catégorie de la question.
+ * Une réponse sur une question portant l'un de ces tags fait évoluer ce rating de tag (et la catégorie).
+ * Stockés en local sous la clé `tag_<tag>` et synchronisés dans le champ `tags` de `players/{uid}`.
+ */
+val TRACKED_TAGS = listOf(TAG_CAPITALE)

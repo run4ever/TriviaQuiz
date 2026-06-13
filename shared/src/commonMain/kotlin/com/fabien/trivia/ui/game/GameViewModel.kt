@@ -21,6 +21,7 @@ import com.fabien.trivia.data.mergeQuestionHistory
 import com.fabien.trivia.data.mergeReviewPool
 import com.fabien.trivia.data.StreakRepository
 import com.fabien.trivia.data.StreakSync
+import com.fabien.trivia.data.TRACKED_TAGS
 import com.fabien.trivia.data.TriviaDatabase
 import com.fabien.trivia.data.mergeStreaks
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,8 +74,12 @@ data class GameState(
     val answerConfirmed: Boolean = false,
     val playerRating: Int = 750,
     val categoryRatings: Map<Category, Int> = Category.entries.associateWith { 750 },
+    /** Ratings par tag suivi (ex. « capitale »), cf. [TRACKED_TAGS]. */
+    val tagRatings: Map<String, Int> = TRACKED_TAGS.associateWith { 750 },
     val lastRatingDelta: Int = 0,
     val selectedCategory: Category? = null,
+    /** Thème (tag) joué en mode « entrée directe » (ex. « capitale »), null sinon. */
+    val selectedTag: String? = null,
     /** Session de révision en cours (questions ratées rejouées). Mode neutre : n'affecte ni ELO, ni séries, ni anti-grind. */
     val isReview: Boolean = false,
     /** Nombre de questions actuellement dans le pool de révision (pour le bouton de l'accueil). */
@@ -88,7 +93,11 @@ data class GameState(
     val profileStats: ProfileStats = ProfileStats()
 ) {
     val displayedRating: Int
-        get() = if (selectedCategory != null) categoryRatings[selectedCategory] ?: 750 else playerRating
+        get() = when {
+            selectedTag != null -> tagRatings[selectedTag] ?: 750
+            selectedCategory != null -> categoryRatings[selectedCategory] ?: 750
+            else -> playerRating
+        }
 }
 
 class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
@@ -118,6 +127,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
     private val _state = MutableStateFlow(GameState(
         playerRating = ratingsRepository.getPlayerRating(),
         categoryRatings = ratingsRepository.getAllCategoryRatings(),
+        tagRatings = ratingsRepository.getAllTagRatings(),
         streak = streakRepository.currentStreak(),
         correctStreak = streakRepository.correctStreak(null),
         bestCorrectStreak = streakRepository.bestCorrectStreak(null),
@@ -279,6 +289,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         _state.value = GameState(
             playerRating = ratingsRepository.getPlayerRating(),
             categoryRatings = ratingsRepository.getAllCategoryRatings(),
+            tagRatings = ratingsRepository.getAllTagRatings(),
             streak = streakRepository.currentStreak(),
             correctStreak = streakRepository.correctStreak(null),
             bestCorrectStreak = streakRepository.bestCorrectStreak(null),
@@ -326,15 +337,18 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
 
     private fun currentLocalRatings() = PlayerRatings(
         global = _state.value.playerRating,
-        categories = _state.value.categoryRatings
+        categories = _state.value.categoryRatings,
+        tags = _state.value.tagRatings
     )
 
     private fun applyCloudRatings(cloud: PlayerRatings) {
         ratingsRepository.savePlayerRating(cloud.global)
         cloud.categories.forEach { (category, rating) -> ratingsRepository.saveCategoryRating(category, rating) }
+        cloud.tags.forEach { (tag, rating) -> ratingsRepository.saveTagRating(tag, rating) }
         _state.value = _state.value.copy(
             playerRating = cloud.global,
-            categoryRatings = cloud.categories
+            categoryRatings = cloud.categories,
+            tagRatings = if (cloud.tags.isNotEmpty()) cloud.tags else _state.value.tagRatings
         )
     }
 
@@ -353,11 +367,39 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             selectedCategory = category,
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
+            tagRatings = _state.value.tagRatings,
             streak = streak,
             // Suite de bonnes réponses CONTEXTUELLE (catégorie choisie, ou globale en « toutes catégories »),
             // persistée (ne repart pas à 0 à chaque partie).
             correctStreak = streakRepository.correctStreak(category),
             bestCorrectStreak = streakRepository.bestCorrectStreak(category),
+            profileStats = _state.value.profileStats,
+            reviewCount = reviewPoolRepository.count()
+        )
+    }
+
+    /**
+     * Démarre une partie sur un THÈME (tag), ex. « capitale » : ne tire que les questions portant ce tag,
+     * tous catégories confondues. L'ELO d'une réponse alimente le rating du tag affiché ICI **et** le rating
+     * de la catégorie de la question (cf. [selectAnswer]) ; le rating global, lui, n'est pas touché.
+     */
+    fun startTagGame(tag: String) {
+        val questions = questionPool.filter { tag in it.tags }.shuffled()
+        if (questions.isEmpty()) return
+        val streak = streakRepository.registerPlay()
+        pushAll()
+        _state.value = GameState(
+            phase = GamePhase.PLAYING,
+            questions = questions,
+            selectedCategory = null,
+            selectedTag = tag,
+            playerRating = _state.value.playerRating,
+            categoryRatings = _state.value.categoryRatings,
+            tagRatings = _state.value.tagRatings,
+            streak = streak,
+            // Série contextuelle = globale (un thème transverse n'a pas de série propre).
+            correctStreak = streakRepository.correctStreak(null),
+            bestCorrectStreak = streakRepository.bestCorrectStreak(null),
             profileStats = _state.value.profileStats,
             reviewCount = reviewPoolRepository.count()
         )
@@ -488,43 +530,50 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         val newCategoryRating = (categoryRating + categoryDelta).coerceAtLeast(100)
         val newCategoryRatings = current.categoryRatings + (question.category to newCategoryRating)
 
-        // Suite de bonnes réponses (persistée, miroir des ratings) : on met à jour la suite de la
-        // catégorie de la question, et la globale uniquement en mode « toutes catégories ».
-        val allCategories = current.selectedCategory == null
-        streakRepository.recordAnswer(question.category, isCorrect, includeGlobal = allCategories)
-        // Suite contextuelle affichée dans l'en-tête : catégorie en mode catégorie, sinon globale.
+        // Tags suivis portés par la question (ex. « capitale ») : chacun a son PROPRE rating, mis à jour à
+        // CHAQUE réponse sur une telle question, quel que soit le mode (catégorie / toutes / thème).
+        val newTagRatings = current.tagRatings.toMutableMap()
+        var selectedTagDelta = 0
+        question.tags.filter { it in TRACKED_TAGS }.forEach { tag ->
+            val tagRating = current.tagRatings[tag] ?: 750
+            val tagDelta = scaleGain(eloRatingDelta(tagRating, questionRating, isCorrect), gainFactor)
+            newTagRatings[tag] = (tagRating + tagDelta).coerceAtLeast(100)
+            ratingsRepository.saveTagRating(tag, newTagRatings.getValue(tag))
+            if (tag == current.selectedTag) selectedTagDelta = tagDelta
+        }
+
+        // Suite de bonnes réponses (persistée) : catégorie de la question toujours ; globale dès que ce
+        // n'est pas un mode catégorie (donc en « toutes catégories » ET en mode thème).
+        val includeGlobalStreak = current.selectedCategory == null
+        streakRepository.recordAnswer(question.category, isCorrect, includeGlobal = includeGlobalStreak)
         val newCorrectStreak = streakRepository.correctStreak(current.selectedCategory)
         val newBestCorrectStreak = streakRepository.bestCorrectStreak(current.selectedCategory)
 
-        if (current.selectedCategory != null) {
-            _state.value = current.copy(
-                selectedAnswerIndex = index,
-                answerConfirmed = true,
-                categoryRatings = newCategoryRatings,
-                lastRatingDelta = categoryDelta,
-                correctStreak = newCorrectStreak,
-                bestCorrectStreak = newBestCorrectStreak,
-                profileStats = readProfileStats(),
-                reviewCount = reviewCount
-            )
-            ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
-        } else {
-            val globalDelta = scaleGain(eloRatingDelta(current.playerRating, questionRating, isCorrect), gainFactor)
-            val newPlayerRating = (current.playerRating + globalDelta).coerceAtLeast(100)
-            _state.value = current.copy(
-                selectedAnswerIndex = index,
-                answerConfirmed = true,
-                playerRating = newPlayerRating,
-                categoryRatings = newCategoryRatings,
-                lastRatingDelta = globalDelta,
-                correctStreak = newCorrectStreak,
-                bestCorrectStreak = newBestCorrectStreak,
-                profileStats = readProfileStats(),
-                reviewCount = reviewCount
-            )
-            ratingsRepository.savePlayerRating(newPlayerRating)
-            ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
+        // Le rating GLOBAL n'évolue qu'en mode « toutes catégories » PUR (ni catégorie, ni thème).
+        val pureAll = current.selectedCategory == null && current.selectedTag == null
+        val globalDelta = if (pureAll) scaleGain(eloRatingDelta(current.playerRating, questionRating, isCorrect), gainFactor) else 0
+        val newPlayerRating = if (pureAll) (current.playerRating + globalDelta).coerceAtLeast(100) else current.playerRating
+        // Delta AFFICHÉ dans l'en-tête, cohérent avec displayedRating (thème → tag, catégorie → cat, sinon global).
+        val displayedDelta = when {
+            current.selectedTag != null -> selectedTagDelta
+            current.selectedCategory != null -> categoryDelta
+            else -> globalDelta
         }
+
+        _state.value = current.copy(
+            selectedAnswerIndex = index,
+            answerConfirmed = true,
+            playerRating = newPlayerRating,
+            categoryRatings = newCategoryRatings,
+            tagRatings = newTagRatings,
+            lastRatingDelta = displayedDelta,
+            correctStreak = newCorrectStreak,
+            bestCorrectStreak = newBestCorrectStreak,
+            profileStats = readProfileStats(),
+            reviewCount = reviewCount
+        )
+        ratingsRepository.saveCategoryRating(question.category, newCategoryRating)
+        if (pureAll) ratingsRepository.savePlayerRating(newPlayerRating)
 
         // Rating dynamique : la question évolue à l'inverse de l'échange ELO avec le rating de catégorie
         // du joueur (le joueur gagne X → la question perd X). On enregistre aussi la réponse (anti-grind).
@@ -559,8 +608,11 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
             return
         }
         val nextIndex = current.currentIndex + 1
+        // Pool à réutiliser quand on a fait le tour : filtré par thème en mode tag, sinon par catégorie.
+        val refill = current.selectedTag?.let { tag -> questionPool.filter { tag in it.tags } }
+            ?: questionsFor(current.selectedCategory)
         val (newIndex, newQuestions) = if (nextIndex >= current.questions.size) {
-            0 to questionsFor(current.selectedCategory).shuffled()
+            0 to refill.shuffled()
         } else {
             nextIndex to current.questions
         }
@@ -577,6 +629,7 @@ class GameViewModel(driverFactory: DatabaseDriverFactory) : ViewModel() {
         _state.value = GameState(
             playerRating = _state.value.playerRating,
             categoryRatings = _state.value.categoryRatings,
+            tagRatings = _state.value.tagRatings,
             streak = _state.value.streak,
             correctStreak = streakRepository.correctStreak(null),
             bestCorrectStreak = streakRepository.bestCorrectStreak(null),
